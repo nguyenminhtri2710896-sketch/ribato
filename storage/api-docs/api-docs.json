@@ -1,0 +1,1388 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PAY API",
+        "description": "<h1>API Encryption Rules</h1><h2>Key Pair Generation Method</h2><p>Due to the various formats of RSA keys, the payment system currently supports only PKCS8 key pairs with a length of 2048. The key formats obtained from different channels may not be the same, and may not meet the key pair requirements of the payment system. In order to ensure that all merchants can obtain key pairs that can be used in the payment system, we provide the following way to obtain key pairs. Merchants can use the following commands on Mac/Linux using OpenSSL to generate available key pairs:<br>Private key generation:</p><pre><code>openssl genpkey -out rsa_private_key.pem -outform PEM -algorithm RSA -pkeyopt rsa_keygen_bits:2048</code></pre><p>Public key generation:</p><pre><code>openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem</code></pre><h2>Encryption Rules</h2><p>To ensure the security of transactions, this system uses an encryption mechanism for all interactive APIs, and this set of encryption rules must be used for all API interactions to ensure the security of partner funds. The encryption rules are as follows:<br>According to the specific API document, obtain the required request parameter list and form a Map in the form of key-value pairs (key=value).<br>The calculation process of the 'sign' parameter is as follows:<br>a. Sort the key-value pairs in Map1 by key in ascending order according to ASCII code to generate the key-value pairs Map2.<br>b. Connect the ordered parameter key-value pairs in Map2 with '&amp;' to form String1.<br>c. Append the secret key to the end of String1 to generate String2.<br>d. Sign String2 with your private key using the SHA256withRSA algorithm and then Base64 encode it (no need for UrlSafe Base64 at this time). This value is the value of the 'sign' parameter.<br>e. Insert the generated 'sign' as a key-value pair &lt;sign,'xxxxx'&gt; into the request parameter Map. This completes the encapsulation of the request parameters.<br>For GET requests, connect the request parameters with '&amp;' and then Base64 encode the concatenated result using URL-safe Base64 to generate the 'param' parameter. Finally, use the 'param' parameter to initiate a request to the payment system API:<br>GET https://domain.com/apidemo?param=xxxxxxx<br>For POST requests, use the Map parameters that have been encapsulated as a JSON format for the Post body and initiate the Post request directly.</p><h2>Here is an example</h2><p>Assuming that an API requires the following parameters:</p><table class='c-table'><thead><tr><th>Parameter Name</th><th>Parameter Value</th></tr></thead><tbody><tr><td>ccc</td><td>111</td></tr><tr><td>aaa</td><td>22</td></tr><tr><td>aab</td><td>444</td></tr><tr><td>eee</td><td>555</td></tr><tr><td>ddd</td><td>666</td></tr><tr><td>AB</td><td>00</td></tr></tbody></table><p>Calculate the signature of the request.</p><p>a. Sort the key-value pairs in Map1 in ascending order of ASCII code to generate Map2.</p><pre><code>{'aaa':22,'ccc':111,'aab':444,'eee':555,'ddd':666,'AB':00,} // sort in ascending order of ASCII code, note that it is in ascending order of ASCII code. {'AB':00,'aaa':22,'aab':444,'ccc':111,'ddd':666,'eee':555}</code></pre><p>b. Concatenate the sorted parameter keys and values in Map2 using the<code data-backticks='1'>&amp;</code>symbol to generate String1.</p><pre><code>{   'AB':00,   'aaa':22,   'aab':444,   'ccc':111,   'ddd':666,   'eee':555}// parameter splicing AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555</code></pre><p>c. Concatenate the secret key (assumed to be: PslBum8DW0uGEI687X38QpdW53e452zvVVYyzUcT) at the end of String1 to generate String2.</p><pre><code>AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555 // concatenate secret key AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555PslBum8DW0uGEI687X38QpdW53e452zvVVYyzUcT</code></pre><p>d. Sign String2 with your private key using the SHA256withRSA algorithm and then Base64 the result to obtain the value of the sign parameter.</p><pre><code>// sign the signature and perform SHA256withRSA(AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555PslBum8DW0uGEI687X38QpdW53e452zvVVYyzUcT, private_key.pem) // the signed result is KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw==</code></pre><p>e. Insert the sign parameter into the request parameter Map.</p><pre><code>{'aaa':22,'ccc':111,'aab':444,'eee':555,'ddd':666,'AB':00,'sign':'KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw=='}</code></pre><p>Initiate a GET request.</p><ul><li>Concatenate key-value pairs in the request parameter map containing 'sign' with the '&amp;' symbol and perform URLsafe_Base64 encoding.</li></ul><pre><code>//Perform URL safe Base64URLsafe_Base64(ccc=111&amp;aaa=22&amp;sign=KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw==&amp;aab=444&amp;eee=555&amp;ddd=666&amp;AB=00)//ResltY2NjPTExMSZhYWE9MjImc2lnbj1LWGtBeFM5c2UyODNVeWVWODF1VmtvdUJYRXZ1SnMxYjlOOVI2amJZSGZidVA2TzNpUVFKbVA0Mk9wSFhzQThVckdJNnk0bGJKNzN1VmlxY29pVWZ2U2dBTEdmNk5zUjVwMW1JeURXVlNFR2hDYkdUUFNUbHNhcEpSRkxOZU8yUFQyQnpzdjI0VUNtVVUrdGxCOVJlRnpHL1dOaU1lK1Z4YjBnTDhjQVVMU01tOFpPcUlqclBPaU9ZakZneVBrTjdYZGFDaVRnNFlUT29nZmI0ckJOSHZCdmdBUHJqMXJwMFN5RTRzV1htcHFQd09vMmhLUnl6U1ZoNFVPV0lOYW1qb3RMbFZQUVRHWUU3aGViMmNLSnlBUWFlSHVnRWxxRWRybUVaT05hcWRjajl4azJKMXFzcUpvbW1xUmxMQm1xc2ZHZDBleSttazlvWEdxbi8xd3VmYXc9PSZhYWI9NDQ0JmVlZT01NTUmZGRkPTY2Ng==</code></pre><ul><li>Initiate a GET request.</li></ul><pre><code>GET https://doamin.com/apidemo?param=Y2NjPTExMSZhYWE9MjImc2lnbj1LWGtBeFM5c2UyODNVeWVWODF1VmtvdUJYRXZ1SnMxYjlOOVI2amJZSGZidVA2TzNpUVFKbVA0Mk9wSFhzQThVckdJNnk0bGJKNzN1VmlxY29pVWZ2U2dBTEdmNk5zUjVwMW1JeURXVlNFR2hDYkdUUFNUbHNhcEpSRkxOZU8yUFQyQnpzdjI0VUNtVVUrdGxCOVJlRnpHL1dOaU1lK1Z4YjBnTDhjQVVMU01tOFpPcUlqclBPaU9ZakZneVBrTjdYZGFDaVRnNFlUT29nZmI0ckJOSHZCdmdBUHJqMXJwMFN5RTRzV1htcHFQd09vMmhLUnl6U1ZoNFVPV0lOYW1qb3RMbFZQUVRHWUU3aGViMmNLSnlBUWFlSHVnRWxxRWRybUVaT05hcWRjajl4azJKMXFzcUpvbW1xUmxMQm1xc2ZHZDBleSttazlvWEdxbi8xd3VmYXc9PSZhYWI9NDQ0JmVlZT01NTUmZGRkPTY2Ng==</code></pre><ul><li>Initiate a POST request.<br>Directly use the JSON-formatted map parameters as the PostBody.</li></ul><pre><code>POST https://doamin.com/apidemoPostBody: {'aaa':22,'ccc':111,'aab':444,'eee':555,'ddd':666,'AB':00,    'sign':'KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw=='}</code></pre><h2>Verify the signature of the result returned by the payment system.</h2><p>All callbacks from the payment system are sent using the POST method.</p><ol><li>Parse the data returned by the payment system API, usually in JSON format, and extract the 'code' and 'result' fields from the outermost layer of the JSON. If the 'code' is not 10000 or the 'result' is empty, there is no need to verify the signature.</li><li>Parse all key-value pairs in the 'result' field, extract the 'sign' field and save it, and then remove any fields that are marked as not requiring signature verification in the API documentation.</li><li>Repeat the steps 1, 2, and 3 of calculating the 'sign' for the request, and use the public key downloaded from the payment system to verify the signature using SHA256withRSA.</li></ol>",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/account/get-balance": {
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Get balance",
+                "operationId": "ebf20ff1877e9a911db7245f5782fcdb",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": {
+                                        "id": 1
+                                    },
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/account/create-qr-payment": {
+            "post": {
+                "tags": [
+                    "Accounts"
+                ],
+                "summary": "Tạo QRCode Thanh toán cá nhân",
+                "operationId": "fc10e08e01848acefac4f6d8ac4e4db1",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "remark": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "amount": 10000,
+                                    "remark": "test"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bank/get-list": {
+            "post": {
+                "tags": [
+                    "Widthdraws"
+                ],
+                "summary": "Danh sách  ngân hàng",
+                "operationId": "88186da480150ced5e5ef4235d94ff1b",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "page": {
+                                        "type": "integer"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": [],
+                                    "limit": 100,
+                                    "page": 1,
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "doman/ipn-callback": {
+            "post": {
+                "tags": [
+                    "IPN"
+                ],
+                "summary": "Địa chỉ đối tác khai báo để tiếp nhận kết quả giao dịch",
+                "operationId": "8df88e3f1ed0d3e99e9c9ddd0e29a84f",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "number"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "received_amount": {
+                                        "type": "number"
+                                    },
+                                    "received_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "fee": {
+                                        "type": "number"
+                                    },
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "ref_code": {
+                                        "type": "string"
+                                    },
+                                    "bank_short_name": {
+                                        "type": "string"
+                                    },
+                                    "bank_account_name": {
+                                        "type": "string"
+                                    },
+                                    "bank_account_number": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "user_id": 1,
+                                    "amount": 10000,
+                                    "received_amount": 8000,
+                                    "received_date": "2025-01-01 12:11:11",
+                                    "fee": 2000,
+                                    "content": "Nội dung chuyển khoản",
+                                    "ref_code": "ABC123",
+                                    "bank_short_name": "BIDV",
+                                    "bank_account_name": "NGUYEN VAN BAY",
+                                    "bank_account_number": "09928323232"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "doman/ipn-callback-payout": {
+            "post": {
+                "tags": [
+                    "IPN PAYOUT"
+                ],
+                "summary": "Địa chỉ đối tác khai báo để tiếp nhận kết quả rút tiền",
+                "operationId": "294acdb90c2312ca825bcd03fb29f25d",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "number"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "fee": {
+                                        "type": "number"
+                                    },
+                                    "trans_code": {
+                                        "type": "string"
+                                    },
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "status_id": {
+                                        "type": "number"
+                                    },
+                                    "code": {
+                                        "type": "string"
+                                    },
+                                    "message": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "error_code": 0,
+                                    "msg": "Thành công",
+                                    "result": {
+                                        "user_id": 1,
+                                        "amount": 10000,
+                                        "fee": 3000,
+                                        "trans_code": "2025091519847",
+                                        "content": "ck",
+                                        "status_id": 2,
+                                        "code": "SUCCESS",
+                                        "message": "Thành công",
+                                        "sign": "sss"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/report/qrcode-revenue": {
+            "post": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Báo cáo giao dịch",
+                "operationId": "0f3881bb2774bc92efd9441f265cc870",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "id": {
+                                        "type": "number"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "id": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transaction/create-payment": {
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Tạo giao dịch thanh toán",
+                "operationId": "8a974a77d0b4e97ce9b94c07d7210e12",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ref_code": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "payment_success_url": {
+                                        "type": "string"
+                                    },
+                                    "payment_cancel_url": {
+                                        "type": "string"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "ref_code": "12232",
+                                    "amount": 20000,
+                                    "payment_success_url": "url success return",
+                                    "payment_cancel_url": "url cancel return",
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transaction/create-payment-base": {
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Tạo giao dịch thanh toán cơ bản",
+                "operationId": "3c30a5598f0db33526be3ca49cb6e921",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ref_code": {
+                                        "type": "string"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "payment_success_url": {
+                                        "type": "string"
+                                    },
+                                    "payment_cancel_url": {
+                                        "type": "string"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "ref_code": "12232",
+                                    "amount": 20000,
+                                    "payment_success_url": "url success return",
+                                    "payment_cancel_url": "url cancel return",
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transaction/get-list": {
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Lấy danh sách giao dịch",
+                "operationId": "4c0a635a869989cfc8a0672596b6f62c",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "page": {
+                                        "type": "integer"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": [],
+                                    "limit": 100,
+                                    "page": 1,
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transaction/get-detail": {
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Lấy chi tiết giao dịch",
+                "operationId": "f3ba0290770a072e637a7cb543de9a41",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": {
+                                        "id": 1
+                                    },
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transaction/create-qr-payment": {
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Tạo QRCode thanh toán giao dịch",
+                "operationId": "bb0b292793d8e2c5ba3ff003f3b5a382",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "amount": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "amount": 10000
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-id-qrcode/get-list": {
+            "post": {
+                "tags": [
+                    "QR Cá nhân , Qr Sale"
+                ],
+                "summary": "Danh sách mã qr cá nhân, sale",
+                "operationId": "779641f27cd8a19276f1d84cbe2c80dc",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "page": {
+                                        "type": "integer"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": [],
+                                    "limit": 100,
+                                    "page": 1,
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-id-qrcode/create": {
+            "post": {
+                "tags": [
+                    "QR Cá nhân , Qr Sale"
+                ],
+                "summary": "Tạo Qrcode theo mã",
+                "operationId": "8d9109b40ea5c330c153d698a510400a",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_bank_account_id": {
+                                        "type": "integer"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "code": {
+                                        "type": "string"
+                                    },
+                                    "note": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "user_bank_account_id": 1,
+                                    "name": "Nguyễn Văn A",
+                                    "code": "AA01",
+                                    "note": "ghi chú thông tin"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-id-qrcode/va-get-list": {
+            "post": {
+                "tags": [
+                    "QR Cá nhân , Qr Sale"
+                ],
+                "summary": "Lấy danh sách VA",
+                "operationId": "5623f60180691018e6d00899bd8b56c9",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "page": {
+                                        "type": "integer"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": [],
+                                    "limit": 100,
+                                    "page": 1,
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-virtual-account/get-list": {
+            "post": {
+                "tags": [
+                    "Virtual Account"
+                ],
+                "summary": "Danh sách VA",
+                "operationId": "19e3100e4768a1a5e07bdd3e0082998f",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-withdraw/get-list": {
+            "post": {
+                "tags": [
+                    "Widthdraws"
+                ],
+                "summary": "Lấy danh sách yêu cầu rút tiền",
+                "operationId": "5c32b6042bee383720815b0e8e3d5028",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "query": {
+                                        "type": "string"
+                                    },
+                                    "limit": {
+                                        "type": "integer"
+                                    },
+                                    "page": {
+                                        "type": "integer"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "query": [],
+                                    "limit": 100,
+                                    "page": 1,
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-withdraw/create": {
+            "post": {
+                "tags": [
+                    "Widthdraws"
+                ],
+                "summary": "Tạo yêu cầu rút tiền",
+                "operationId": "617e51322d99f345f95f70379f98c56c",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "bank_account_number": {
+                                        "type": "string"
+                                    },
+                                    "bank_account_name": {
+                                        "type": "string"
+                                    },
+                                    "bank_id": {
+                                        "type": "integer"
+                                    },
+                                    "amount": {
+                                        "type": "integer"
+                                    },
+                                    "remark": {
+                                        "type": "string"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "bank_account_number": "1021312323",
+                                    "bank_account_name": "NGUYEN VAN A",
+                                    "bank_id": "get to list bank",
+                                    "remark": "noi dung ck",
+                                    "amount": 100,
+                                    "sign": "signiture data"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_false": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 401,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "errors": [
+                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                            ],
+                                            "data": null,
+                                            "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 200,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Accounts",
+            "description": "Accounts"
+        },
+        {
+            "name": "Widthdraws",
+            "description": "Widthdraws"
+        },
+        {
+            "name": "IPN",
+            "description": "IPN"
+        },
+        {
+            "name": "IPN PAYOUT",
+            "description": "IPN PAYOUT"
+        },
+        {
+            "name": "Report",
+            "description": "Report"
+        },
+        {
+            "name": "Transactions",
+            "description": "Transactions"
+        },
+        {
+            "name": "QR Cá nhân , Qr Sale",
+            "description": "QR Cá nhân , Qr Sale"
+        },
+        {
+            "name": "Virtual Account",
+            "description": "Virtual Account"
+        }
+    ]
+}

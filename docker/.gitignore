@@ -1,0 +1,2 @@
+workspace/supervisor/conf.d/*.conf
+nginx/conf.d/*.conf

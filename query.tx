@@ -1,0 +1,51 @@
+INSERT INTO user_revenue_reports(user_id,`name`,total_referal_fee,total_gateway_fee,total_profit,total_transaction_amount,total_transaction_fee,type_id,report_yyyymmdd,report_at)
+
+(
+SELECT
+user_id,
+"Giao dịch nạp",
+	SUM( referal_fee ) AS total_referal_fee,
+	SUM( gateway_fee ) AS total_gateway_fee,
+	SUM( profit ) AS total_profit,
+	SUM( amount ) AS total_amount,
+	SUM( fee ) AS total_fee,
+		1,
+DATE_FORMAT(created_at, '%Y%m%d') as report_yyyymmdd,
+DATE_FORMAT(created_at, '%Y-%m-%d 00:00:00') as report_at
+FROM
+	transactions 
+WHERE
+status_id=2 OR status_id=6
+-- 	created_at > '2025-07-20 00:00:00' 
+GROUP BY
+	user_id,
+	report_yyyymmdd
+	) ON DUPLICATE KEY UPDATE total_referal_fee = total_referal_fee;
+	
+	
+INSERT INTO user_revenue_reports(user_id,`name`,total_referal_fee,total_gateway_fee,total_profit,total_transaction_amount,total_transaction_fee,type_id,report_yyyymmdd,report_at)
+(
+SELECT
+user_id,
+"Giao dịch rút",
+	SUM( referal_fee ) AS total_referal_fee,
+	SUM( gateway_fee ) AS total_gateway_fee,
+	SUM( profit ) AS total_profit,
+	SUM( amount ) AS total_amount,
+	SUM( fee ) AS total_fee,
+		2,
+DATE_FORMAT(created_at, '%Y%m%d') as report_yyyymmdd,
+DATE_FORMAT(created_at, '%Y-%m-%d 00:00:00') as report_at
+FROM
+	user_withdraws 
+WHERE
+status_id=2 OR status_id=6
+-- 	created_at > '2025-07-20 00:00:00' 
+GROUP BY
+	user_id,
+	report_yyyymmdd
+		) ON DUPLICATE KEY UPDATE total_referal_fee = total_referal_fee
+	
+	
+	
+	

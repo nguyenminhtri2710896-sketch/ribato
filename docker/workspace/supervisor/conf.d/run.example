@@ -1,0 +1,54 @@
+[program:horizon]
+process_name=%(program_name)s_%(process_num)02d
+command=php artisan horizon
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/storage/logs/suppervisor.horizon.log
+stopwaitsecs=3600
+directory=/var/www
+
+[program:schedule]
+process_name=%(program_name)s_%(process_num)02d
+command=php artisan schedule:work
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/storage/logs/suppervisor.horizon.log
+stopwaitsecs=3600
+directory=/var/www
+
+[program:octane]
+process_name=%(program_name)s_%(process_num)02d
+command=php command=php artisan octane:start --watch
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/storage/logs/octane.log
+stopwaitsecs=3600
+directory=/var/www
+
+[program:note_video_call_v2]
+process_name=%(program_name)s_%(process_num)02d
+command=node /data/www/dktt.pro/public_html/nodejs/video-call-v2/index.js
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/data/www/dktt.pro/public_html/storage/logs/supervisor-video-call-v2.log
+stopwaitsecs=3600

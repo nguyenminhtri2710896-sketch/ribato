@@ -1,0 +1,268 @@
+.page-content {
+    min-height: 800px;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.card-custom-header {
+    padding: 10px 20px;
+}
+
+.select2-container .select2-selection--single {
+    height: 35px !important;
+    border: 1px solid #ced4da !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 34px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 5px !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border: 1px solid #ced4da !important;
+    height: 34px !important;
+    border-radius: 6px !important;
+}
+
+.select2-dropdown {
+    border: 1px solid#ced4da !important;
+}
+
+.ajax-select2 .select2-container {
+    width: 100% !important;
+}
+
+.bs-modal-update-children {
+    background: #5f5f5fb0;
+}
+
+.card-menu-fillter {
+    width: 300px;
+    margin: 0px;
+}
+
+.tab-category-package-data a {
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    text-align: right;
+    padding-top: 0.25em;
+}
+
+div.dataTables_wrapper div.dataTables_info {
+    padding-top: 0.85em;
+    white-space: nowrap;
+}
+
+.dataTables_info,
+.dataTables_length,
+.dt-buttons {
+    display: inline-block;
+    margin: 0 10px 0 0;
+}
+
+.navbar-header .logo {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.navbar-header .logo-light {
+    color: #fff;
+}
+
+.navbar-header .logo-dark {
+    color: #000;
+}
+
+.header-item-balance {
+    font-weight: 500;
+}
+
+.header-item-balance span {
+    float: right;
+    padding: 8px 0 8px 5px;
+}
+
+.page-title-box {
+    padding-bottom: 18px;
+}
+
+.dropdown-menu-search {
+    width: 300px;
+}
+
+.modal-custom-sm {
+    --bs-modal-width: 388px;
+}
+
+.modal-custom-sm-1 {
+    --bs-modal-width: 588px;
+}
+
+.text-right-desktop {
+    text-align: right;
+}
+
+.text-center-desktop {
+    text-align: center;
+}
+
+
+.text-left-desktop {
+    text-align: left;
+}
+
+.upload-box-cmnd {
+    padding: 1.5rem 1.75rem;
+    text-align: center;
+    cursor: pointer;
+    border: 1px dashed #009ef7;
+    background-color: #f1faff;
+    border-radius: 0.75rem !important;
+    position: relative;
+    min-height: 150px;
+    margin: 0 0 10px 0;
+    overflow: hidden;
+}
+
+
+.upload-box-cmnd .title {
+    width: 100%;
+    left: 0px;
+    text-align: center;
+    color: #009EF7;
+    font-weight: 500;
+    display: block;
+    margin: 2em 0;
+}
+
+.small-customize {
+    font-size: 12px;
+    font-weight: initial;
+}
+
+.upload-box-cmnd .error-message {
+    position: absolute;
+    color: red;
+    left: 0px;
+    bottom: 0px;
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+}
+
+.upload-box-cmnd .content-success {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    display: none;
+}
+
+.upload-box-cmnd .loading {
+    position: absolute;
+    width: auto;
+    height: 100%;
+    top: 80%;
+    left: 45%;
+    display: none;
+    z-index: 300;
+}
+
+.upload-box-cmnd .content-success .img img {
+    width: 100%;
+    height: 100%;
+}
+
+
+.upload-box-cmnd .content-success .img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #fff;
+}
+
+.upload-box-cmnd .content-success .img-w100 img {
+    width: 230px;
+    height: auto
+}
+
+@media (max-width: 1024px) {
+    .text-right-desktop {
+        text-align: left;
+    }
+
+    .text-left-desktop {
+        text-align: left;
+    }
+
+    .text-center-desktop {
+        text-align: left;
+    }
+
+    table.dataTable .dtr-details {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    table.dataTable span.dtr-title {
+        display: inline-block;
+        min-width: 75px;
+        font-weight: bold;
+    }
+
+    .page-content {
+        padding: calc(70px + 24px) calc(3px * .75) 60px calc(3px * .75);
+    }
+
+    .datatable-action {
+        padding: 0px !important;
+    }
+
+    /* .datatable-action ul {
+        display: block !important;
+    }
+
+    .datatable-action .btn {
+        width: 50%;
+    } */
+
+    .text-center-desktop {
+        text-align: initial;
+    }
+
+    .action-dropdown-menu-mobile {
+        width: 100%;
+    }
+
+    .card .card-body {
+        padding: 10px;
+    }
+
+    .card .card-body .card-title {
+        padding: 10px;
+    }
+
+    .reponsive-with-mobile .text-right,
+    .reponsive-with-mobile .text-center {
+        text-align: left !important
+    }
+}
+
+@media (max-width: 768px) {
+
+    .notification-item h6,
+    .text-description {
+        width: 345px;
+    }
+}

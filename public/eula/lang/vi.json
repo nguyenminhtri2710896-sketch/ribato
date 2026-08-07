@@ -1,0 +1,234 @@
+{
+    "meta": {
+      "title": "RbWallet — Điều Khoản Sử Dụng & Thỏa Thuận Cấp Phép Phần Mềm (EULA)",
+      "lastUpdated": "Cập nhật lần cuối:",
+      "effectiveDate": "Ngày có hiệu lực:",
+      "lastUpdatedValue": "13 tháng 11, 2025",
+      "effectiveDateValue": "13 tháng 11, 2025"
+    },
+    "intro": {
+      "welcome": "Chào mừng bạn đến với RbWallet (\"chúng tôi\", \"của chúng tôi\", \"Ứng dụng\", \"Dịch vụ\").",
+      "description": "Các Điều Khoản Sử Dụng và Thỏa Thuận Cấp Phép Phần Mềm (\"Điều Khoản\") này điều chỉnh việc bạn truy cập và sử dụng RbWallet cùng toàn bộ các dịch vụ tiền tệ được ngân hàng hỗ trợ thông qua Ứng dụng.",
+      "agreement": "Bằng việc tải xuống, cài đặt hoặc sử dụng RbWallet, bạn đồng ý tuân thủ các Điều Khoản này.",
+      "disagreement": "Nếu bạn không đồng ý, vui lòng ngừng sử dụng Ứng dụng ngay lập tức."
+    },
+    "eligibility": {
+      "title": "1. Điều Kiện Sử Dụng",
+      "description": "Để sử dụng RbWallet, bạn phải:",
+      "items": [
+        "từ 18 tuổi trở lên,",
+        "cung cấp thông tin đầy đủ và chính xác,",
+        "không cư trú tại các khu vực bị hạn chế hoặc chịu lệnh trừng phạt,",
+        "được pháp luật tại khu vực cư trú cho phép sử dụng ví điện tử và dịch vụ ngân hàng."
+      ],
+      "conclusion": "Chúng tôi có quyền từ chối hoặc tạm ngưng quyền truy cập nếu bạn không đáp ứng các điều kiện trên."
+    },
+    "description": {
+      "title": "2. Mô Tả Dịch Vụ (Ví Chỉ Fiat)",
+      "intro": "RbWallet là ví điện tử chỉ hỗ trợ tiền fiat và được ngân hàng bảo chứng, cung cấp các chức năng:",
+      "items": [
+        "tạo ví điện tử",
+        "nạp tiền qua chuyển khoản ngân hàng hoặc các kênh hỗ trợ",
+        "chuyển tiền giữa các ví",
+        "rút tiền về tài khoản ngân hàng",
+        "thanh toán cho thương gia (nếu được hỗ trợ)",
+        "tra cứu lịch sử giao dịch và báo cáo",
+        "xác minh danh tính (KYC)",
+        "giám sát bảo mật và phòng chống gian lận"
+      ],
+      "cryptoNotice": {
+        "title": "✔ Không Có Dịch Vụ Crypto (Giai Đoạn 1)",
+        "description": "Các tính năng liên quan đến crypto hoặc tài sản kỹ thuật số chưa có trong phiên bản hiện tại và có thể được bổ sung trong các bản cập nhật sau."
+      }
+    },
+    "account": {
+      "title": "3. Đăng Ký, Xác Minh & Bảo Mật Tài Khoản",
+      "registration": {
+        "title": "3.1 Đăng Ký",
+        "description": "Bạn phải cung cấp thông tin chính xác và trung thực khi tạo tài khoản."
+      },
+      "kyc": {
+        "title": "3.2 Tuân Thủ KYC & AML",
+        "description": "Để đáp ứng yêu cầu pháp lý, chúng tôi có thể yêu cầu:",
+        "items": [
+          "giấy tờ tùy thân do chính phủ cấp",
+          "xác minh selfie hoặc sinh trắc học",
+          "bằng chứng địa chỉ cư trú",
+          "thông tin về nguồn tiền"
+        ],
+        "conclusion": "Việc không cung cấp đầy đủ tài liệu có thể dẫn đến tạm ngưng tài khoản."
+      },
+      "security": {
+        "title": "3.3 Trách Nhiệm Bảo Mật Tài Khoản",
+        "description": "Bạn có trách nhiệm:",
+        "items": [
+          "bảo mật thiết bị sử dụng Ứng dụng,",
+          "giữ kín thông tin đăng nhập,",
+          "thông báo ngay cho chúng tôi nếu phát hiện truy cập trái phép."
+        ],
+        "conclusion": "Chúng tôi không chịu trách nhiệm đối với tổn thất phát sinh từ sự bất cẩn của bạn."
+      }
+    },
+    "transactions": {
+      "title": "4. Nạp Tiền, Chuyển Khoản & Rút Tiền",
+      "deposits": {
+        "title": "4.1 Nạp Tiền",
+        "items": [
+          "Được xử lý thông qua các đối tác thanh toán hoặc ngân hàng được cấp phép.",
+          "Thời gian xử lý có thể thay đổi tùy vào hệ thống ngân hàng.",
+          "Tiền nạp có thể bị giữ lại để kiểm tra bảo mật hoặc tuân thủ."
+        ]
+      },
+      "transfers": {
+        "title": "4.2 Chuyển Tiền Giữa Các Ví",
+        "items": [
+          "Thường diễn ra tức thì, nhưng không được đảm bảo.",
+          "Các giao dịch chuyển nhầm có thể không thể đảo ngược."
+        ]
+      },
+      "withdrawals": {
+        "title": "4.3 Rút Tiền Về Ngân Hàng",
+        "items": [
+          "Có thể yêu cầu xác minh lại danh tính.",
+          "Thời gian xử lý của ngân hàng (1–5 ngày làm việc) nằm ngoài khả năng kiểm soát của chúng tôi.",
+          "Có thể áp dụng hạn mức rút tiền."
+        ]
+      },
+      "reversals": {
+        "title": "4.4 Hoàn Tác & Chargeback",
+        "description": "Bạn đồng ý cho phép chúng tôi:",
+        "items": [
+          "hoàn tác giao dịch,",
+          "đóng băng hoặc giữ số dư khi cần,",
+          "khấu trừ số tiền đang bị tranh chấp,",
+          "thu hồi tiền theo quy định."
+        ]
+      }
+    },
+    "fees": {
+      "title": "5. Phí và Hạn Mức",
+      "description": "Bạn đồng ý thanh toán các khoản phí áp dụng cho:",
+      "items": [
+        "nạp tiền",
+        "rút tiền",
+        "chuyển khoản",
+        "xử lý thanh toán",
+        "phí bảo trì hoặc tài khoản không hoạt động (nếu có)"
+      ],
+      "conclusion": "Phí và hạn mức có thể thay đổi, và bạn sẽ được thông báo trước."
+    },
+    "prohibited": {
+      "title": "6. Hoạt Động Bị Cấm",
+      "description": "Bạn không được sử dụng RbWallet cho:",
+      "items": [
+        "rửa tiền hoặc tài trợ khủng bố",
+        "gian lận, lừa đảo hoặc mạo danh",
+        "giao dịch hàng hóa/dịch vụ bất hợp pháp",
+        "hoạt động tài chính trái phép",
+        "lạm dụng chargeback",
+        "vượt qua kiểm soát hệ thống",
+        "hoạt động cờ bạc bị cấm",
+        "bất kỳ hành vi trái pháp luật nào",
+        "can thiệp vào bảo mật hoặc hệ thống"
+      ],
+      "conclusion": "Chúng tôi có thể đóng băng hoặc chấm dứt tài khoản liên quan đến hành vi bị cấm."
+    },
+    "suspension": {
+      "title": "7. Tạm Ngưng, Đóng Băng & Chấm Dứt Tài Khoản",
+      "description": "Chúng tôi có thể tạm ngưng hoặc chấm dứt tài khoản của bạn nếu:",
+      "items": [
+        "phát hiện hoạt động đáng ngờ,",
+        "KYC không chính xác hoặc không đầy đủ,",
+        "bạn vi phạm Điều Khoản,",
+        "có yêu cầu hợp pháp từ cơ quan chức năng,",
+        "đối tác ngân hàng hoặc thanh toán yêu cầu."
+      ],
+      "frozen": "Tiền bị đóng băng có thể được giữ lại trong thời gian điều tra.",
+      "termination": "Khi tài khoản bị chấm dứt, bạn có thể rút số dư hợp lệ sau khi hoàn tất xác minh."
+    },
+    "license": {
+      "title": "8. Thỏa Thuận Cấp Phép Phần Mềm (EULA)",
+      "grant": {
+        "title": "8.1 Cấp Phép",
+        "description": "Chúng tôi cấp cho bạn giấy phép có thể thu hồi, không độc quyền và không thể chuyển nhượng để cài đặt và sử dụng RbWallet trên thiết bị cá nhân."
+      },
+      "restrictions": {
+        "title": "8.2 Hạn Chế",
+        "description": "Bạn không được:",
+        "items": [
+          "đảo ngược kỹ thuật, giải mã hoặc tháo rời Ứng dụng,",
+          "truy cập hoặc sao chép mã nguồn,",
+          "vượt qua hoặc vô hiệu hóa cơ chế bảo mật,",
+          "sao chép, chỉnh sửa hoặc phân phối Ứng dụng,",
+          "sử dụng bot, macro hoặc công cụ tự động,",
+          "khai thác hoặc kiểm thử lỗ hổng khi chưa được cho phép."
+        ]
+      },
+      "ip": {
+        "title": "8.3 Quyền Sở Hữu Trí Tuệ",
+        "description1": "Tất cả quyền sở hữu đối với RbWallet (phần mềm, thiết kế, thương hiệu, nội dung) thuộc về chúng tôi.",
+        "description2": "Bạn chỉ được cấp quyền sử dụng có giới hạn, không phải quyền sở hữu."
+      }
+    },
+    "risk": {
+      "title": "9. Cảnh Báo Rủi Ro",
+      "description": "Bạn thừa nhận rằng:",
+      "items": [
+        "mạng ngân hàng có thể bị chậm trễ,",
+        "dịch vụ của bên thứ ba có thể bị gián đoạn,",
+        "nhập sai thông tin chuyển khoản có thể gây mất tiền và không thể đảo ngược,",
+        "thương gia và người dùng khác nằm ngoài kiểm soát của chúng tôi,",
+        "thay đổi pháp lý có thể ảnh hưởng đến dịch vụ."
+      ],
+      "conclusion": "Bạn sử dụng RbWallet với toàn bộ rủi ro phát sinh."
+    },
+    "liability": {
+      "title": "10. Giới Hạn Trách Nhiệm",
+      "description": "Trong phạm vi pháp luật cho phép, chúng tôi không chịu trách nhiệm đối với:",
+      "items": [
+        "chậm trễ từ mạng hoặc hệ thống ngân hàng,",
+        "truy cập trái phép do bạn bảo mật kém,",
+        "thông tin giao dịch sai do bạn cung cấp,",
+        "tranh chấp với thương gia,",
+        "gián đoạn từ bên cung cấp dịch vụ thứ ba,",
+        "thiệt hại gián tiếp hoặc hậu quả."
+      ],
+      "conclusion": "Tổng trách nhiệm của chúng tôi được giới hạn trong số phí bạn đã trả trong 12 tháng gần nhất (nếu có)."
+    },
+    "compliance": {
+      "title": "11. Tuân Thủ & Hợp Tác Với Cơ Quan Chức Năng",
+      "description": "Bạn đồng ý rằng chúng tôi có thể:",
+      "items": [
+        "giám sát giao dịch để phát hiện rủi ro,",
+        "đóng băng tiền khi cần thiết cho việc tuân thủ,",
+        "chia sẻ thông tin với cơ quan quản lý,",
+        "lưu trữ hồ sơ theo quy định."
+      ]
+    },
+    "updates": {
+      "title": "12. Cập Nhật Điều Khoản",
+      "description1": "Chúng tôi có thể sửa đổi Điều Khoản này vào bất kỳ thời điểm nào.",
+      "description2": "Việc tiếp tục sử dụng RbWallet đồng nghĩa bạn chấp nhận phiên bản cập nhật."
+    },
+    "governing": {
+      "title": "13. Luật Điều Chỉnh",
+      "description": "Điều Khoản này được điều chỉnh bởi pháp luật Việt Nam.",
+      "note": "(Cho tôi biết quốc gia của bạn nếu bạn muốn điều chỉnh theo khu vực pháp lý khác.)"
+    },
+    "contact": {
+      "title": "14. Thông Tin Liên Hệ",
+      "team": "Đội ngũ hỗ trợ RbWallet",
+      "email": "Email:",
+      "website": "Trang web:",
+      "websiteValue": "(sắp ra mắt)"
+    },
+    "footer": {
+      "copyright": "© 2025 RbWallet. Bảo lưu mọi quyền."
+    },
+    "language": {
+      "switch": "Chuyển Ngôn Ngữ",
+      "en": "English",
+      "vi": "Tiếng Việt"
+    }
+  }
+  

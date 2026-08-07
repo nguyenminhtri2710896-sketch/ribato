@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check /www/wwwroot/1900pay.com/static/backend/v2/customes/js/user.js)",
+      "Bash(php artisan *)",
+      "Bash(awk '{print $1}')"
+    ]
+  }
+}

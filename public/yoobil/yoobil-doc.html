@@ -1,0 +1,2617 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>YooBil System API Access Instraction</title>
+  <meta charset="utf-8" />
+  <style>
+    @charset "UTF-8";
+
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote {
+      margin: 0;
+      padding: 0;
+      font-weight: normal;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* 设置滚动条的样式 */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    /* 外层轨道 */
+    ::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset006pxrgba(255, 0, 0, 0.3);
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* 滚动条滑块 */
+    ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb:window-inactive {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+      font-size: 13px;
+      line-height: 25px;
+      color: #393838;
+      position: relative;
+    }
+
+    table {
+      margin: 10px 0 15px 0;
+      border-collapse: collapse;
+    }
+
+    td,
+    th {
+      border: 1px solid #ddd;
+      padding: 3px 10px;
+    }
+
+    th {
+      padding: 5px 10px;
+    }
+
+    a,
+    a:link,
+    a:visited {
+      color: #34495e;
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      color: #59d69d;
+      text-decoration: none;
+    }
+
+    a img {
+      border: none;
+    }
+
+    p {
+      padding-left: 10px;
+      margin-bottom: 9px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: #404040;
+      line-height: 36px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      font-weight: 600;
+      margin-bottom: 16px;
+      font-size: 32px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #ddd;
+      line-height: 50px;
+    }
+
+    h2 {
+      font-size: 28px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    h3 {
+      clear: both;
+      font-weight: 400;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      border-left: 3px solid #59d69d;
+      padding-left: 8px;
+      font-size: 18px;
+    }
+
+    h4 {
+      font-size: 16px;
+    }
+
+    h5 {
+      font-size: 14px;
+    }
+
+    h6 {
+      font-size: 13px;
+    }
+
+    hr {
+      margin: 0 0 19px;
+      border: 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    blockquote {
+      padding: 13px 13px 21px 15px;
+      margin-bottom: 18px;
+      font-family: georgia, serif;
+      font-style: italic;
+    }
+
+    blockquote:before {
+      font-size: 40px;
+      margin-left: -10px;
+      font-family: georgia, serif;
+      color: #eee;
+    }
+
+    blockquote p {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 18px;
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    code,
+    pre {
+      font-family: Monaco, Andale Mono, Courier New, monospace;
+    }
+
+    code {
+      background-color: #fee9cc;
+      color: rgba(0, 0, 0, 0.75);
+      padding: 1px 3px;
+      font-size: 12px;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+    }
+
+    pre {
+      display: block;
+      padding: 14px;
+      margin: 0 0 18px;
+      line-height: 16px;
+      font-size: 11px;
+      border: 1px solid #d9d9d9;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #f6f6f6;
+    }
+
+    pre code {
+      background-color: #f6f6f6;
+      color: #737373;
+      font-size: 11px;
+      padding: 0;
+    }
+
+    sup {
+      font-size: 0.83em;
+      vertical-align: super;
+      line-height: 0;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact;
+    }
+
+    @media print {
+
+      body,
+      code,
+      pre code,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: black;
+      }
+
+      table,
+      pre {
+        page-break-inside: avoid;
+      }
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    .table-of-contents {
+      position: fixed;
+      top: 61px;
+      left: 0;
+      bottom: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 260px;
+    }
+
+    .table-of-contents>ul>li>a {
+      font-size: 20px;
+      margin-bottom: 16px;
+      margin-top: 16px;
+    }
+
+    .table-of-contents ul {
+      overflow: auto;
+      margin: 0px;
+      height: 100%;
+      padding: 0px 0px;
+      box-sizing: border-box;
+      list-style-type: none;
+    }
+
+    .table-of-contents ul li {
+      padding-left: 20px;
+    }
+
+    .table-of-contents a {
+      padding: 2px 0px;
+      display: block;
+      text-decoration: none;
+    }
+
+    .content-right {
+      max-width: 700px;
+      margin-left: 290px;
+      padding-left: 70px;
+      flex-grow: 1;
+    }
+
+    .content-right h2:target {
+      padding-top: 80px;
+    }
+
+    body>p {
+      margin-left: 30px;
+    }
+
+    body>table {
+      margin-left: 30px;
+    }
+
+    body>pre {
+      margin-left: 30px;
+    }
+
+    .curProject {
+      position: fixed;
+      top: 20px;
+      font-size: 25px;
+      color: black;
+      margin-left: -240px;
+      width: 240px;
+      padding: 5px;
+      line-height: 25px;
+      box-sizing: border-box;
+    }
+
+    .g-doc {
+      margin-top: 56px;
+      padding-top: 24px;
+      display: flex;
+    }
+
+    .curproject-name {
+      font-size: 42px;
+    }
+
+    .m-header {
+      background: #32363a;
+      height: 56px;
+      line-height: 56px;
+      padding-left: 60px;
+      display: flex;
+      align-items: center;
+      position: fixed;
+      z-index: 9;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .m-header .title {
+      font-size: 22px;
+      color: #fff;
+      font-weight: normal;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      margin-left: 16px;
+      padding: 0;
+      line-height: 56px;
+      border: none;
+    }
+
+    .m-header .nav {
+      color: #fff;
+      font-size: 16px;
+      position: absolute;
+      right: 32px;
+      top: 0;
+    }
+
+    .m-header .nav a {
+      color: #fff;
+      margin-left: 16px;
+      padding: 8px;
+      transition: color .2s;
+    }
+
+    .m-header .nav a:hover {
+      color: #59d69d;
+    }
+
+    .m-footer {
+      border-top: 1px solid #ddd;
+      padding-top: 16px;
+      padding-bottom: 16px;
+    }
+
+    /*# sourceMappingURL=defaultTheme.css.map */
+  </style>
+</head>
+
+<body>
+  <div class="g-doc">
+    <div class="table-of-contents">
+      <ul>
+        <li><a href="#virtual20account20in20vietnam">Virtual Account in Vietnam</a>
+          <ul>
+            <li><a href="#create20va0a3ca20id3dcreate20va6423e203ca3e">Create VA
+                <a id=Create VA642> </a></a></li>
+            <li><a href="#query20transactions0a3ca20id3dquery20transactions6423e203ca3e">Query transactions
+                <a id=Query transactions642> </a></a></li>
+            <li><a href="#check20status20of20va0a3ca20id3dcheck20status20of20va6423e203ca3e">Check status of VA
+                <a id=Check status of VA642> </a></a></li>
+            <li><a
+                href="#webhook-notifies20the20user20of20the20actual20transaction20when20it20occurs0a3ca20id3dwebhook-notifies20the20user20of20the20actual20transaction20when20it20occurs6423e203ca3e">Webhook--notifies
+                the user of the actual transaction when it occurs.
+                <a id=Webhook--notifies the user of the actual transaction when it occurs.642> </a></a></li>
+          </ul>
+        </li>
+        <li><a href="#cash20out20api">Cash out API</a>
+          <ul>
+            <li><a href="#create20a20cash20out20order0a3ca20id3dcreate20a20cash20out20order8183e203ca3e">Create a cash
+                out order
+                <a id=Create a cash out order818> </a></a></li>
+            <li><a href="#query20bank20list0a3ca20id3dquery20bank20list8183e203ca3e">Query bank list
+                <a id=Query bank list818> </a></a></li>
+            <li><a href="#webhook20of20cash20out20order0a3ca20id3dwebhook20of20cash20out20order8183e203ca3e">Webhook of
+                cash out order
+                <a id=Webhook of cash out order818> </a></a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div id="right" class="content-right">
+      <h1 class="curproject-name"> YooBil System API Access Instraction </h1>
+      <h3 id="">Public info</h3>
+      <h1>API Encryption Rules</h1>
+      <h2>Key Pair Generation Method</h2>
+      <p>Due to the various formats of RSA keys, the payment system currently supports only PKCS8 key pairs with a
+        length of 2048. The key formats obtained from different channels may not be the same, and may not meet the key
+        pair requirements of the payment system. In order to ensure that all merchants can obtain key pairs that can be
+        used in the payment system, we provide the following way to obtain key pairs. Merchants can use the following
+        commands on Mac/Linux using OpenSSL to generate available key pairs:<br>
+        Private key generation:</p>
+      <pre><code>openssl genpkey -out rsa_private_key.pem -outform PEM -algorithm RSA -pkeyopt rsa_keygen_bits:2048
+</code></pre>
+      <p>Public key generation:</p>
+      <pre><code>openssl rsa -in rsa_private_key.pem -pubout -out rsa_public_key.pem
+</code></pre>
+      <h2>Encryption Rules</h2>
+      <p>To ensure the security of transactions, this system uses an encryption mechanism for all interactive APIs, and
+        this set of encryption rules must be used for all API interactions to ensure the security of partner funds. The
+        encryption rules are as follows:<br>
+        According to the specific API document, obtain the required request parameter list and form a Map in the form of
+        key-value pairs (key=value).<br>
+        The calculation process of the "sign" parameter is as follows:<br>
+        a. Sort the key-value pairs in Map1 by key in ascending order according to ASCII code to generate the key-value
+        pairs Map2.<br>
+        b. Connect the ordered parameter key-value pairs in Map2 with "&amp;" to form String1.<br>
+        c. Append the secret key to the end of String1 to generate String2.<br>
+        d. Sign String2 with your private key using the SHA256withRSA algorithm and then Base64 encode it (no need for
+        UrlSafe Base64 at this time). This value is the value of the "sign" parameter.<br>
+        e. Insert the generated "sign" as a key-value pair &lt;sign,"xxxxx"&gt; into the request parameter Map. This
+        completes the encapsulation of the request parameters.<br>
+        For GET requests, connect the request parameters with "&amp;" and then Base64 encode the concatenated result
+        using URL-safe Base64 to generate the "param" parameter. Finally, use the "param" parameter to initiate a
+        request to the payment system API:<br>
+        GET https://domain.com/apidemo?param=xxxxxxx<br>
+        For POST requests, use the Map parameters that have been encapsulated as a JSON format for the Post body and
+        initiate the Post request directly.</p>
+      <h2>Here is an example</h2>
+      <p>Assuming that an API requires the following parameters:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter Name</th>
+            <th>Parameter Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ccc</td>
+            <td>111</td>
+          </tr>
+          <tr>
+            <td>aaa</td>
+            <td>22</td>
+          </tr>
+          <tr>
+            <td>aab</td>
+            <td>444</td>
+          </tr>
+          <tr>
+            <td>eee</td>
+            <td>555</td>
+          </tr>
+          <tr>
+            <td>ddd</td>
+            <td>666</td>
+          </tr>
+          <tr>
+            <td>AB</td>
+            <td>00</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Calculate the signature of the request.</p>
+      <p>a. Sort the key-value pairs in Map1 in ascending order of ASCII code to generate Map2.</p>
+      <pre><code>{"aaa":22,"ccc":111,"aab":444,"eee":555,"ddd":666,"AB":00,} 
+// sort in ascending order of ASCII code, note that it is in ascending order of ASCII code. 
+{"AB":00,"aaa":22,"aab":444,"ccc":111,"ddd":666,"eee":555}
+</code></pre>
+      <p>b. Concatenate the sorted parameter keys and values in Map2 using the <code data-backticks="1">&amp;</code>
+        symbol to generate String1.</p>
+      <pre><code>{
+   "AB":00,
+   "aaa":22,
+   "aab":444,
+   "ccc":111,
+   "ddd":666,
+   "eee":555
+}
+// parameter splicing 
+AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555
+</code></pre>
+      <p>c. Concatenate the secret key (assumed to be: PslBum8DW0uGEI687X38QpdW53e452zvVVYyzUcT) at the end of String1
+        to generate String2.</p>
+      <pre><code>AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555 // concatenate secret key AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555PslBum8DW0uGEI687X38QpdW53e452zvVVYyzUcT
+</code></pre>
+      <p>d. Sign String2 with your private key using the SHA256withRSA algorithm and then Base64 the result to obtain
+        the value of the sign parameter.</p>
+      <pre><code>// sign the signature and perform 
+SHA256withRSA(AB=00&amp;aaa=22&amp;aab=444&amp;ccc=111&amp;ddd=666&amp;eee=555PslBum8DW0uGEI687X38QpdW53e452zvVVYyzUcT, private_key.pem) 
+// the signed result is KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw==
+</code></pre>
+      <p>e. Insert the sign parameter into the request parameter Map.</p>
+      <pre><code>{"aaa":22,"ccc":111,"aab":444,"eee":555,"ddd":666,"AB":00,"sign":"KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw=="}
+</code></pre>
+      <p>Initiate a GET request.</p>
+      <ul>
+        <li>Concatenate key-value pairs in the request parameter map containing "sign" with the "&amp;" symbol and
+          perform URLsafe_Base64 encoding.</li>
+      </ul>
+      <pre><code>//Perform URL safe Base64
+URLsafe_Base64(ccc=111&amp;aaa=22&amp;sign=KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw==&amp;aab=444&amp;eee=555&amp;ddd=666&amp;AB=00)
+//Reslt
+Y2NjPTExMSZhYWE9MjImc2lnbj1LWGtBeFM5c2UyODNVeWVWODF1VmtvdUJYRXZ1SnMxYjlOOVI2amJZSGZidVA2TzNpUVFKbVA0Mk9wSFhzQThVckdJNnk0bGJKNzN1VmlxY29pVWZ2U2dBTEdmNk5zUjVwMW1JeURXVlNFR2hDYkdUUFNUbHNhcEpSRkxOZU8yUFQyQnpzdjI0VUNtVVUrdGxCOVJlRnpHL1dOaU1lK1Z4YjBnTDhjQVVMU01tOFpPcUlqclBPaU9ZakZneVBrTjdYZGFDaVRnNFlUT29nZmI0ckJOSHZCdmdBUHJqMXJwMFN5RTRzV1htcHFQd09vMmhLUnl6U1ZoNFVPV0lOYW1qb3RMbFZQUVRHWUU3aGViMmNLSnlBUWFlSHVnRWxxRWRybUVaT05hcWRjajl4azJKMXFzcUpvbW1xUmxMQm1xc2ZHZDBleSttazlvWEdxbi8xd3VmYXc9PSZhYWI9NDQ0JmVlZT01NTUmZGRkPTY2Ng==
+</code></pre>
+      <ul>
+        <li>Initiate a GET request.</li>
+      </ul>
+      <pre><code>GET https://doamin.com/apidemo?param=Y2NjPTExMSZhYWE9MjImc2lnbj1LWGtBeFM5c2UyODNVeWVWODF1VmtvdUJYRXZ1SnMxYjlOOVI2amJZSGZidVA2TzNpUVFKbVA0Mk9wSFhzQThVckdJNnk0bGJKNzN1VmlxY29pVWZ2U2dBTEdmNk5zUjVwMW1JeURXVlNFR2hDYkdUUFNUbHNhcEpSRkxOZU8yUFQyQnpzdjI0VUNtVVUrdGxCOVJlRnpHL1dOaU1lK1Z4YjBnTDhjQVVMU01tOFpPcUlqclBPaU9ZakZneVBrTjdYZGFDaVRnNFlUT29nZmI0ckJOSHZCdmdBUHJqMXJwMFN5RTRzV1htcHFQd09vMmhLUnl6U1ZoNFVPV0lOYW1qb3RMbFZQUVRHWUU3aGViMmNLSnlBUWFlSHVnRWxxRWRybUVaT05hcWRjajl4azJKMXFzcUpvbW1xUmxMQm1xc2ZHZDBleSttazlvWEdxbi8xd3VmYXc9PSZhYWI9NDQ0JmVlZT01NTUmZGRkPTY2Ng==
+</code></pre>
+      <ul>
+        <li>Initiate a POST request.<br>
+          Directly use the JSON-formatted map parameters as the PostBody.</li>
+      </ul>
+      <pre><code>POST https://doamin.com/apidemo
+PostBody: 
+{
+"aaa":22,
+"ccc":111,
+"aab":444,
+"eee":555,
+"ddd":666,
+"AB":00,    "sign":"KXkAxS9se283UyeV81uVkouBXEvuJs1b9N9R6jbYHfbuP6O3iQQJmP42OpHXsA8UrGI6y4lbJ73uViqcoiUfvSgALGf6NsR5p1mIyDWVSEGhCbGTPSTlsapJRFLNeO2PT2Bzsv24UCmUU+tlB9ReFzG/WNiMe+Vxb0gL8cAULSMm8ZOqIjrPOiOYjFgyPkN7XdaCiTg4YTOogfb4rBNHvBvgAPrj1rp0SyE4sWXmpqPwOo2hKRyzSVh4UOWINamjotLlVPQTGYE7heb2cKJyAQaeHugElqEdrmEZONaqdcj9xk2J1qsqJommqRlLBmqsfGd0ey+mk9oXGqn/1wufaw=="}
+</code></pre>
+      <h2>Verify the signature of the result returned by the payment system.</h2>
+      <p>All callbacks from the payment system are sent using the POST method.</p>
+      <ol>
+        <li>Parse the data returned by the payment system API, usually in JSON format, and extract the "code" and
+          "result" fields from the outermost layer of the JSON. If the "code" is not 10000 or the "result" is empty,
+          there is no need to verify the signature.</li>
+        <li>Parse all key-value pairs in the "result" field, extract the "sign" field and save it, and then remove any
+          fields that are marked as not requiring signature verification in the API documentation.</li>
+        <li>Repeat the steps 1, 2, and 3 of calculating the "sign" for the request, and use the public key downloaded
+          from the payment system to verify the signature using SHA256withRSA.</li>
+      </ol>
+      <h1>Response code table</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Message</th>
+            <th>Descriotion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>10000</td>
+            <td>the request is succeed.</td>
+            <td>Successful</td>
+          </tr>
+          <tr>
+            <td>10009</td>
+            <td>the request is failed.</td>
+            <td>Failed</td>
+          </tr>
+          <tr>
+            <td>40000</td>
+            <td>the param is wrong.</td>
+            <td>Parameters wrong</td>
+          </tr>
+          <tr>
+            <td>40001</td>
+            <td>the encrypt is wrong.</td>
+            <td>Encryption mismatch</td>
+          </tr>
+          <tr>
+            <td>40002</td>
+            <td>parameter parsing error.</td>
+            <td>Parse failed</td>
+          </tr>
+          <tr>
+            <td>40003</td>
+            <td>forbidden.</td>
+            <td>Business was forbidden</td>
+          </tr>
+          <tr>
+            <td>40004</td>
+            <td>the request is not found.</td>
+            <td>Not found</td>
+          </tr>
+          <tr>
+            <td>40005</td>
+            <td>unauthorized.</td>
+            <td>Unauthorized</td>
+          </tr>
+          <tr>
+            <td>40010</td>
+            <td>payment code error.</td>
+            <td>Wrong payment code</td>
+          </tr>
+          <tr>
+            <td>40070</td>
+            <td>Version is too low, please update the latest version</td>
+            <td>Version too low</td>
+          </tr>
+          <tr>
+            <td>40009</td>
+            <td>the product status is illegal.</td>
+            <td>Product illegal</td>
+          </tr>
+          <tr>
+            <td>40100</td>
+            <td>Not Logged In</td>
+            <td>Not logged in</td>
+          </tr>
+          <tr>
+            <td>50000</td>
+            <td>unknown error.</td>
+            <td>Unknown error, usually caused by unstable channels</td>
+          </tr>
+          <tr>
+            <td>50001</td>
+            <td>the connection error.</td>
+            <td>Connection error, usually caused by unstable channels</td>
+          </tr>
+          <tr>
+            <td>50006</td>
+            <td>the request is rejected.</td>
+            <td>Transaction rejected, usually caused by business status</td>
+          </tr>
+          <tr>
+            <td>50007</td>
+            <td>the channel unavailable.</td>
+            <td>Transaction channel unavailable, usually caused by unstable channels</td>
+          </tr>
+          <tr>
+            <td>50009</td>
+            <td>the bank code does not exist.</td>
+            <td>Bank code does not exist</td>
+          </tr>
+          <tr>
+            <td>50011</td>
+            <td>please try again after several minutes.</td>
+            <td>Please try again later, usually caused by unstable channels</td>
+          </tr>
+          <tr>
+            <td>50012</td>
+            <td>system busy</td>
+            <td>Please try again later, usually caused by unstable channels</td>
+          </tr>
+          <tr>
+            <td>50013</td>
+            <td>system sign error</td>
+            <td>System sign error</td>
+          </tr>
+          <tr>
+            <td>60001</td>
+            <td>the balance is insufficient.</td>
+            <td>Insufficient balance</td>
+          </tr>
+          <tr>
+            <td>60002</td>
+            <td>Trading day limit</td>
+            <td>Transaction day limit reached</td>
+          </tr>
+          <tr>
+            <td>60005</td>
+            <td>the transaction is duplicated.</td>
+            <td>Duplicate transaction code or other important unique parameters</td>
+          </tr>
+          <tr>
+            <td>60021</td>
+            <td>the transaction user is illegal.</td>
+            <td>Transaction user is unavailable, possibly due to blacklisted users or other reasons</td>
+          </tr>
+          <tr>
+            <td>60023</td>
+            <td>the transaction is expired.</td>
+            <td>Transaction expired</td>
+          </tr>
+          <tr>
+            <td>60050</td>
+            <td>The user does not exist.</td>
+            <td>Transaction user does not exist</td>
+          </tr>
+          <tr>
+            <td>60055</td>
+            <td>Transaction amount does not match</td>
+            <td>Transaction amount does not match</td>
+          </tr>
+        </tbody>
+      </table>
+      <h1>Transaction code table</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Descriotion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>-1</td>
+            <td>Waiting for verifying</td>
+          </tr>
+          <tr>
+            <td>0</td>
+            <td>Success</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Rejected</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>The account number does not exist or input a wrong bank number</td>
+          </tr>
+          <tr>
+            <td>19</td>
+            <td>Wrong account name</td>
+          </tr>
+          <tr>
+            <td>25</td>
+            <td>Transaction amount limit</td>
+          </tr>
+          <tr>
+            <td>26</td>
+            <td>Pending, do not retry</td>
+          </tr>
+          <tr>
+            <td>34</td>
+            <td>Failed, retry please</td>
+          </tr>
+          <tr>
+            <td>36</td>
+            <td>Pending, do not retry</td>
+          </tr>
+          <tr>
+            <td>37</td>
+            <td>Insufficient balance</td>
+          </tr>
+        </tbody>
+      </table>
+      <h1 id="virtual20account20in20vietnam">Virtual Account in Vietnam</h1>
+      <p></p>
+      <h2 id="create20va0a3ca20id3dcreate20va6423e203ca3e">Create VA
+        <a id=Create VA642> </a>
+      </h2>
+      <p></p>
+      <h3 id="-2">Basic info</h3>
+      <p><strong>Path：</strong> /trade/vn/virtual/create</p>
+      <p><strong>Method：</strong> POST</p>
+      <p><strong>Description: </strong></p>
+      <p>Create a virtual account</p>
+      <h3 id="-3">Request parameters</h3>
+      <p><strong>Headers</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Type</td>
+            <td>application/json</td>
+            <td>Y</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Body</strong></p>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> accountBase</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Base of the account
+                In virtual cards that allow custom card numbers, this value will be included as part of the card number.
+                It must be globally unique.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> amount</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction amount
+                From 10,000 to 300,000,000</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> businessId</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID
+                Business ID automatically assigned by the backend.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-3>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> clientId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>N</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Client ID
+                Transparent parameter used by merchants to distinguish transactions. Only supports numbers and
+                upper/lowercase English letters. It will be transparently transmitted back to the merchant during the
+                transaction.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-4>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction currency
+                “VND” only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-5>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> expireDate</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">VA expire time
+                Card expiration time, which will become invalid at 24:00 on the specified date and currently has no
+                meaning.，format“yyyyMMdd”</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-6>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> feeId</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Fee ID
+                Fee ID automatically assigned by the backend.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-7>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> idNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">ID number
+                User ID number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-8>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> merchantId</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID
+                Merchant ID automatically assigned by the backend.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-9>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Order number
+                Merchant order number, only supports numbers, uppercase and lowercase letters. Used by merchants to
+                distinguish transactions.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-10>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> phoneNumber</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Phone number
+                User phone number User phone number, can be with or without +84.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-11>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> returnUrl</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Webhook URL
+                The URL to return the transaction result</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-12>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Signature
+                Signature</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-13>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> timestamp</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Timestamp
+                UNIX timestamp accurate to the millisecond, with an error margin of no more than 2 minutes.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-14>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> userName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">User name
+                User name, supports letters with and without diacritics.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-15>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> version</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Version
+                “2.0” only</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="-4">Response data</h3>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">code
+                Response code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Valid only when the transaction result is 10000.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Holder name of the VA， contains only numbers and
+                letters.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Contains only numbers and letters.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> amount</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The amount passed in during creation.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Issuer bank of the VA</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> businessId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">VND</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-6>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> expireDate</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The expire date passed in during creation.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-7>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> feeId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Fee ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-8>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> merchantId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-9>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The order number passed in during creation.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-10>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Signature</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-11>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> userName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The user name passed in during creation.</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="query20transactions0a3ca20id3dquery20transactions6423e203ca3e">Query transactions
+        <a id=Query transactions642> </a>
+      </h2>
+      <p></p>
+      <h3 id="-5">Basic info</h3>
+      <p><strong>Path：</strong> /trade/vn/virtual/query</p>
+      <p><strong>Method：</strong> GET</p>
+      <p><strong>Description: </strong></p>
+      <p>Query all transactions that meet the conditions</p>
+      <h3 id="-6">Request parameters</h3>
+      <p><strong>Headers</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Type</td>
+            <td>application/x-www-form-urlencoded</td>
+            <td>Y</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Query</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>merchantId</td>
+            <td>Y</td>
+            <td>1</td>
+            <td>Merchant ID</td>
+          </tr>
+          <tr>
+            <td>businessId</td>
+            <td>Y</td>
+            <td>1</td>
+            <td>Business ID</td>
+          </tr>
+          <tr>
+            <td>startTime</td>
+            <td>N</td>
+            <td>1679601793921</td>
+            <td>Start time format timestamp, long int type, millisecond</td>
+          </tr>
+          <tr>
+            <td>endTime</td>
+            <td>N</td>
+            <td>1679641793921</td>
+            <td>End time format timestamp, long int type, millisecond，must not exceed 180 days from the start time.</td>
+          </tr>
+          <tr>
+            <td>orderNo</td>
+            <td>N</td>
+            <td>16784440759629ebf6</td>
+            <td>Order number provided during the creation of the virtual card.</td>
+          </tr>
+          <tr>
+            <td>pageNum</td>
+            <td>Y</td>
+            <td>1</td>
+            <td>Page number</td>
+          </tr>
+          <tr>
+            <td>pageSize</td>
+            <td>Y</td>
+            <td>10</td>
+            <td>Page size</td>
+          </tr>
+          <tr>
+            <td>timestamp</td>
+            <td>Y</td>
+            <td>1679641793921</td>
+            <td>UNIX timestamp accurate to the millisecond, with an error margin of no more than 2 minutes.</td>
+          </tr>
+          <tr>
+            <td>version</td>
+            <td>Y</td>
+            <td>2.0</td>
+            <td>&quot;2.0&quot; only</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Body</strong></p>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+        </tbody>
+      </table>
+      <h3 id="-7">Response data</h3>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap"></span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> cnt</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Total number of transactions that meet the criteria.</span>
+            </td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> currentPage</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Current page number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> nextPageFlag</span></td>
+            <td key=1><span>boolean</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">True -- Has next page False -- no more pages</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> pageSize</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Page size</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">signature</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> transactions</span></td>
+            <td key=1><span>object []</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The list of transactions retrieved from the query. Note that
+                this field and the content field are not included in the signature calculation.</span></td>
+            <td key=5>
+              <p key=3><span style="font-weight: '700'">item Type: </span><span>object</span></p>
+            </td>
+          </tr>
+          <tr key=0-2-5-0>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Holder name of the VA</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-1>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Account number of the VA</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-2>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> amount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The amount when creating an order, note that this value is not
+                the actual payment amount of the user.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-3>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> bankName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Issuer bank</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-4>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> businessId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-5>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">VND</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-6>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> expireDate</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Expire date of the VA</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-7>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> feeId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Fee ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-8>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> merchantId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-9>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Order Number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-10>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> purchaseAmount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Actual payment amount of the user.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-11>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> purchaseCurrency</span>
+            </td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Actual payment currency of the user.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-12>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> purchaseTime</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The time we receive the transaction</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-13>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> remark</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">User's payment remarks for this transaction, which may not be
+                exactly the same as what the user has entered.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-14>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> tradeNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Trade number, unique, generated by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5-15>
+            <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> userName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">User name</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="check20status20of20va0a3ca20id3dcheck20status20of20va6423e203ca3e">Check status of VA
+        <a id=Check status of VA642> </a>
+      </h2>
+      <p></p>
+      <h3 id="-8">Basic info</h3>
+      <p><strong>Path：</strong> /trade/vn/virtual/queryVc</p>
+      <p><strong>Method：</strong> GET</p>
+      <p><strong>Description: </strong></p>
+      <p>Check status of a virtual account, to check is it still available for future transactions.</p>
+      <h3 id="-9">Request parameters</h3>
+      <p><strong>Headers</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Type</td>
+            <td>application/x-www-form-urlencoded</td>
+            <td>Y</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Query</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>businessId</td>
+            <td>Y</td>
+            <td>1</td>
+            <td>Business ID</td>
+          </tr>
+          <tr>
+            <td>merchantId</td>
+            <td>Y</td>
+            <td>1</td>
+            <td>Merchant ID</td>
+          </tr>
+          <tr>
+            <td>orderNo</td>
+            <td>Y</td>
+            <td>ABC23</td>
+            <td>Merchant order number</td>
+          </tr>
+          <tr>
+            <td>timestamp</td>
+            <td>Y</td>
+            <td></td>
+            <td>UNIX timestamp accurate to the millisecond, with an error margin of no more than 2 minutes.</td>
+          </tr>
+          <tr>
+            <td>version</td>
+            <td>Y</td>
+            <td>2.0</td>
+            <td>“2.0” only</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Body</strong></p>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+        </tbody>
+      </table>
+      <h3 id="-10">Response data</h3>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Valid only when the transaction result is 10000.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Holder name</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Va number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> amount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The amount when creating an order, note that this value is not
+                the actual payment amount of the user.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Issuer bank</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> businessId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">VND</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-6>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> expireDate</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Expire date</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-7>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> feeId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Fee UD</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-8>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> merchantId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-9>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant order number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-10>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Signarure</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-11>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> userName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">User name</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2
+        id="webhook-notifies20the20user20of20the20actual20transaction20when20it20occurs0a3ca20id3dwebhook-notifies20the20user20of20the20actual20transaction20when20it20occurs6423e203ca3e">
+        Webhook--notifies the user of the actual transaction when it occurs.
+        <a id=Webhook--notifies the user of the actual transaction when it occurs.642> </a>
+      </h2>
+      <p></p>
+      <h3 id="-11">Basic info</h3>
+      <p><strong>Path：</strong> /customize/that_is/return_url</p>
+      <p><strong>Method：</strong> POST</p>
+      <p><strong>Description: </strong></p>
+      <p>The system considers the user's acceptance successful when the HTTP status code 200 is returned, and it does
+        not require or care about the returned data content. If the system does not receive a 200 status code, it will
+        retry after half a minute, for a maximum of seven times.</p>
+      <h3 id="-12">Request parameters</h3>
+      <p><strong>Headers</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Type</td>
+            <td>application/json</td>
+            <td>Y</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Body</strong></p>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Valid only when the transaction result is 10000.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Holder name</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">VA number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> amount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The amount when creating an order, note that this value is not
+                the actual payment amount of the user.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Issuer bank</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> businessId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">VND</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-6>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> expireDate</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Expire date</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-7>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> feeId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Fee ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-8>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> merchantId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-9>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant order number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-10>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Signature</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-11>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> userName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">User name</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-12>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> purchaseAmount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Actual payment amount of the user.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-13>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> purchaseCurrency</span>
+            </td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Actual payment currency of the user. VND</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-14>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> purchaseTime</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">The time we receive the transaction</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-15>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> remark</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">User's payment remarks for this transaction, which may not be
+                exactly the same as what the user has entered.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-16>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> tradeNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Trade number, unique, generated by the system</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h1 id="cash20out20api">Cash out API</h1>
+      <p></p>
+      <h2 id="create20a20cash20out20order0a3ca20id3dcreate20a20cash20out20order8183e203ca3e">Create a cash out order
+        <a id=Create a cash out order818> </a>
+      </h2>
+      <p></p>
+      <h3 id="-13">Basic info</h3>
+      <p><strong>Path：</strong> /trade/vn/transfer/pay</p>
+      <p><strong>Method：</strong> POST</p>
+      <p><strong>Description: </strong></p>
+      <p>Create a cash out order</p>
+      <h3 id="-14">Request parameters</h3>
+      <p><strong>Headers</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Type</td>
+            <td>application/json</td>
+            <td>Y</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Body</strong></p>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> merchantId</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID
+                Merchant ID, created by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> businessId</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID
+                Business ID, created by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> timestamp</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Current timesatmp
+                UNIX timestamp accurate to the millisecond, with an error margin of no more than 2 minutes.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-3>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> version</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">API Version
+                “2.0” only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-4>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> returnUrl</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>N</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Webhook URL
+                The URL to return the transaction result, max 255 chars</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max length: </span><span>255</span></p>
+              <p key=1><span style="font-weight: '700'">Min length: </span><span>0</span></p>
+            </td>
+          </tr>
+          <tr key=0-5>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Order number
+                Merchant order number, only supports numbers, uppercase and lowercase letters. Used by merchants to
+                distinguish transactions. Max 40 chars</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max length: </span><span>40</span></p>
+              <p key=1><span style="font-weight: '700'">Min length: </span><span>1</span></p>
+            </td>
+          </tr>
+          <tr key=0-6>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction currency
+                “VND” only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-7>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> clientId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>N</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Client ID
+                Transparent parameter used by merchants to distinguish transactions. Only supports numbers and
+                upper/lowercase English letters. It will be transparently transmitted back to the merchant during the
+                transaction.</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max length: </span><span>40</span></p>
+              <p key=1><span style="font-weight: '700'">Min length: </span><span>0</span></p>
+            </td>
+          </tr>
+          <tr key=0-8>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> amount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction amount
+                Transaction amount</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max value: </span><span>300000000</span></p>
+              <p key=1><span style="font-weight: '700'">Min value: </span><span>50000</span></p>
+            </td>
+          </tr>
+          <tr key=0-9>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> bankLocation</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Bank Location
+                "VN" only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-10>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> bankNo</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit bank number
+                Benefit bank number of the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-11>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit account name
+                Benefit account name</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-12>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit account number
+                Benefit account number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-13>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> phoneNumber</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit user's phone number
+                Benefit user's phone number</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max length: </span><span>12</span></p>
+              <p key=1><span style="font-weight: '700'">Min length: </span><span>9</span></p>
+            </td>
+          </tr>
+          <tr key=0-14>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> accountType</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit bank account type
+                0 -- Account number, 1--- Card number, not all banks support with card number transactions</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-15>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> remark</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Memo
+                Memo of the transaction</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max length: </span><span>100</span></p>
+              <p key=1><span style="font-weight: '700'">Min length: </span><span>1</span></p>
+            </td>
+          </tr>
+          <tr key=0-16>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> idNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit user's ID card number
+                Benefit user's ID card number</span></td>
+            <td key=5>
+              <p key=0><span style="font-weight: '700'">Max length: </span><span>12</span></p>
+              <p key=1><span style="font-weight: '700'">Min length: </span><span>9</span></p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="-15">Response data</h3>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response code
+                Response code of this request</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description
+                Description of the code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response data
+                Valid only when the response code is 10000.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit account name
+                Benefit account name</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit account number
+                Benefit account number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> amount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction amount
+                Transaction amount</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> businessId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID
+                BUsiness ID, created by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction currency
+                “VND” only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> merchantId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID
+                Merchant ID, created by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-6>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Order number
+                Merchant order number, only supports numbers, uppercase and lowercase letters. Used by merchants to
+                distinguish transactions. Max 40 chars</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-7>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Signature
+                The system signs with private key</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-8>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankNo</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit bank number
+                Benefit bank number in the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-9>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> status</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction status
+                Current transaction status of the, refer to Transaction code table</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-10>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountType</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit bank account type</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-11>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankLocation</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Bank location
+                "VN" only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-12>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> tradeNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Trade number
+                Trade number, unique, generated by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-13>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sendTime</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Send time in the system
+                Timestamp in the system</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="query20bank20list0a3ca20id3dquery20bank20list8183e203ca3e">Query bank list
+        <a id=Query bank list818> </a>
+      </h2>
+      <p></p>
+      <h3 id="-16">Basic info</h3>
+      <p><strong>Path：</strong> /trade/vn/transfer/getBankList</p>
+      <p><strong>Method：</strong> GET</p>
+      <p><strong>Description: </strong></p>
+      <h3 id="-17">Request parameters</h3>
+      <p><strong>Query</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>bankId</td>
+            <td>Y</td>
+            <td>0</td>
+            <td>银行目录默认0</td>
+          </tr>
+          <tr>
+            <td>merchantId</td>
+            <td>Y</td>
+            <td></td>
+            <td>Merchant ID</td>
+          </tr>
+          <tr>
+            <td>businessId</td>
+            <td>Y</td>
+            <td></td>
+            <td>Business ID</td>
+          </tr>
+          <tr>
+            <td>timestamp</td>
+            <td>Y</td>
+            <td></td>
+            <td>UNIX timestamp accurate to the millisecond, with an error margin of no more than 2 minutes.</td>
+          </tr>
+          <tr>
+            <td>version</td>
+            <td>Y</td>
+            <td>2.0</td>
+            <td>API version, &quot;2.0&quot; only</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="-18">Response data</h3>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response code
+                Refer to Response code table</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description
+                Description of resposne code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object []</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response data</span></td>
+            <td key=5>
+              <p key=3><span style="font-weight: '700'">item Type: </span><span>object</span></p>
+            </td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> abbreviation</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Abbreviation name
+                Abbreviation name of the bank</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountSupport</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Account support flag
+                Does the bank support account number transaction</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankID</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Bank number
+                Bank number in the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Bank full name
+                Full name of the bank</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> cardSupport</span></td>
+            <td key=1><span>boolean</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Card support flag
+                Does the bank support card number transaction</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> version</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">version
+                Version of the bank info</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h2 id="webhook20of20cash20out20order0a3ca20id3dwebhook20of20cash20out20order8183e203ca3e">Webhook of cash out
+        order
+        <a id=Webhook of cash out order818> </a>
+      </h2>
+      <p></p>
+      <h3 id="-19">Basic info</h3>
+      <p><strong>Path：</strong> /customer/define/url</p>
+      <p><strong>Method：</strong> POST</p>
+      <p><strong>Description: </strong></p>
+      <p>Response data is not important, the system only pays attention to the http response code, 200 204---success,
+        other values---failed</p>
+      <h3 id="-20">Request parameters</h3>
+      <p><strong>Headers</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Mandatory</th>
+            <th>Sample</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Type</td>
+            <td>application/json</td>
+            <td>Y</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Body</strong></p>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+          <tr key=0-0>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> code</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response code
+                Response code of this request</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-1>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> msg</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Description
+                Description of the code</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2>
+            <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> result</span></td>
+            <td key=1><span>object</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Response data
+                Valid only when the response code is 10000.</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-0>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountName</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit account name
+                Benefit account name</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-1>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit account number
+                Benefit account number</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-2>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> amount</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction amount
+                Transaction amount</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-3>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> businessId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Business ID
+                BUsiness ID, created by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-4>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> currency</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction currency
+                “VND” only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-5>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> merchantId</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Merchant ID
+                Merchant ID, created by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-6>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> orderNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Order number
+                Merchant order number, only supports numbers, uppercase and lowercase letters. Used by merchants to
+                distinguish transactions. Max 40 chars</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-7>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sign</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Signature
+                The system signs with private key</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-8>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankNo</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit bank number
+                Benefit bank number in the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-9>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> status</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Transaction status
+                Current transaction status of the, refer to Transaction code table</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-10>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> accountType</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Benefit bank account type</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-11>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> bankLocation</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Bank location
+                "VN" only</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-12>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> tradeNo</span></td>
+            <td key=1><span>string</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Trade number
+                Trade number, unique, generated by the system</span></td>
+            <td key=5></td>
+          </tr>
+          <tr key=0-2-13>
+            <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> sendTime</span></td>
+            <td key=1><span>number</span></td>
+            <td key=2>Y</td>
+            <td key=3></td>
+            <td key=4><span style="white-space: pre-wrap">Send time in the system
+                Timestamp in the system</span></td>
+            <td key=5></td>
+          </tr>
+        </tbody>
+      </table>
+      <h3 id="-21">Response data</h3>
+      <table>
+        <thead class="ant-table-thead">
+          <tr>
+            <th key=name>Name</th>
+            <th key=type>Type</th>
+            <th key=required>Mandatory</th>
+            <th key=default>Default</th>
+            <th key=desc>Remark</th>
+            <th key=sub>Memo</th>
+          </tr>
+        </thead>
+        <tbody className="ant-table-tbody">
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+
+</html>

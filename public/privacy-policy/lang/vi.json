@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "title": "RbWallet — Chính Sách Quyền Riêng Tư (Bản Chính Thức)",
+    "lastUpdated": "Ngày cập nhật:",
+    "effectiveDate": "Ngày có hiệu lực:",
+    "lastUpdatedValue": "13/11/2025",
+    "effectiveDateValue": "13/11/2025"
+  },
+  "intro": {
+    "title": "1. Giới thiệu",
+    "description": "RbWallet (\"chúng tôi\", \"của chúng tôi\", \"Ứng dụng\", \"Dịch vụ\") cam kết bảo vệ quyền riêng tư và dữ liệu cá nhân của bạn. Chính Sách Quyền Riêng Tư này (\"Chính Sách\") giải thích cách chúng tôi thu thập, sử dụng, lưu trữ, chia sẻ và bảo vệ thông tin người dùng.",
+    "agreement": "Bằng cách sử dụng RbWallet, bạn xác nhận rằng bạn đã đọc và đồng ý với Chính Sách này."
+  },
+  "scope": {
+    "title": "2. Phạm vi áp dụng",
+    "description": "Chính Sách này áp dụng cho:",
+    "items": [
+      "ứng dụng RbWallet,",
+      "trang web (khi ra mắt),",
+      "dịch vụ khách hàng,",
+      "hệ thống xác minh danh tính,",
+      "các tích hợp thanh toán và ngân hàng liên quan."
+    ]
+  },
+  "dataCollection": {
+    "title": "3. Dữ liệu chúng tôi thu thập",
+    "provided": {
+      "title": "3.1 Dữ liệu bạn cung cấp trực tiếp",
+      "items": [
+        "Thông tin cá nhân: họ tên, ngày sinh, quốc tịch.",
+        "Tài liệu KYC: CMND/CCCD/Hộ chiếu, ảnh selfie, sinh trắc học.",
+        "Thông tin liên hệ: email, số điện thoại.",
+        "Tài khoản ngân hàng liên kết.",
+        "Phản hồi hỗ trợ, báo cáo khiếu nại."
+      ]
+    },
+    "automatic": {
+      "title": "3.2 Dữ liệu thu thập tự động",
+      "items": [
+        "Thông tin thiết bị (model, hệ điều hành, ngôn ngữ).",
+        "Địa chỉ IP, khu vực địa lý gần đúng.",
+        "ID quảng cáo (nếu cho phép).",
+        "Nhật ký sử dụng ứng dụng."
+      ]
+    },
+    "transaction": {
+      "title": "3.3 Dữ liệu giao dịch",
+      "items": [
+        "lịch sử nạp tiền, rút tiền, chuyển khoản,",
+        "số tiền, thời gian, trạng thái giao dịch,",
+        "thông tin người nhận/người gửi."
+      ]
+    },
+    "thirdParty": {
+      "title": "3.4 Dữ liệu từ bên thứ ba",
+      "items": [
+        "ngân hàng đối tác,",
+        "nhà cung cấp dịch vụ thanh toán,",
+        "hệ thống xác minh danh tính (eKYC),",
+        "cơ quan pháp luật (khi có yêu cầu hợp lệ)."
+      ]
+    }
+  },
+  "purpose": {
+    "title": "4. Mục đích xử lý dữ liệu",
+    "description": "Chúng tôi sử dụng dữ liệu của bạn để:",
+    "operation": {
+      "title": "4.1 Vận hành dịch vụ",
+      "items": [
+        "tạo và quản lý tài khoản,",
+        "thực hiện giao dịch,",
+        "xác minh danh tính (KYC/AML),",
+        "phát hiện gian lận và bảo mật."
+      ]
+    },
+    "customer": {
+      "title": "4.2 Chăm sóc khách hàng",
+      "items": [
+        "cung cấp hỗ trợ,",
+        "xử lý tranh chấp,",
+        "gửi thông báo quan trọng."
+      ]
+    },
+    "compliance": {
+      "title": "4.3 Tuân thủ pháp luật",
+      "items": [
+        "chống rửa tiền (AML),",
+        "phòng chống tài trợ khủng bố (CFT),",
+        "báo cáo cho cơ quan quản lý khi yêu cầu."
+      ]
+    },
+    "improvement": {
+      "title": "4.4 Cải thiện dịch vụ",
+      "items": [
+        "phân tích dữ liệu tổng hợp,",
+        "tối ưu hiệu suất ứng dụng,",
+        "phát triển tính năng mới."
+      ]
+    },
+    "noSale": "Chúng tôi không bán dữ liệu cá nhân của bạn."
+  },
+  "sharing": {
+    "title": "5. Chia sẻ dữ liệu",
+    "description": "Chúng tôi chỉ chia sẻ dữ liệu khi cần thiết và hợp pháp, bao gồm:",
+    "items": [
+      "Đối tác ngân hàng: xử lý nạp/rút tiền.",
+      "Đối tác thanh toán: xác nhận giao dịch.",
+      "Nhà cung cấp eKYC: xác minh danh tính.",
+      "Công ty bảo mật: phát hiện gian lận.",
+      "Cơ quan pháp luật: theo yêu cầu hợp lệ.",
+      "Nhà cung cấp dịch vụ hạ tầng (cloud, máy chủ)."
+    ],
+    "conclusion": "Tất cả bên liên quan đều bị ràng buộc bởi các thỏa thuận bảo mật."
+  },
+  "storage": {
+    "title": "6. Lưu trữ & bảo mật dữ liệu",
+    "storage": {
+      "title": "6.1 Lưu trữ",
+      "description": "Dữ liệu được lưu trữ tại máy chủ đạt chuẩn bảo mật quốc tế (ví dụ: ISO 27001) trong thời gian:",
+      "items": [
+        "theo yêu cầu pháp luật, hoặc",
+        "miễn là bạn còn sử dụng dịch vụ."
+      ]
+    },
+    "security": {
+      "title": "6.2 Biện pháp bảo mật",
+      "items": [
+        "Mã hóa cấp ngân hàng (AES-256, TLS 1.3).",
+        "Hệ thống phát hiện gian lận thời gian thực.",
+        "Kiểm soát truy cập nội bộ nghiêm ngặt.",
+        "2FA và bảo vệ thiết bị."
+      ],
+      "conclusion": "Dù chúng tôi cố gắng tối đa, không hệ thống nào có thể đảm bảo an toàn 100%."
+    }
+  },
+  "rights": {
+    "title": "7. Quyền của người dùng",
+    "description": "Bạn có quyền:",
+    "items": [
+      "yêu cầu truy cập dữ liệu cá nhân,",
+      "yêu cầu chỉnh sửa thông tin sai,",
+      "yêu cầu xóa tài khoản (theo luật cho phép),",
+      "yêu cầu hạn chế hoặc phản đối xử lý dữ liệu,",
+      "tải xuống dữ liệu cá nhân của bạn."
+    ],
+    "refusal": {
+      "title": "Chúng tôi có thể từ chối yêu cầu nếu liên quan đến:",
+      "items": [
+        "điều tra pháp lý,",
+        "nghĩa vụ tuân thủ,",
+        "phòng chống gian lận."
+      ]
+    }
+  },
+  "cookies": {
+    "title": "8. Cookie & Công nghệ theo dõi",
+    "description": "(Áp dụng khi trang web ra mắt)",
+    "intro": "Chúng tôi có thể sử dụng:",
+    "items": [
+      "cookie chức năng,",
+      "cookie phân tích,",
+      "cookie bảo mật."
+    ],
+    "conclusion": "Bạn có thể tắt cookie trong trình duyệt, nhưng một số tính năng có thể không hoạt động."
+  },
+  "transfer": {
+    "title": "9. Chuyển dữ liệu ra nước ngoài",
+    "description": "Nếu cần thiết (ví dụ: máy chủ quốc tế), chúng tôi sẽ đảm bảo:",
+    "items": [
+      "dữ liệu được mã hóa,",
+      "chỉ xử lý với tiêu chuẩn bảo mật tương đương hoặc cao hơn luật Việt Nam."
+    ]
+  },
+  "children": {
+    "title": "10. Quyền riêng tư của trẻ em",
+    "description": "RbWallet không dành cho người dưới 18 tuổi.",
+    "conclusion": "Chúng tôi không cố ý thu thập dữ liệu trẻ em."
+  },
+  "changes": {
+    "title": "11. Thay đổi Chính Sách",
+    "description1": "Chúng tôi có thể cập nhật Chính Sách này bất kỳ lúc nào.",
+    "description2": "Thông báo sẽ được gửi thông qua:",
+    "items": [
+      "ứng dụng,",
+      "email,",
+      "trang web."
+    ],
+    "conclusion": "Tiếp tục sử dụng dịch vụ đồng nghĩa bạn chấp nhận các cập nhật."
+  },
+  "contact": {
+    "title": "12. Liên hệ",
+    "team": "Đội ngũ hỗ trợ RbWallet",
+    "email": "Email:",
+    "website": "Trang web:",
+    "websiteValue": "(sắp ra mắt)"
+  },
+  "footer": {
+    "copyright": "© 2025 RbWallet. Bảo lưu mọi quyền."
+  },
+  "language": {
+    "switch": "Chuyển Ngôn Ngữ",
+    "en": "English",
+    "vi": "Tiếng Việt"
+  }
+}
+

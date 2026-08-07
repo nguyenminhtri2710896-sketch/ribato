@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "title": "RbWallet — Privacy Policy (Official)",
+    "lastUpdated": "Last Updated:",
+    "effectiveDate": "Effective Date:",
+    "lastUpdatedValue": "November 13, 2025",
+    "effectiveDateValue": "November 13, 2025"
+  },
+  "intro": {
+    "title": "1. Introduction",
+    "description": "RbWallet (\"we\", \"our\", \"the App\", \"the Service\") is committed to protecting your privacy and personal data. This Privacy Policy (\"Policy\") explains how we collect, use, store, share, and protect user information.",
+    "agreement": "By using RbWallet, you confirm that you have read and agree to this Policy."
+  },
+  "scope": {
+    "title": "2. Scope of Application",
+    "description": "This Policy applies to:",
+    "items": [
+      "the RbWallet application,",
+      "the website (when launched),",
+      "customer service,",
+      "identity verification systems,",
+      "related payment and banking integrations."
+    ]
+  },
+  "dataCollection": {
+    "title": "3. Data We Collect",
+    "provided": {
+      "title": "3.1 Data You Provide Directly",
+      "items": [
+        "Personal information: full name, date of birth, nationality.",
+        "KYC documents: ID card/Citizen ID/Passport, selfie photos, biometrics.",
+        "Contact information: email, phone number.",
+        "Linked bank accounts.",
+        "Support feedback, complaint reports."
+      ]
+    },
+    "automatic": {
+      "title": "3.2 Automatically Collected Data",
+      "items": [
+        "Device information (model, operating system, language).",
+        "IP address, approximate geographic region.",
+        "Advertising ID (if permitted).",
+        "Application usage logs."
+      ]
+    },
+    "transaction": {
+      "title": "3.3 Transaction Data",
+      "items": [
+        "deposit, withdrawal, transfer history,",
+        "amount, time, transaction status,",
+        "recipient/sender information."
+      ]
+    },
+    "thirdParty": {
+      "title": "3.4 Data from Third Parties",
+      "items": [
+        "partner banks,",
+        "payment service providers,",
+        "identity verification systems (eKYC),",
+        "law enforcement agencies (when legally required)."
+      ]
+    }
+  },
+  "purpose": {
+    "title": "4. Purpose of Data Processing",
+    "description": "We use your data to:",
+    "operation": {
+      "title": "4.1 Service Operations",
+      "items": [
+        "create and manage accounts,",
+        "process transactions,",
+        "verify identity (KYC/AML),",
+        "detect fraud and ensure security."
+      ]
+    },
+    "customer": {
+      "title": "4.2 Customer Care",
+      "items": [
+        "provide support,",
+        "handle disputes,",
+        "send important notifications."
+      ]
+    },
+    "compliance": {
+      "title": "4.3 Legal Compliance",
+      "items": [
+        "anti-money laundering (AML),",
+        "counter-terrorism financing (CFT),",
+        "reporting to regulatory authorities when required."
+      ]
+    },
+    "improvement": {
+      "title": "4.4 Service Improvement",
+      "items": [
+        "analyze aggregated data,",
+        "optimize application performance,",
+        "develop new features."
+      ]
+    },
+    "noSale": "We do not sell your personal data."
+  },
+  "sharing": {
+    "title": "5. Data Sharing",
+    "description": "We only share data when necessary and legal, including:",
+    "items": [
+      "Partner banks: processing deposits/withdrawals.",
+      "Payment partners: confirming transactions.",
+      "eKYC providers: identity verification.",
+      "Security companies: fraud detection.",
+      "Law enforcement: when legally required.",
+      "Infrastructure service providers (cloud, servers)."
+    ],
+    "conclusion": "All related parties are bound by confidentiality agreements."
+  },
+  "storage": {
+    "title": "6. Data Storage & Security",
+    "storage": {
+      "title": "6.1 Storage",
+      "description": "Data is stored on servers meeting international security standards (e.g., ISO 27001) for:",
+      "items": [
+        "as required by law, or",
+        "as long as you continue using the service."
+      ]
+    },
+    "security": {
+      "title": "6.2 Security Measures",
+      "items": [
+        "Bank-level encryption (AES-256, TLS 1.3).",
+        "Real-time fraud detection systems.",
+        "Strict internal access controls.",
+        "2FA and device protection."
+      ],
+      "conclusion": "While we strive to the maximum, no system can guarantee 100% security."
+    }
+  },
+  "rights": {
+    "title": "7. User Rights",
+    "description": "You have the right to:",
+    "items": [
+      "request access to personal data,",
+      "request correction of incorrect information,",
+      "request account deletion (as permitted by law),",
+      "request restriction or object to data processing,",
+      "download your personal data."
+    ],
+    "refusal": {
+      "title": "We may refuse requests if related to:",
+      "items": [
+        "legal investigations,",
+        "compliance obligations,",
+        "fraud prevention."
+      ]
+    }
+  },
+  "cookies": {
+    "title": "8. Cookies & Tracking Technologies",
+    "description": "(Applies when website is launched)",
+    "intro": "We may use:",
+    "items": [
+      "functional cookies,",
+      "analytics cookies,",
+      "security cookies."
+    ],
+    "conclusion": "You can disable cookies in your browser, but some features may not work."
+  },
+  "transfer": {
+    "title": "9. International Data Transfer",
+    "description": "If necessary (e.g., international servers), we will ensure:",
+    "items": [
+      "data is encrypted,",
+      "processing only with security standards equivalent to or higher than Vietnamese law."
+    ]
+  },
+  "children": {
+    "title": "10. Children's Privacy",
+    "description": "RbWallet is not intended for users under 18 years of age.",
+    "conclusion": "We do not knowingly collect data from children."
+  },
+  "changes": {
+    "title": "11. Policy Changes",
+    "description1": "We may update this Policy at any time.",
+    "description2": "Notifications will be sent through:",
+    "items": [
+      "the application,",
+      "email,",
+      "the website."
+    ],
+    "conclusion": "Continued use of the service means you accept the updates."
+  },
+  "contact": {
+    "title": "12. Contact",
+    "team": "RbWallet Support Team",
+    "email": "Email:",
+    "website": "Website:",
+    "websiteValue": "ribato.com"
+  },
+  "footer": {
+    "copyright": "© 2025 RbWallet. All rights reserved."
+  },
+  "language": {
+    "switch": "Switch Language",
+    "en": "English",
+    "vi": "Tiếng Việt"
+  }
+}
+

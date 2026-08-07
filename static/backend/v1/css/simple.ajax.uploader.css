@@ -1,0 +1,74 @@
+.simple-box-upload {
+    padding: 1.5rem 1.75rem;
+    text-align: center;
+    cursor: pointer;
+    border: 1px dashed #adadad;
+    background-color: #f1faff;
+    border-radius: 0.75rem !important;
+    position: relative;
+    min-height: 150px;
+    margin: 10px 0 10px 0;
+    overflow: hidden;
+}
+
+
+.simple-box-upload .title {
+    width: 100%;
+    left: 0px;
+    text-align: center;
+    color: #009EF7;
+    font-weight: 500;
+    display: block;
+    margin: 2em 0;
+}
+
+.simple-box-upload .msgBox {
+    color: red;
+}
+
+.cmnd-loading {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    color: #186ff1;
+    background: hsl(0deg 0% 69% / 57%);
+    padding: 21px 0 0 0;
+}
+
+.simple-box-upload .loading {
+    position: absolute;
+    width: auto;
+    height: 100%;
+    top: 45%;
+    left: 45%;
+    display: none;
+    z-index: 300;
+}
+
+.simple-box-upload .error-message {
+    position: absolute;
+    color: red;
+    left: 0px;
+    bottom: 0px;
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+}
+
+.simple-box-upload .content-success {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    display: none;
+}
+
+.simple-box-upload .content-success img {
+    width: 100%;
+    height: 100%;
+}
