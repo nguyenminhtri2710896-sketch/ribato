@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 $strRouteBackend = function () {
     Route::group(['as' => 'backend.'], function () {
-        Route::middleware(['XSS'])->group(function () {
+        Route::middleware(['XSS', 'payment.gate'])->group(function () {
 
             Route::get('/test/index', [\App\Http\Controllers\Backend\V1\TestController::class, 'index'])->name('test.index');
             Route::match(['post', 'get'], '/vr/{hash?}', [\App\Http\Controllers\Backend\V1\ConfirmWithdrawController::class, 'verify'])->name('confirm-withdraw.verify');
