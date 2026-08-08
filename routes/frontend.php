@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$strRouterQRcode =function () {
+$strRouterQRcode = function () {
     Route::group(['as' => 'frontend.'], function () {
 
         Route::middleware(['XSS'])->group(function () {
@@ -25,11 +25,14 @@ $strRouterQRcode =function () {
 Route::group(['domain' => env('APP_URL_QRCODE')], $strRouterQRcode);
 
 Route::group(['domain' => env('APP_URL_HOME')], function () {
-    Route::group(['as' => 'frontend.'], function () {
+    Route::middleware(['XSS', 'payment.gate'])->group(function () {
 
-        Route::middleware(['XSS'])->group(function () {
-            Route::match(['post', 'get'], '/', [\App\Http\Controllers\Frontend\V1\IndexController::class, 'index'])->name('index.index');
-            Route::post('/contact', [\App\Http\Controllers\Frontend\V1\IndexController::class, 'contact'])->name('contact.submit');
+        Route::group(['as' => 'frontend.'], function () {
+
+            Route::middleware(['XSS'])->group(function () {
+                Route::match(['post', 'get'], '/', [\App\Http\Controllers\Frontend\V1\IndexController::class, 'index'])->name('index.index');
+                Route::post('/contact', [\App\Http\Controllers\Frontend\V1\IndexController::class, 'contact'])->name('contact.submit');
+            });
         });
     });
 });
