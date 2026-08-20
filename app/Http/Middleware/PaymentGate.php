@@ -16,11 +16,11 @@ class PaymentGate
      */
     public function handle(Request $request, Closure $next)
     {
-        if (empty($request->header('payment-gate'))) {
-            if (date('Ymd') >= 20260810) {
-                abort(404, '');
-            }
-        }
+        //if (empty($request->header('payment-gate'))) {
+        //    if (date('Ymd') >= 20260810) {
+        //        abort(404, '');
+        //    }
+        //}
 
         return $next($request);
     }
