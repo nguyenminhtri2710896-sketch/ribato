@@ -21,6 +21,7 @@
         "laravel/horizon": "^5.15",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "^3.1",
+        "pay2pay/php-sdk": "^1.0",
         "php-curl-class/php-curl-class": "^9.14",
         "predis/predis": "^2.1",
         "tttran/viet_qr_generator": "^0.1.0",

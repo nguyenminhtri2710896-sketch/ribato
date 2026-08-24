@@ -22,6 +22,7 @@ use App\Utilities\Yoobil;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Crypt;
 
+use Pay2Pay\Pay2Pay;
 class TestController extends BaseController
 {
 
@@ -72,6 +73,40 @@ class TestController extends BaseController
     }
     public function index()
     {
+
+        //    dd($yoobil->setSecretKey($objGatewayAccount->secret_key)->setPrivateKey($objGatewayAccount->private_key)->setBusinessId($objGatewayAccount->business_id)->setMerchantId($objGatewayAccount->merchant_id)
+        //         ->updateVA(["orderNo" => "WAOei49350", "status" => 1]));
+
+
+
+        $objGatewayAccount = GatewayAccount::where('id', 13)->first();
+
+        $pay2pay = Pay2Pay::make([
+            'environment' => 'production',              // uat | production
+            'tenant' => $objGatewayAccount->tenant,
+            'username' => $objGatewayAccount->username,
+            'password' => $objGatewayAccount->password,     // mật khẩu GỐC, SDK tự băm
+            'private_key' => $objGatewayAccount->private_key,
+            'merchant_id' => $objGatewayAccount->merchant_id,
+            'merchant_key' => '',
+            'secret_key' => $objGatewayAccount->secret_key,
+        ]);
+
+        // $qr = $pay2pay->collection()->initializeDynamicQr('DH001', 500000, 'Thanh toan don hang');
+        // echo $qr->getData('qrInfo');
+
+        dd($pay2pay->payout()->transfer247([
+            'amount' => 200000,
+            'bankId' => 'BIDV',
+            'bankCode' => '970418',
+            'bankRefNumber' => '1023020330000',
+            'bankRefName' => 'NGUYEN VAN A',
+            'content' => 'Hoan tien DH001',
+        ]));
+
+        dd("done");
+
+
         dd(Crypt::decryptString("eyJpdiI6IlFmRTRJa2tPeDlPY1FkUVZrS2Rrd0E9PSIsInZhbHVlIjoiTXRHU0p4Rk5RbjVvSzRoZVJoRmhVZz09IiwibWFjIjoiNTczMTQ1Yzg3YTNkOGQwODE0ZGZlMTY0MzVmNTdmMDU3ZDQ3ZDhjZjhiMzRiYjBkNzNjZDM0ODE0MjUzMzFhNyIsInRhZyI6IiJ9"));
 
         $yoobill = new Yoobil();
