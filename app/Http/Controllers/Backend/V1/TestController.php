@@ -85,7 +85,7 @@ class TestController extends BaseController
             'environment' => 'production',              // uat | production
             'tenant' => $objGatewayAccount->tenant,
             'username' => $objGatewayAccount->username,
-            'password' => $objGatewayAccount->password,     // mật khẩu GỐC, SDK tự băm
+            'password' => Crypt::decryptString($objGatewayAccount->password),     // mật khẩu GỐC, SDK tự băm
             'private_key' => $objGatewayAccount->private_key,
             'merchant_id' => $objGatewayAccount->merchant_id,
             'merchant_key' => '',
@@ -95,14 +95,11 @@ class TestController extends BaseController
         // $qr = $pay2pay->collection()->initializeDynamicQr('DH001', 500000, 'Thanh toan don hang');
         // echo $qr->getData('qrInfo');
 
-        dd($pay2pay->payout()->transfer247([
-            'amount' => 200000,
-            'bankId' => 'BIDV',
-            'bankCode' => '970418',
-            'bankRefNumber' => '1023020330000',
-            'bankRefName' => 'NGUYEN VAN A',
-            'content' => 'Hoan tien DH001',
-        ]));
+      $response = $pay2pay->payout()->banks();
+
+foreach ($response->getData() as $bank) {
+    printf("%-12s %-8s %s\n", $bank['bankId'], $bank['binCode'], $bank['shortName']);
+}
 
         dd("done");
 
