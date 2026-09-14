@@ -556,7 +556,7 @@
     </div>
 
     <!-- Multi-Language Translator System -->
-    <script src="/frontend/v2/js/translations.js"></script>
+    <script src="/frontend/v2/js/translations.js?v={{ time() }}"></script>
 
     <!-- General Scripts -->
     <script>
