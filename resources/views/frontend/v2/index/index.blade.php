@@ -168,29 +168,11 @@
                 </div>
             </div>
 
-            <!-- Right Graphic -->
-            <div class="relative flex items-center justify-center gap-4 z-10">
-                <div class="w-40 sm:w-48 rounded-xl bg-gradient-to-b from-blue-600 to-indigo-900 p-3.5 shadow-2xl border border-white/20 transform -rotate-6">
-                    <div class="flex items-center justify-between text-[10px] font-mono text-cyan-200">
-                        <span>Razorepay Turbo</span>
-                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                    </div>
-                    <div class="text-sm font-bold text-white mt-1.5">245.000.000 ₫</div>
-                    <div class="mt-2.5 p-2 bg-white/10 rounded text-[9px] text-blue-100 flex items-center justify-between">
-                        <span>Success Rate</span>
-                        <span class="font-bold text-emerald-300">99.8%</span>
-                    </div>
-                </div>
-                <div class="w-40 sm:w-48 rounded-xl bg-gradient-to-b from-indigo-800 to-slate-900 p-3.5 shadow-2xl border border-white/20 transform rotate-6">
-                    <div class="flex items-center justify-between text-[10px] font-mono text-emerald-300">
-                        <span>Agent Studio</span>
-                        <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-300">LIVE</span>
-                    </div>
-                    <div class="text-sm font-bold text-white mt-1.5">Autonomous Flow</div>
-                    <div class="mt-2.5 p-2 bg-white/10 rounded text-[9px] text-slate-200 flex items-center justify-between">
-                        <span>Latency</span>
-                        <span class="font-bold text-cyan-300">18ms</span>
-                    </div>
+            <!-- Right Graphic (Official Razorpay Visual) -->
+            <div class="relative flex items-center justify-center z-10 w-full md:w-auto max-w-md lg:max-w-lg">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition duration-500"></div>
+                    <img src="/frontend/v2/images/products/startup-26-banner.png" alt="Razorepay Startup 26" class="relative rounded-xl max-h-72 w-auto object-contain drop-shadow-2xl transition duration-300 transform group-hover:scale-[1.02]">
                 </div>
             </div>
         </div>
