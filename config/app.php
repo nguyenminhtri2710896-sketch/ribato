@@ -62,6 +62,7 @@ return [
     'asset_version' => env('APP_ENV') == "local" ? time() : env('ASSET_VERSION', "1.0"),
     'backend_version' => env('BACKEND_VERSION') ?: 'v1',
     'mod_version' => env('MOD_VERSION') ?: 'v1',
+    'home_version' => env('HOME_VERSION') ?: '1',
 
     /*
     |--------------------------------------------------------------------------

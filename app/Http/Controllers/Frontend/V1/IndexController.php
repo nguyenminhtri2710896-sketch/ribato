@@ -20,8 +20,12 @@ class IndexController extends BaseController
 
         public function index()
         {
-                return view("frontend.v1.index.index")->with([]);
+            $version = (string) config('app.home_version', env('HOME_VERSION', '1'));
+            if (in_array(trim($version), ['2', 'v2', 'V2'])) {
+                return view("frontend.v2.index.index")->with([]);
+            }
 
+            return view("frontend.v1.index.index")->with([]);
         }
 
 
