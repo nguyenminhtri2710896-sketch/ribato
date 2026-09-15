@@ -84,7 +84,7 @@ class TestController extends BaseController
 
             // Tham số tạo tài khoản ảo VA
             $params = [
-                'account_name'     => 'NGUYEN VAN A',                         // Tên chủ tài khoản ảo
+                'account_name'     => 'TAMI',                         // Tên chủ tài khoản ảo
                 'account_type'     => GpayV2::VA_TYPE_MULTIPLE,               // 'M' (dùng nhiều lần) hoặc 'O' (1 lần)
                 'bank_code'        => GpayV2::BANK_BIDV,                      // BIDV, TCB, MSB, VCCB, VPB, WOO
                 'map_id'           => 'CUST_' . time(),                       // Mã định danh khách hàng duy nhất
