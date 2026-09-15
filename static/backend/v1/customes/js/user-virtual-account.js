@@ -3,6 +3,7 @@ var userVirtualAccount = {
         this.getList();
     },
     initEvent: function () {
+        var self = this;
         $(document).off('change', '.va-status-toggle').on('change', '.va-status-toggle', function () {
             var id = $(this).data('id');
             var isChecked = $(this).is(':checked');
@@ -30,6 +31,117 @@ var userVirtualAccount = {
                     inputElement.prop('checked', !isChecked);
                 }
             });
+        });
+
+        // Xử lý khi chọn tài khoản cổng trong modal tạo VA
+        $(document).off('select2:select', '.bs-modal-add-user-virtual-account select[name="gateway_account_id"]').on('select2:select', '.bs-modal-add-user-virtual-account select[name="gateway_account_id"]', function (e) {
+            var data = (e && e.params && e.params.data) ? e.params.data : null;
+            var gatewayId = (data && typeof data.gateway_id !== 'undefined') ? data.gateway_id : null;
+            if (gatewayId) {
+                $(this).data('selected-gateway-id', gatewayId);
+                self.applyGatewayBankFilter(gatewayId);
+            } else {
+                var gatewayAccountId = $(this).val();
+                if (gatewayAccountId) {
+                    self.fetchGatewayDetailAndFilter(gatewayAccountId);
+                } else {
+                    self.updateBankSelect(['BIDV', 'TCB', 'MSB']);
+                }
+            }
+        });
+
+        $(document).off('change', '.bs-modal-add-user-virtual-account select[name="gateway_account_id"]').on('change', '.bs-modal-add-user-virtual-account select[name="gateway_account_id"]', function (e) {
+            var gatewayAccountId = $(this).val();
+            if (!gatewayAccountId) {
+                $(this).removeData('selected-gateway-id');
+                self.updateBankSelect(['BIDV', 'TCB', 'MSB']);
+                return;
+            }
+
+            var gatewayId = $(this).data('selected-gateway-id');
+            if (gatewayId) {
+                self.applyGatewayBankFilter(gatewayId);
+            } else {
+                self.fetchGatewayDetailAndFilter(gatewayAccountId);
+            }
+        });
+
+        // Khi mở modal tạo VA
+        $('.bs-modal-add-user-virtual-account').on('show.bs.modal', function () {
+            var selectGateway = $('.bs-modal-add-user-virtual-account select[name="gateway_account_id"]');
+            var gatewayAccountId = selectGateway.val();
+            var gatewayId = selectGateway.data('selected-gateway-id');
+            if (gatewayAccountId && gatewayId) {
+                self.applyGatewayBankFilter(gatewayId);
+            } else if (gatewayAccountId) {
+                self.fetchGatewayDetailAndFilter(gatewayAccountId);
+            } else {
+                self.updateBankSelect(['BIDV', 'TCB', 'MSB']);
+            }
+        });
+    },
+    fetchGatewayDetailAndFilter: function (gatewayAccountId) {
+        var self = this;
+        $.ajax({
+            url: '/gateway-account/ajax/get-detail',
+            type: 'POST',
+            data: { query: { id: gatewayAccountId } },
+            dataType: 'json',
+            success: function (res) {
+                if (res.error_code == 0 && res.data) {
+                    var gid = res.data.gateway_id;
+                    $('.bs-modal-add-user-virtual-account select[name="gateway_account_id"]').data('selected-gateway-id', gid);
+                    self.applyGatewayBankFilter(gid);
+                } else {
+                    self.updateBankSelect(['BIDV', 'TCB', 'MSB']);
+                }
+            },
+            error: function () {
+                self.updateBankSelect(['BIDV', 'TCB', 'MSB']);
+            }
+        });
+    },
+    applyGatewayBankFilter: function (gatewayId) {
+        if (gatewayId == 8 || gatewayId == '8') {
+            // Cổng GPAY V2: hỗ trợ 6 ngân hàng: BIDV, TCB, MSB, VCCB, VPB, WOO
+            this.updateBankSelect(['BIDV', 'TCB', 'MSB', 'VCCB', 'VPB', 'WOO']);
+        } else if (gatewayId == 3 || gatewayId == '3') {
+            // Cổng Yoobill: hỗ trợ BIDV
+            this.updateBankSelect(['BIDV']);
+        } else {
+            // Cổng GPAY cũ (gateway 2) hoặc các cổng khác: 3 ngân hàng cũ
+            this.updateBankSelect(['BIDV', 'TCB', 'MSB']);
+        }
+    },
+    updateBankSelect: function (shortCodes) {
+        var bankSelect = $('.bs-modal-add-user-virtual-account select[name="bank_id"]');
+        if (bankSelect.length === 0) return;
+
+        var arrCodes = Array.isArray(shortCodes) ? shortCodes : shortCodes.split(',');
+        var ajaxUrl = '/bank/ajax/ajax-select2-get-list';
+        
+        bankSelect.val(null);
+        if (bankSelect.hasClass("select2-hidden-accessible")) {
+            bankSelect.select2('destroy');
+        }
+        bankSelect.empty();
+
+        bankSelect.select2({
+            dropdownParent: bankSelect.parent(),
+            ajax: {
+                url: ajaxUrl,
+                dataType: 'json',
+                type: "POST",
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: { name: params.term },
+                        query_in_list: { short_code: arrCodes },
+                        page: params.page
+                    };
+                }
+            },
+            placeholder: 'Chọn ngân hàng'
         });
     },
     getList: function () {

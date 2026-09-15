@@ -19,6 +19,7 @@ use App\Utilities\General;
 use App\Utilities\Gpay;
 use App\Utilities\Telegram;
 use App\Utilities\Yoobil;
+use App\Utilities\GpayV2;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -73,35 +74,73 @@ class TestController extends BaseController
     }
     public function index()
     {
+        // =========================================================================
+        // TEST TẠO TÀI KHOẢN ẢO (VIRTUAL ACCOUNT - VA) VỚI GPAY V2
+        // =========================================================================
+        $objGatewayAccount = GatewayAccount::where('gateway_id', 8)->first();
 
-        //    dd($yoobil->setSecretKey($objGatewayAccount->secret_key)->setPrivateKey($objGatewayAccount->private_key)->setBusinessId($objGatewayAccount->business_id)->setMerchantId($objGatewayAccount->merchant_id)
-        //         ->updateVA(["orderNo" => "WAOei49350", "status" => 1]));
+        if ($objGatewayAccount) {
+            $gpayV2 = GpayV2::fromGatewayAccount($objGatewayAccount);
 
+            // Tham số tạo tài khoản ảo VA
+            $params = [
+                'account_name'     => 'NGUYEN VAN A',                         // Tên chủ tài khoản ảo
+                'account_type'     => GpayV2::VA_TYPE_MULTIPLE,               // 'M' (dùng nhiều lần) hoặc 'O' (1 lần)
+                'bank_code'        => GpayV2::BANK_BIDV,                      // BIDV, TCB, MSB, VCCB, VPB, WOO
+                'map_id'           => 'CUST_' . time(),                       // Mã định danh khách hàng duy nhất
+                'map_type'         => GpayV2::MAP_TYPE_CUSTOMER_ID,          // CUSTOMER_ID, PHONE_NUMBER, CCCD...
+                'customer_address' => 'Ha Noi, Viet Nam',
+                'description'      => 'Tao tai khoan thu ho test',
+                // 'equal_amount'  => 50000,                                 // Số tiền cố định nếu muốn gán (tùy chọn)
+            ];
 
+            // 1. Gọi API tạo tài khoản ảo
+            $resultCreateVA = $gpayV2->createVirtualAccount($params);
 
-        $objGatewayAccount = GatewayAccount::where('id', 13)->first();
+            // 2. Nếu thành công và có account_number, có thể lấy thêm ảnh VietQR
+            $vietQrResult = null;
+            if ($resultCreateVA['success'] && !empty($resultCreateVA['account_number'])) {
+                $vietQrResult = $gpayV2->getVietQRImage($resultCreateVA['account_number']);
+            }
 
-        $pay2pay = Pay2Pay::make([
-            'environment' => 'production',              // uat | production
-            'tenant' => $objGatewayAccount->tenant,
-            'username' => $objGatewayAccount->username,
-            'password' => Crypt::decryptString($objGatewayAccount->password),     // mật khẩu GỐC, SDK tự băm
-            'private_key' => $objGatewayAccount->private_key,
-            'merchant_id' => $objGatewayAccount->merchant_id,
-            'merchant_key' => '',
-            'secret_key' => $objGatewayAccount->secret_key,
+            dd([
+                'title'             => 'KẾT QUẢ TEST TẠO VIRTUAL ACCOUNT (GPAY V2)',
+                'gateway_account'   => [
+                    'id'            => $objGatewayAccount->id,
+                    'name'          => $objGatewayAccount->name,
+                    'merchant_code' => $gpayV2->getMerchantCode(),
+                    'client_id'     => $gpayV2->getClientId(),
+                    'environment'   => $objGatewayAccount->tenant ?: 'sandbox',
+                ],
+                'input_params'      => $params,
+                'create_va_result'  => $resultCreateVA,
+                'vietqr_result'     => $vietQrResult,
+            ]);
+        }
+
+        // Hoặc test trực tiếp bằng mảng cấu hình (GpayV2::make)
+        /*
+        $gpayV2 = GpayV2::make([
+            'environment'   => 'sandbox',
+            'merchant_code' => 'PORTALJIAHAO21688',
+            'client_id'     => 'YOUR_CLIENT_ID',
+            'client_secret' => 'YOUR_CLIENT_SECRET',
+            'certificate'   => 'YOUR_CERTIFICATE',
+            'private_key'   => 'YOUR_PRIVATE_KEY',
+            'public_key'    => 'YOUR_PUBLIC_KEY',
         ]);
 
-        // $qr = $pay2pay->collection()->initializeDynamicQr('DH001', 500000, 'Thanh toan don hang');
-        // echo $qr->getData('qrInfo');
+        $resultCreateVA = $gpayV2->createVirtualAccount([
+            'account_name' => 'NGUYEN VAN A',
+            'account_type' => 'M',
+            'bank_code'    => 'BIDV',
+            'map_id'       => 'CUST_' . time(),
+            'map_type'     => 'CUSTOMER_ID',
+        ]);
+        dd($resultCreateVA);
+        */
 
-      $response = $pay2pay->payout()->banks();
-
-foreach ($response->getData() as $bank) {
-    printf("%-12s %-8s %s\n", $bank['bankId'], $bank['binCode'], $bank['shortName']);
-}
-
-        dd("done");
+        dd("Không tìm thấy tài khoản cổng gateway_id = 8 trong database.");
 
 
         dd(Crypt::decryptString("eyJpdiI6IlFmRTRJa2tPeDlPY1FkUVZrS2Rrd0E9PSIsInZhbHVlIjoiTXRHU0p4Rk5RbjVvSzRoZVJoRmhVZz09IiwibWFjIjoiNTczMTQ1Yzg3YTNkOGQwODE0ZGZlMTY0MzVmNTdmMDU3ZDQ3ZDhjZjhiMzRiYjBkNzNjZDM0ODE0MjUzMzFhNyIsInRhZyI6IiJ9"));

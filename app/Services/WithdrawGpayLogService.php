@@ -14,6 +14,7 @@ use App\Models\UserYoobilConfig;
 use App\Models\WithdrawGpayLog;
 use App\Utilities\General;
 use App\Utilities\Gpay;
+use App\Utilities\GpayV2;
 use App\Utilities\Yoobil;
 use Illuminate\Support\Facades\Validator;
 
@@ -205,14 +206,13 @@ class WithdrawGpayLogService extends AbstractService
             ])->result();
         }
 
-        $gpay              = new Gpay();
-        $objGatewayAccount = GatewayAccount::where('id', $objUserWithdraw->gateway_account_id)->where('gateway_id', 2)->first();
+        $objGatewayAccount = GatewayAccount::where('id', $objUserWithdraw->gateway_account_id)->whereIn('gateway_id', [2, 8])->first();
         if (!$objGatewayAccount) {
             $objWithdrawGpayLog->status_id = 3;
             $objWithdrawGpayLog->message   = "Không tồn tại gpay config";
             $objWithdrawGpayLog->save();
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                [__("Không tồn tại yoobil config.")]
+                [__("Không tồn tại cấu hình cổng Gpay.")]
             ])->result();
         }
 
@@ -241,13 +241,20 @@ class WithdrawGpayLogService extends AbstractService
         }
 
 
-        $strPrivateKey                     = $objGatewayAccount->private_key;
-        $fundTransfersFtToBank             = $gpay->setPrivateKey($strPrivateKey)->fundTransfersFtToBank($arrRequest);
+        if ($objGatewayAccount->gateway_id == 8) {
+            $gpayV2                = GpayV2::fromGatewayAccount($objGatewayAccount);
+            $fundTransfersFtToBank = $gpayV2->transferToBank($arrRequest);
+        } else {
+            $gpay                  = new Gpay();
+            $strPrivateKey         = $objGatewayAccount->private_key;
+            $fundTransfersFtToBank = $gpay->setPrivateKey($strPrivateKey)->fundTransfersFtToBank($arrRequest);
+        }
+
         $objWithdrawGpayLog->data_response = json_encode($fundTransfersFtToBank);
         $objWithdrawGpayLog->save();
         if (empty($fundTransfersFtToBank["success"])) {
-            $msg                           = $fundTransfersFtToBank["data"]["meta"]["internal_msg"] ?? "";
-            $code                          = $fundTransfersFtToBank["data"]["meta"]["code"] ?? "999999";
+            $msg                           = $fundTransfersFtToBank["message"] ?? ($fundTransfersFtToBank["data"]["meta"]["internal_msg"] ?? ($fundTransfersFtToBank["meta"]["msg"] ?? ""));
+            $code                          = $fundTransfersFtToBank["code"] ?? ($fundTransfersFtToBank["data"]["meta"]["code"] ?? "999999");
             $objWithdrawGpayLog->status_id = 3;
             $objWithdrawGpayLog->message   = "Lỗi " . $msg;
             $objWithdrawGpayLog->save();

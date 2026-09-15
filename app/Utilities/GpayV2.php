@@ -194,6 +194,145 @@ class GpayV2
     }
 
     /**
+     * Khởi tạo GpayV2 từ Model GatewayAccount (gateway_id = 8)
+     *
+     * @param \App\Models\GatewayAccount|object|array $gatewayAccount
+     * @param string|null $environment
+     * @return static
+     */
+    public static function fromGatewayAccount($gatewayAccount, ?string $environment = null): self
+    {
+        $instance = new static();
+
+        // 1. Password / Client Secret (Thử giải mã nếu được mã hóa)
+        $clientSecret = '';
+        $rawPassword = is_array($gatewayAccount) ? ($gatewayAccount['password'] ?? '') : ($gatewayAccount->password ?? '');
+        if (!empty($rawPassword)) {
+            try {
+                $clientSecret = \Illuminate\Support\Facades\Crypt::decryptString($rawPassword);
+            } catch (\Exception $e) {
+                $clientSecret = $rawPassword;
+            }
+        }
+        $secretKey = is_array($gatewayAccount) ? ($gatewayAccount['secret_key'] ?? '') : ($gatewayAccount->secret_key ?? '');
+        if (empty($clientSecret) && !empty($secretKey)) {
+            $clientSecret = $secretKey;
+        }
+
+        // 2. Client ID / Username
+        $username = is_array($gatewayAccount) ? ($gatewayAccount['username'] ?? '') : ($gatewayAccount->username ?? '');
+        $merchantId = is_array($gatewayAccount) ? ($gatewayAccount['merchant_id'] ?? '') : ($gatewayAccount->merchant_id ?? '');
+        $clientId = $username ?: $merchantId;
+
+        // 3. Merchant Code
+        $tenant = is_array($gatewayAccount) ? ($gatewayAccount['tenant'] ?? '') : ($gatewayAccount->tenant ?? '');
+        $merchantCode = $merchantId ?: ($tenant ?: $username);
+
+        // 4. Certificate (XCertificate)
+        $businessId = is_array($gatewayAccount) ? ($gatewayAccount['business_id'] ?? '') : ($gatewayAccount->business_id ?? '');
+        $accessToken = is_array($gatewayAccount) ? ($gatewayAccount['access_token'] ?? '') : ($gatewayAccount->access_token ?? '');
+        $certificate = $businessId ?: $accessToken;
+
+        // 5. Private Key
+        $privateKey = is_array($gatewayAccount) ? ($gatewayAccount['private_key'] ?? '') : ($gatewayAccount->private_key ?? '');
+
+        // 6. Gpay Public Key
+        $gatewayPubKey = is_array($gatewayAccount) ? ($gatewayAccount['gateway_public_key'] ?? '') : ($gatewayAccount->gateway_public_key ?? '');
+        $pubKey = is_array($gatewayAccount) ? ($gatewayAccount['public_key'] ?? '') : ($gatewayAccount->public_key ?? '');
+        $gpayPublicKey = $gatewayPubKey ?: $pubKey;
+
+        // 7. Môi trường (sandbox / production)
+        $env = $environment;
+        if (empty($env)) {
+            if (!empty($tenant) && in_array(strtolower($tenant), ['production', 'prod', 'live'])) {
+                $env = self::ENV_PRODUCTION;
+            } elseif (!empty($tenant) && in_array(strtolower($tenant), ['sandbox', 'test', 'dev'])) {
+                $env = self::ENV_SANDBOX;
+            } else {
+                $env = config('services.gpay.environment', env('GPAY_ENVIRONMENT', self::ENV_SANDBOX));
+            }
+        }
+
+        $instance->setEnvironment($env);
+        $instance->setMerchantCode($merchantCode);
+        $instance->setClientId($clientId);
+        $instance->setClientSecret($clientSecret);
+        $instance->setCertificate($certificate);
+        $instance->setPrivateKey($privateKey);
+        $instance->setGpayPublicKey($gpayPublicKey);
+
+        return $instance;
+    }
+
+    /**
+     * Tạo X.509 Certificate (RSA 2048-bit) từ Private Key
+     *
+     * @param string $privateKey
+     * @param array $distinguishedName
+     * @param int $daysValid
+     * @return string|null
+     */
+    public static function generateCertificateFromPrivateKey(string $privateKey, array $distinguishedName = [], int $daysValid = 3650): ?string
+    {
+        $privKeyResource = openssl_pkey_get_private($privateKey);
+        if (!$privKeyResource) {
+            return null;
+        }
+
+        $dn = array_merge([
+            "countryName"            => "VN",
+            "stateOrProvinceName"    => "Ha Noi",
+            "localityName"           => "Ha Noi",
+            "organizationName"       => "Merchant",
+            "organizationalUnitName" => "Payment",
+            "commonName"             => "merchant.gpay.vn",
+            "emailAddress"           => "merchant@example.com"
+        ], $distinguishedName);
+
+        $csr = openssl_csr_new($dn, $privKeyResource, ['digest_alg' => 'sha256']);
+        if (!$csr) {
+            return null;
+        }
+
+        $sscert = openssl_csr_sign($csr, null, $privKeyResource, $daysValid, ['digest_alg' => 'sha256']);
+        if (!$sscert) {
+            return null;
+        }
+
+        openssl_x509_export($sscert, $certOut);
+        return $certOut;
+    }
+
+    /**
+     * Sinh cặp khóa RSA 2048-bit và Certificate X.509
+     *
+     * @param int $bits
+     * @return array ['private_key' => ..., 'public_key' => ..., 'certificate' => ...]
+     */
+    public static function generateKeyPair(int $bits = 2048): array
+    {
+        $config = [
+            "digest_alg"       => "sha256",
+            "private_key_bits" => $bits,
+            "private_key_type" => OPENSSL_KEYTYPE_RSA,
+        ];
+
+        $res = openssl_pkey_new($config);
+        openssl_pkey_export($res, $privateKey);
+
+        $publicKeyDetails = openssl_pkey_get_details($res);
+        $publicKey        = $publicKeyDetails["key"] ?? '';
+
+        $certificate = self::generateCertificateFromPrivateKey($privateKey);
+
+        return [
+            'private_key' => $privateKey,
+            'public_key'  => $publicKey,
+            'certificate' => $certificate,
+        ];
+    }
+
+    /**
      * Nạp cấu hình từ mảng
      *
      * @param array $config

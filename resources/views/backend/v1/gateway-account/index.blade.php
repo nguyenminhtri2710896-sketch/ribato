@@ -112,7 +112,7 @@
                 <div class="modal-body">
                     <input type="hidden" name="id" id="edit-id">
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3 ajax-select2">
                             <label class="form-label">Chọn cổng thanh toán</label>
                             <select class="form-select js-data-select2" name="gateway_id" id="edit-gateway_id" data-ajax-url="{{ route('backend.gateway.ajax-select2-get-list') }}" style="width: 100%">
                                 <option value="">Chọn cổng</option>
@@ -149,6 +149,28 @@
                             <label class="form-label d-block">&nbsp;</label>
                             <button type="button" class="btn btn-warning waves-effect waves-light" onclick="gatewayAccount.generateKeyEdit()">Generate Key</button>
                         </div>
+
+                        <!-- Cấu hình riêng cho GPAY V2 (gateway_id = 8) -->
+                        <div class="col-12 gpayv2-fields" style="display: none;">
+                            <div class="border border-dashed p-3 rounded mb-3 bg-light">
+                                <h6 class="text-primary mb-3"><i class="mdi mdi-information-outline"></i> Cấu hình bổ sung GPAY V2</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Mã Merchant (Merchant Code)</label>
+                                        <input type="text" class="form-control" name="merchant_id" id="edit-merchant_id" placeholder="Mã Merchant do GPAY cấp">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Certificate / XCertificate</label>
+                                        <textarea class="form-control" name="access_token" id="edit-access_token" rows="2" placeholder="Chuỗi Certificate do GPAY cấp"></textarea>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">GPAY Public Key (Verify Webhook / IPN)</label>
+                                        <textarea class="form-control" name="gateway_public_key" id="edit-gateway_public_key" rows="3" placeholder="Khóa công khai của GPAY"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Private Key</label>
                             <textarea class="form-control" name="private_key" id="edit-private_key" rows="5" placeholder="Private Key"></textarea>
@@ -210,6 +232,28 @@
                             <label class="form-label">Tenant</label>
                             <input type="text" class="form-control" name="tenant" placeholder="Tenant">
                         </div>
+
+                        <!-- Cấu hình riêng cho GPAY V2 (gateway_id = 8) -->
+                        <div class="col-12 gpayv2-fields" style="display: none;">
+                            <div class="border border-dashed p-3 rounded mb-3 bg-light">
+                                <h6 class="text-primary mb-3"><i class="mdi mdi-information-outline"></i> Cấu hình bổ sung GPAY V2</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Mã Merchant (Merchant Code)</label>
+                                        <input type="text" class="form-control" name="merchant_id" placeholder="Mã Merchant do GPAY cấp">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Certificate / XCertificate</label>
+                                        <textarea class="form-control" name="access_token" rows="2" placeholder="Chuỗi Certificate do GPAY cấp"></textarea>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">GPAY Public Key (Verify Webhook / IPN)</label>
+                                        <textarea class="form-control" name="gateway_public_key" rows="3" placeholder="Khóa công khai của GPAY"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-12 mb-3">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label class="form-label mb-0">Private Key & Public Key</label>

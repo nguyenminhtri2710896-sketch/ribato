@@ -7,6 +7,7 @@ use App\Models\GatewayAccount;
 use App\Models\GatewayAccountHistory;
 use App\Models\UserWithdraw;
 use App\Utilities\Gpay;
+use App\Utilities\GpayV2;
 use App\Utilities\Paymenthot;
 use App\Utilities\Yoobil;
 use Illuminate\Support\Facades\Validator;
@@ -104,6 +105,7 @@ class GatewayAccountService extends AbstractService
             $arrData[] = [
                 "id" => $objBank->id,
                 "text" => $objBank->name,
+                "gateway_id" => $objBank->gateway_id,
             ];
         }
         return ["results" => $arrData, "pagination" => ["more" => $arrResult["data"]["records_total"] >= ($intLimit * $intPage) ? true : false], 'limit' => $intLimit];
@@ -138,6 +140,11 @@ class GatewayAccountService extends AbstractService
             "tenant" => $arrParams["tenant"] ?? null,
             "private_key" => $arrParams["private_key"] ?? null,
             "public_key" => $arrParams["public_key"] ?? null,
+            "gateway_public_key" => $arrParams["gateway_public_key"] ?? null,
+            "secret_key" => $arrParams["secret_key"] ?? null,
+            "access_token" => $arrParams["access_token"] ?? null,
+            "merchant_id" => $arrParams["merchant_id"] ?? null,
+            "business_id" => $arrParams["business_id"] ?? null,
         ];
         
         if (!empty($arrParams["password"])) {
@@ -210,6 +217,21 @@ class GatewayAccountService extends AbstractService
         if (!empty($arrParams["public_key"])) {
             $objGatewayAccount->public_key = $arrParams["public_key"];
         }
+        if (isset($arrParams["gateway_public_key"])) {
+            $objGatewayAccount->gateway_public_key = $arrParams["gateway_public_key"];
+        }
+        if (isset($arrParams["secret_key"])) {
+            $objGatewayAccount->secret_key = $arrParams["secret_key"];
+        }
+        if (isset($arrParams["access_token"])) {
+            $objGatewayAccount->access_token = $arrParams["access_token"];
+        }
+        if (isset($arrParams["merchant_id"])) {
+            $objGatewayAccount->merchant_id = $arrParams["merchant_id"];
+        }
+        if (isset($arrParams["business_id"])) {
+            $objGatewayAccount->business_id = $arrParams["business_id"];
+        }
 
         if (!$objGatewayAccount->save()) {
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
@@ -272,7 +294,7 @@ class GatewayAccountService extends AbstractService
             ])->result();
         }
         
-        $objGatewayAccount->makeVisible(['username', 'tenant', 'private_key', 'public_key']);
+        $objGatewayAccount->makeVisible(['username', 'tenant', 'private_key', 'public_key', 'gateway_public_key', 'secret_key', 'merchant_id', 'business_id', 'access_token']);
 
         return $this->setStatusCode(0)->setMessage(__('Thành công.'))->setData($objGatewayAccount)->result();
     }
@@ -373,6 +395,17 @@ class GatewayAccountService extends AbstractService
                 $intTotalPendingBalance += $reusltTransaction["creditedAmount"] ?? 0;
             }
 
+        } elseif ($objGatewayAccount->gateway_id == 8) {
+            $gpayV2                             = GpayV2::fromGatewayAccount($objGatewayAccount);
+            $resultGetMerchantAccountInfomation = $gpayV2->getAccountInformation();
+            if (empty($resultGetMerchantAccountInfomation["success"])) {
+                return $this->setStatusCode(404)->setMessage('')->setData($resultGetMerchantAccountInfomation)->setErrors([
+                    [__('Không lấy được số dư tài khoản vui lòng kiểm tra lại: ' . ($resultGetMerchantAccountInfomation['message'] ?? ''))]
+                ])->result();
+            }
+
+            $intTotalBalance        = (int) ($resultGetMerchantAccountInfomation["amount_cash"] ?? ($resultGetMerchantAccountInfomation["data"]["amount_cash"] ?? 0));
+            $intTotalPendingBalance = (int) ($resultGetMerchantAccountInfomation["amount_revenue"] ?? ($resultGetMerchantAccountInfomation["data"]["amount_revenue"] ?? 0));
         } else {
             return $this->setStatusCode(404)->setMessage('')->setData([])->setErrors([
                 [__('Không xác định được thông tin cổng.')]

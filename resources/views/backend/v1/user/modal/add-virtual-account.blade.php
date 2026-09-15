@@ -1,7 +1,7 @@
 <!--  Large modal example -->
 <div class="modal fade bs-modal-add-user-virtual-account" tabindex="-1" role="dialog"
     aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm  modal-custom-sm">
+    <div class="modal-dialog modal-sm modal-custom-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="myLargeModalLabel">Tạo tài khoản VA</h5>
@@ -17,10 +17,26 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="has-validation ajax-select2">
-                                    <label class="mt-1 mb-1">Ngân hàng<span class="text-danger">(*)</span></label>
-                                    <select name="bank_id" class="js-data-select2  form-control form-control-custom"
-                                        data-ajax-url="{{ route('backend.bank.ajax-select2-get-list') }}?query_in_list[short_code]=MSB,BIDV,TCB"
-                                        data-placeholder="Ngân hàng"></select>
+                                    <label class="mt-1 mb-1">Tài khoản cổng<span class="text-danger">(*)</span></label>
+                                    <select name="gateway_account_id" id="va-gateway-account-id"
+                                        class="js-data-select2 form-control form-control-custom"
+                                        data-ajax-url="{{ route('backend.gateway-account.ajax-select2-get-list') }}"
+                                        data-text-placeholder="Chọn tài khoản cổng"
+                                        data-placeholder="Chọn tài khoản cổng"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="has-validation">
+                                    <label class="mt-3 mb-1">Ngân hàng<span class="text-danger">(*)</span></label>
+                                    <select name="bank_id" id="va-bank-id"
+                                        class="form-control form-control-custom"
+                                        data-ajax-url="{{ route('backend.bank.ajax-select2-get-list') }}"
+                                        data-text-placeholder="Chọn ngân hàng"
+                                        data-placeholder="Chọn ngân hàng"></select>
                                 </div>
                             </div>
                         </div>
@@ -32,19 +48,6 @@
                                     <label class="mt-3 mb-1">Chủ khoản<span class="text-danger">(*)</span></label>
                                     <input type="text" class="form-control" name="bank_account_name"
                                         placeholder="Tên chủ khoản" required>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="has-validation ajax-select2">
-                                    <label class="mt-3 mb-1">Tài khoản cổng<span class="text-danger">(*)</span></label>
-                                    <select name="gateway_account_id"
-                                        class="js-data-select2  form-control form-control-custom"
-                                        data-ajax-url="{{ route('backend.gateway-account.ajax-select2-get-list') }}"
-                                        data-placeholder="Tài khoản cổng"></select>
                                 </div>
                             </div>
                         </div>

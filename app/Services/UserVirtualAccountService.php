@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserToken;
 use App\Models\UserVirtualAccount;
 use App\Utilities\Gpay;
+use App\Utilities\GpayV2;
 use App\Utilities\Yoobil;
 use Illuminate\Support\Facades\Validator;
 
@@ -194,6 +195,34 @@ class UserVirtualAccountService extends AbstractService
                 ])->result();
             }
             $bankAccountNumber = $resultCreateVirtualAccount['data']['account_number'] ?? "";
+        } else if ($intGatewayId == 8) {
+            if (!in_array($strBankShortCode, ["BIDV", "TCB", "MSB", "VCCB", "VPB", "WOO"])) {
+                return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                    [__("Không hỗ trợ ngân hàng này cho cổng GPAY V2.")]
+                ])->result();
+            }
+
+            $urlIpnCollection = url()->route('api.gpay.ipn', ["token" => $objUserToken->token_gateway]);
+            $urlIpnPayout     = url()->route('api.gpay.ipn', ["token" => $objUserToken->token_gateway]);
+
+            $gpayV2 = GpayV2::fromGatewayAccount($objGatewayAccount);
+            $resultCreateVirtualAccount = $gpayV2->createVirtualAccount([
+                "account_name" => strtoupper($strBankAccountName),
+                "bank_code"    => $strBankShortCode,
+                "account_type" => GpayV2::VA_TYPE_MULTIPLE,
+                "map_type"     => GpayV2::MAP_TYPE_CUSTOMER_ID,
+                "map_id"       => (string) $objUser->id,
+                "description"  => "VA {$objUser->id} - {$strBankAccountName}",
+            ]);
+
+            if (empty($resultCreateVirtualAccount['success'])) {
+                return $this->setStatusCode(404)->setMessage("")->setData($resultCreateVirtualAccount)->setErrors([
+                    [__("Tạo tài khoản ảo thất bại: " . ($resultCreateVirtualAccount['message'] ?? ''))]
+                ])->result();
+            }
+
+            $bankAccountNumber = $resultCreateVirtualAccount['account_number'] ?? ($resultCreateVirtualAccount['data']['account_number'] ?? "");
+            $orderNo           = $resultCreateVirtualAccount['data']['map_id'] ?? ((string) $objUser->id);
         } else {
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
                 [__("Cổng không hợp lệ.")]
@@ -301,6 +330,32 @@ class UserVirtualAccountService extends AbstractService
             if ($resultUpdateVA['success'] == false) {
                 return $this->setStatusCode(404)->setMessage("")->setData($resultUpdateVA)->setErrors([
                     [__(($intStatusId == 1 ? "Hủy" : "Kích hoạt") . " tài khoản ảo thất bại: " . $resultUpdateVA['message'])]
+                ])->result();
+            }
+        } elseif ($objUserVirtualAccount->gateway_id == 8) {
+            $arrGatewayAccount = GatewayAccount::find($objUserVirtualAccount->gateway_account_id);
+            if (empty($arrGatewayAccount)) {
+                return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                    [__("Không tìm thấy tài khoản cổng.")]
+                ])->result();
+            }
+
+            $gpayV2 = GpayV2::fromGatewayAccount($arrGatewayAccount);
+            if ($intStatusId == 2) {
+                $resultVaStatus = $gpayV2->reopenVirtualAccount([
+                    'account_number' => $objUserVirtualAccount->bank_account_number,
+                    'bank_code'      => $objUserVirtualAccount->bank_short_code,
+                ]);
+            } else {
+                $resultVaStatus = $gpayV2->closeVirtualAccount([
+                    'account_number' => $objUserVirtualAccount->bank_account_number,
+                    'bank_code'      => $objUserVirtualAccount->bank_short_code,
+                ]);
+            }
+
+            if (empty($resultVaStatus['success'])) {
+                return $this->setStatusCode(404)->setMessage("")->setData($resultVaStatus)->setErrors([
+                    [__(($intStatusId == 1 ? "Hủy" : "Kích hoạt") . " tài khoản ảo thất bại: " . ($resultVaStatus['message'] ?? ''))]
                 ])->result();
             }
         }

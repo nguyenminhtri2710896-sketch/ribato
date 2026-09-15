@@ -1,6 +1,49 @@
 var gatewayAccount = {
     index: function () {
         this.getList();
+        this.initEvents();
+    },
+    toggleGatewayUI: function (modal, val, isImmediate) {
+        if (val == 8 || val == '8') {
+            if (isImmediate) {
+                modal.find('.gpayv2-fields').show();
+            } else {
+                modal.find('.gpayv2-fields').slideDown();
+            }
+            modal.find('input[name="username"]').attr('placeholder', 'Client ID do GPAY cấp');
+            modal.find('input[name="tenant"]').attr('placeholder', 'sandbox hoặc production');
+            if (modal.attr('id') === 'modal-edit') {
+                modal.find('input[name="password"]').attr('placeholder', 'Client Secret mới (bỏ trống nếu không đổi)');
+            } else {
+                modal.find('input[name="password"]').attr('placeholder', 'Client Secret do GPAY cấp');
+            }
+        } else {
+            if (isImmediate) {
+                modal.find('.gpayv2-fields').hide();
+            } else {
+                modal.find('.gpayv2-fields').slideUp();
+            }
+            modal.find('input[name="username"]').attr('placeholder', 'Username');
+            modal.find('input[name="tenant"]').attr('placeholder', 'Tenant');
+            if (modal.attr('id') === 'modal-edit') {
+                modal.find('input[name="password"]').attr('placeholder', 'Mật khẩu mới (bỏ trống nếu không đổi)');
+            } else {
+                modal.find('input[name="password"]').attr('placeholder', 'Mật khẩu');
+            }
+        }
+    },
+    initEvents: function () {
+        var self = this;
+        $(document).on('change select2:select', '#modal-add select[name="gateway_id"], #gateway-id-select, #edit-gateway_id, select[name="gateway_id"]', function () {
+            var val = $(this).val();
+            var modal = $(this).closest('.modal');
+            self.toggleGatewayUI(modal, val, false);
+        });
+
+        $('#modal-add').on('show.bs.modal shown.bs.modal', function () {
+            var val = $('#modal-add select[name="gateway_id"]').val();
+            self.toggleGatewayUI($('#modal-add'), val, true);
+        });
     },
     getList: function () {
         var arrColumns = [
@@ -104,10 +147,13 @@ var gatewayAccount = {
             status_id: $('#modal-add select[name="status_id"]').val(),
             username: $('#modal-add input[name="username"]').val(),
             password: $('#modal-add input[name="password"]').val(),
+            merchant_id: $('#modal-add input[name="merchant_id"]').val(),
             payout_pin: $('#modal-add input[name="payout_pin"]').val(),
             tenant: $('#modal-add input[name="tenant"]').val(),
+            access_token: $('#modal-add textarea[name="access_token"]').val(),
             private_key: $('#modal-add textarea[name="private_key"]').val(),
             public_key: $('#modal-add textarea[name="public_key"]').val(),
+            gateway_public_key: $('#modal-add textarea[name="gateway_public_key"]').val(),
         };
         $.ajax({
             url: '/gateway-account/ajax/add',
@@ -141,6 +187,9 @@ var gatewayAccount = {
                 if (res.error_code == 0) {
                     $('#modal-add textarea[name="private_key"]').val(res.data.private_key);
                     $('#modal-add textarea[name="public_key"]').val(res.data.public_key);
+                    if (res.data.certificate && $('#modal-add select[name="gateway_id"]').val() == 8) {
+                        $('#modal-add textarea[name="access_token"]').val(res.data.certificate);
+                    }
                     toastr["success"]('Tạo mã thành công');
                 } else {
                     toastr["error"]('Tạo mã thất bại');
@@ -156,10 +205,13 @@ var gatewayAccount = {
             status_id: $('#edit-status_id').val(),
             username: $('#edit-username').val(),
             password: $('#edit-password').val(),
+            merchant_id: $('#edit-merchant_id').val(),
             payout_pin: $('#edit-payout_pin').val(),
             tenant: $('#edit-tenant').val(),
+            access_token: $('#edit-access_token').val(),
             private_key: $('#edit-private_key').val(),
             public_key: $('#edit-public_key').val(),
+            gateway_public_key: $('#edit-gateway_public_key').val(),
         };
         $.ajax({
             url: '/gateway-account/ajax/update',
@@ -185,6 +237,7 @@ var gatewayAccount = {
         });
     },
     openEditModal: function (id) {
+        var self = this;
         $.ajax({
             url: '/gateway-account/ajax/get-detail',
             type: 'POST',
@@ -204,10 +257,16 @@ var gatewayAccount = {
                     $('#edit-status_id').val(data.status_id);
                     $('#edit-username').val(data.username);
                     $('#edit-password').val('');
+                    $('#edit-merchant_id').val(data.merchant_id || '');
                     $('#edit-payout_pin').val('');
-                    $('#edit-tenant').val(data.tenant);
-                    $('#edit-private_key').val(data.private_key);
-                    $('#edit-public_key').val(data.public_key);
+                    $('#edit-tenant').val(data.tenant || '');
+                    $('#edit-access_token').val(data.access_token || '');
+                    $('#edit-private_key').val(data.private_key || '');
+                    $('#edit-public_key').val(data.public_key || '');
+                    $('#edit-gateway_public_key').val(data.gateway_public_key || '');
+                    
+                    self.toggleGatewayUI($('#modal-edit'), data.gateway_id, true);
+                    
                     $('#modal-edit').modal('show');
                 } else {
                     toastr["error"](res.message || 'Không lấy được thông tin chi tiết');
@@ -227,6 +286,9 @@ var gatewayAccount = {
                 if (res.error_code == 0) {
                     $('#edit-private_key').val(res.data.private_key);
                     $('#edit-public_key').val(res.data.public_key);
+                    if (res.data.certificate && $('#edit-gateway_id').val() == 8) {
+                        $('#edit-access_token').val(res.data.certificate);
+                    }
                     toastr["success"]('Tạo mã thành công');
                 } else {
                     toastr["error"]('Tạo mã thất bại');

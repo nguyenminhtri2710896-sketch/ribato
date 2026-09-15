@@ -67,12 +67,26 @@ class GatewayController extends BaseController
         $publicKeyDetails = openssl_pkey_get_details($res);
         $publicKey = $publicKeyDetails["key"];
 
+        $dn = [
+            "countryName" => "VN",
+            "stateOrProvinceName" => "Ha Noi",
+            "localityName" => "Ha Noi",
+            "organizationName" => "Merchant",
+            "organizationalUnitName" => "Payment",
+            "commonName" => "merchant.gpay.vn",
+            "emailAddress" => "merchant@example.com"
+        ];
+        $csr = openssl_csr_new($dn, $res, ['digest_alg' => 'sha256']);
+        $sscert = openssl_csr_sign($csr, null, $res, 3650, ['digest_alg' => 'sha256']);
+        openssl_x509_export($sscert, $certificate);
+
         return response()->json([
             'error_code' => 0,
             'message' => 'Success',
             'data' => [
                 'private_key' => $privateKey,
-                'public_key' => $publicKey
+                'public_key' => $publicKey,
+                'certificate' => $certificate
             ]
         ]);
     }

@@ -170,7 +170,7 @@ class Tool extends Command
         }
         sleep(8);
         $sql = "
-            SELECT FORMAT(((SELECT SUM(balance+pending_balance) FROM gateway_accounts WHERE gateway_id IN (1,2,3) AND id !=2)+ (SELECT SUM(amount) FROM user_debits WHERE type_id!=1 AND deleted_at is null)) - ((SELECT SUM(balance) FROM users INNER JOIN user_balances ON users.id = user_balances.user_id WHERE group_id = 2) + (SELECT SUM(received_amount) FROM transactions WHERE status_id = 6 
+            SELECT FORMAT(((SELECT SUM(balance+pending_balance) FROM gateway_accounts WHERE gateway_id IN (1,2,3,8) AND id !=2)+ (SELECT SUM(amount) FROM user_debits WHERE type_id!=1 AND deleted_at is null)) - ((SELECT SUM(balance) FROM users INNER JOIN user_balances ON users.id = user_balances.user_id WHERE group_id = 2) + (SELECT SUM(received_amount) FROM transactions WHERE status_id = 6 
             )),0) as rev
             ";
         $results = \Illuminate\Support\Facades\DB::select($sql, []);

@@ -1035,7 +1035,7 @@ class UserWithdrawService extends AbstractService
                 dispatch(new WithdrawYoobilLogV2Job([
                     'id' => $objUserWithDraw->id,
                 ]))->onQueue('request');
-            } elseif ($intGatewayId == 2) {
+            } elseif ($intGatewayId == 2 || $intGatewayId == 8) {
                 dispatch(new WithdrawGPayLogV2Job([
                     'id' => $objUserWithDraw->id,
                 ]))->onQueue('request');
@@ -1043,11 +1043,6 @@ class UserWithdrawService extends AbstractService
                 dispatch(new WithdrawPaymenthotV2Job([
                     'id' => $objUserWithDraw->id,
                 ]))->onQueue('request');
-            } elseif (in_array($intGatewayId, [4, 5, 6])) {
-
-
-            } else {
-
             }
         } else {
             /**
