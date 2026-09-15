@@ -60,6 +60,7 @@ Route::group(['as' => 'api.'], function () {
 
     Route::match(['post', 'get'], '/ipn/gpay-collection', [\App\Http\Controllers\Api\V1\IpnController::class, 'gpayCollection'])->name('ipn.gpay-collection');
     Route::match(['post', 'get'], '/ipn/gpay-payout', [\App\Http\Controllers\Api\V1\IpnController::class, 'gpayPayout'])->name('ipn.gpay-payout');
+    Route::match(['post', 'get'], '/gpay/ipn', [\App\Http\Controllers\Api\V1\GpayController::class, 'ipn'])->name('gpay.ipn');
 
     Route::match(['post', 'get'], '/ipn/neox-collection', [\App\Http\Controllers\Api\V1\IpnController::class, 'neoxCollection'])->name('ipn.neox-collection');
     Route::match(['post', 'get'], '/ipn/neox-payout', [\App\Http\Controllers\Api\V1\IpnController::class, 'neoxPayout'])->name('ipn.neox-payout');
