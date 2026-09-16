@@ -731,6 +731,32 @@ class GpayV2
     }
 
     /**
+     * Tạo chuỗi cURL command tương ứng để dễ dàng copy test trên Terminal / Postman
+     *
+     * @param string $url
+     * @param string $method
+     * @param array $headers
+     * @param string|null $body
+     * @return string
+     */
+    public function buildCurlCommand(string $url, string $method = 'POST', array $headers = [], ?string $body = null): string
+    {
+        $cmd = "curl --location --request {$method} '{$url}'";
+        
+        foreach ($headers as $k => $v) {
+            $escapedHeader = str_replace("'", "'\\''", (string)$v);
+            $cmd .= " \\\n  --header '{$k}: {$escapedHeader}'";
+        }
+
+        if (!empty($body)) {
+            $escapedBody = str_replace("'", "'\\''", (string)$body);
+            $cmd .= " \\\n  --data '{$escapedBody}'";
+        }
+
+        return $cmd;
+    }
+
+    /**
      * Gửi request POST có bảo mật chữ ký số tới Gpay API
      *
      * @param string $path Đường dẫn API tương đối (VD: '/payouts/instant/transfer-to-bank')
@@ -744,7 +770,11 @@ class GpayV2
             $endpoint  = $this->baseUrl . '/' . ltrim($path, '/');
             $requestId = $customRequestId ?: ((string)Str::uuid());
             $headers   = $this->buildSecurityHeaders($body, $requestId);
+            $bodyJson  = json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
+            // Tạo chuỗi cURL command để dễ dàng test / debug
+            // $curlCommand = $this->buildCurlCommand($endpoint, 'POST', $headers, $bodyJson);
+      
             $this->initCurl();
             foreach ($headers as $k => $v) {
                 $this->curl->setHeader($k, $v);
@@ -753,21 +783,27 @@ class GpayV2
             $this->curl->setOpt(CURLOPT_SSL_VERIFYPEER, true);
 
             $this->logInfo('GPAY_V2_POST_REQUEST', [
-                'endpoint' => $endpoint,
-                'headers'  => $this->maskHeaders($headers),
-                'body'     => $body
+                'endpoint'     => $endpoint,
+                'headers'      => $this->maskHeaders($headers),
+                'body'         => $body,
+                'curl_command' => $curlCommand
             ]);
 
-            $this->curl->post($endpoint, json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            $this->curl->post($endpoint, $bodyJson);
 
             if ($this->curl->error) {
                 $errMsg = "Lỗi kết nối Gpay ({$path}): {$this->curl->errorCode} - {$this->curl->errorMessage}";
-                $this->logError('GPAY_V2_CURL_ERROR', ['error' => $errMsg, 'raw' => $this->curl->rawResponse]);
+                $this->logError('GPAY_V2_CURL_ERROR', [
+                    'error'        => $errMsg,
+                    'raw'          => $this->curl->rawResponse,
+                    'curl_command' => $curlCommand
+                ]);
                 return [
-                    'success'    => false,
-                    'message'    => $errMsg,
-                    'error_code' => $this->curl->errorCode,
-                    'raw'        => $this->curl->rawResponse
+                    'success'      => false,
+                    'message'      => $errMsg,
+                    'error_code'   => $this->curl->errorCode,
+                    'raw'          => $this->curl->rawResponse,
+                    'curl_command' => $curlCommand
                 ];
             }
 
@@ -777,23 +813,25 @@ class GpayV2
             $code = $res['meta']['code'] ?? 'ERR';
             if ((string)$code === '200') {
                 return [
-                    'success' => true,
-                    'code'    => 200,
-                    'message' => $res['meta']['msg'] ?? ($res['meta']['message'] ?? 'Thành công'),
-                    'data'    => $res['data'] ?? [],
-                    'meta'    => $res['meta'] ?? [],
-                    'raw'     => $res
+                    'success'      => true,
+                    'code'         => 200,
+                    'message'      => $res['meta']['msg'] ?? ($res['meta']['message'] ?? 'Thành công'),
+                    'data'         => $res['data'] ?? [],
+                    'meta'         => $res['meta'] ?? [],
+                    'raw'          => $res,
+                    'curl_command' => $curlCommand
                 ];
             }
 
             $msg = $res['meta']['msg'] ?? ($res['meta']['message'] ?? 'Thao tác thất bại');
             return [
-                'success' => false,
-                'code'    => $code,
-                'message' => $msg,
-                'error'   => $res['meta']['error'] ?? null,
-                'data'    => $res['data'] ?? [],
-                'raw'     => $res
+                'success'      => false,
+                'code'         => $code,
+                'message'      => $msg,
+                'error'        => $res['meta']['error'] ?? null,
+                'data'         => $res['data'] ?? [],
+                'raw'          => $res,
+                'curl_command' => $curlCommand
             ];
         } catch (\Exception $e) {
             $this->logError('GPAY_V2_EXCEPTION', ['path' => $path, 'exception' => $e->getMessage()]);
@@ -952,9 +990,10 @@ class GpayV2
                 'full_name'  => $data['full_name'] ?? '',
                 'order_id'   => $data['order_id'] ?? '',
                 'status'     => $data['status'] ?? '',
-                'request_id' => $reqId,
-                'data'       => $data,
-                'meta'       => $res['meta'] ?? []
+                'request_id'   => $reqId,
+                'data'         => $data,
+                'meta'         => $res['meta'] ?? [],
+                'curl_command' => $res['curl_command'] ?? ''
             ];
         }
 
@@ -1012,7 +1051,7 @@ class GpayV2
             return ['success' => false, 'message' => 'full_name người nhận không được để trống'];
         }
 
-        $res = $this->postSecure('/payouts/instant/transfer-to-bank', $body, $transId);
+        $res = $this->postSecure('/payouts/instant/transfer-to-bank', $body);
         if ($res['success'] && !empty($res['data'])) {
             $data   = $res['data'];
             $status = $data['transfer_status'] ?? '';
@@ -1029,7 +1068,8 @@ class GpayV2
                 'transfer_status_updated_time' => $data['transfer_status_updated_time'] ?? '',
                 'transaction_id'               => $transId,
                 'data'                         => $data,
-                'meta'                         => $res['meta'] ?? []
+                'meta'                         => $res['meta'] ?? [],
+                'curl_command'                 => $res['curl_command'] ?? ''
             ];
         }
 
@@ -1202,6 +1242,7 @@ class GpayV2
                 'qr_code_image'  => $data['qr_code_image'] ?? '',
                 'start_at'       => $data['start_at'] ?? '',
                 'expire_at'      => $data['expire_at'] ?? '',
+                'curl_command'   => $res['curl_command'] ?? '',
                 'data'           => $data,
                 'meta'           => $res['meta'] ?? []
             ];
@@ -1288,14 +1329,15 @@ class GpayV2
         if (!empty($params['map_id'])) {
             $body['map_id'] = (string)$params['map_id'];
         }
-        if (isset($params['equal_amount'])) {
+        if (isset($params['equal_amount']) && $params['equal_amount'] > 0) {
             $body['equal_amount'] = (int)$params['equal_amount'];
-        }
-        if (isset($params['min_amount'])) {
-            $body['min_amount'] = (int)$params['min_amount'];
-        }
-        if (isset($params['max_amount'])) {
-            $body['max_amount'] = (int)$params['max_amount'];
+        } else {
+            if (isset($params['min_amount']) && $params['min_amount'] > 0) {
+                $body['min_amount'] = (int)$params['min_amount'];
+            }
+            if (isset($params['max_amount']) && $params['max_amount'] > 0) {
+                $body['max_amount'] = (int)$params['max_amount'];
+            }
         }
 
         if (empty($body['account_number'])) {
@@ -1336,15 +1378,21 @@ class GpayV2
     /**
      * 2.5. API Đóng Virtual Account (POST /v1/collection/va/close)
      * 
-     * @param string $accountNumber
+    /**
+     * 2.5. API Đóng Virtual Account (POST /v1/collection/va/close)
+     * 
+     * @param string|array $accountNumber Số tài khoản ảo hoặc mảng ['account_number' => '...', 'close_reason' => '...']
      * @param string $closeReason
      * @return array
      */
-    public function closeVirtualAccount(string $accountNumber, string $closeReason = ''): array
+    public function closeVirtualAccount($accountNumber, string $closeReason = ''): array
     {
+        $accNo = is_array($accountNumber) ? ($accountNumber['account_number'] ?? '') : (string)$accountNumber;
+        $reason = is_array($accountNumber) ? ($accountNumber['close_reason'] ?? $closeReason) : $closeReason;
+
         $body = [
-            'account_number' => (string)$accountNumber,
-            'close_reason'   => (string)$closeReason
+            'account_number' => (string)$accNo,
+            'close_reason'   => (string)$reason
         ];
 
         return $this->postSecure('/collection/va/close', $body);
@@ -1353,13 +1401,15 @@ class GpayV2
     /**
      * 2.6. API Truy vấn chi tiết Virtual Account (POST /v1/collection/va/detail)
      * 
-     * @param string $accountNumber
+     * @param string|array $accountNumber Số tài khoản ảo hoặc mảng ['account_number' => '...']
      * @return array
      */
-    public function getDetailVirtualAccount(string $accountNumber): array
+    public function getDetailVirtualAccount($accountNumber): array
     {
+        $accNo = is_array($accountNumber) ? ($accountNumber['account_number'] ?? '') : (string)$accountNumber;
+
         $body = [
-            'account_number' => (string)$accountNumber
+            'account_number' => (string)$accNo
         ];
 
         return $this->postSecure('/collection/va/detail', $body);
@@ -1368,13 +1418,15 @@ class GpayV2
     /**
      * 2.7. API Re-Open mở lại Virtual Account (POST /v1/collection/va/re-open)
      * 
-     * @param string $accountNumber
+     * @param string|array $accountNumber Số tài khoản ảo hoặc mảng ['account_number' => '...']
      * @return array
      */
-    public function reopenVirtualAccount(string $accountNumber): array
+    public function reopenVirtualAccount($accountNumber): array
     {
+        $accNo = is_array($accountNumber) ? ($accountNumber['account_number'] ?? '') : (string)$accountNumber;
+
         $body = [
-            'account_number' => (string)$accountNumber
+            'account_number' => (string)$accNo
         ];
 
         return $this->postSecure('/collection/va/re-open', $body);

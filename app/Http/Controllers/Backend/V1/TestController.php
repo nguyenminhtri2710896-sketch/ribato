@@ -74,47 +74,109 @@ class TestController extends BaseController
     }
     public function index()
     {
+
+        exit;
         // =========================================================================
-        // TEST TẠO TÀI KHOẢN ẢO (VIRTUAL ACCOUNT - VA) VỚI GPAY V2
+        // TEST CHI HỘ / CHUYỂN TIỀN TỚI NGÂN HÀNG (TRANSFER TO BANK) - GPAY V2
         // =========================================================================
-        $objGatewayAccount = GatewayAccount::where('gateway_id', 8)->first();
+        $gatewayAccountId = request('gateway_account_id');
+        $objGatewayAccount = $gatewayAccountId
+            ? GatewayAccount::find($gatewayAccountId)
+            : GatewayAccount::where('gateway_id', 8)->first();
 
         if ($objGatewayAccount) {
             $gpayV2 = GpayV2::fromGatewayAccount($objGatewayAccount);
 
-            // Tham số tạo tài khoản ảo VA
-            $params = [
-                'account_name'     => 'TAMI',                         // Tên chủ tài khoản ảo
-                'account_type'     => GpayV2::VA_TYPE_MULTIPLE,               // 'M' (dùng nhiều lần) hoặc 'O' (1 lần)
-                'bank_code'        => GpayV2::BANK_BIDV,                      // BIDV, TCB, MSB, VCCB, VPB, WOO
-                'map_id'           => 'CUST_' . time(),                       // Mã định danh khách hàng duy nhất
-                'map_type'         => GpayV2::MAP_TYPE_CUSTOMER_ID,          // CUSTOMER_ID, PHONE_NUMBER, CCCD...
-                'customer_address' => 'Ha Noi, Viet Nam',
-                'description'      => 'Tao tai khoan thu ho test',
-                // 'equal_amount'  => 50000,                                 // Số tiền cố định nếu muốn gán (tùy chọn)
+            // 1. Tham số tài khoản nhận
+            $accountNumber = (string)request('account_number', '100000000555');
+            $bankCode      = (string)request('bank_code', 'BIDV');
+            $type          = (string)request('type', GpayV2::PAYOUT_TYPE_ACCOUNT_NUMBER); // 'ACCOUNT_NUMBER' hoặc 'CARD_NUMBER'
+            $amount        = (int)request('amount', 50000); // Số tiền VND (bắt buộc > 0)
+            $message       = (string)request('message', 'transfer to bank');
+            // $transactionId = (string)request('transaction_id', 'W2B_' . date('YmdHis') . '_' . rand(1000, 9999));
+            $transactionId = (string)request('transaction_id', '123456');
+            $mapId         = (string)request('map_id', 'PAYOUT_' . time());
+
+            // 2. (Tùy chọn) Truy vấn thông tin tài khoản ngân hàng trước khi chuyển tiền (Inquiry)
+            $doInquiry = request()->has('inquiry') ? (bool)request('inquiry') : true;
+            $queryAccResult = null;
+            $orderRef = request('order_ref');
+            $fullName = 'nguyen thi xuan';
+
+            if ($doInquiry) {
+                $queryAccResult = $gpayV2->queryBankAccount($accountNumber, $bankCode, $type);
+                if (!empty($queryAccResult['success']) && !empty($queryAccResult['full_name'])) {
+                    if (empty($fullName)) {
+                        $fullName = $queryAccResult['full_name'];
+                    }
+                    if (empty($orderRef) && !empty($queryAccResult['order_id'])) {
+                        $orderRef = $queryAccResult['order_id'];
+                    }
+                }
+            }
+
+            if (empty($fullName)) {
+                $fullName = 'NGUYEN VAN A';
+            }
+
+            // 3. Chuẩn bị params gọi transferToBank
+            $payoutParams = [
+                'transaction_id' => $transactionId,
+                'account_number' => $accountNumber,
+                'bank_code'      => $bankCode,
+                'amount'         => $amount,
+                'full_name'      => $fullName,
+                'type'           => $type,
+                'message'        => $message,
+                'map_id'         => $mapId,
             ];
 
-            // 1. Gọi API tạo tài khoản ảo
-            $resultCreateVA = $gpayV2->createVirtualAccount($params);
+            if (!empty($orderRef)) {
+                $payoutParams['order_ref'] = $orderRef;
+            }
 
-            // 2. Nếu thành công và có account_number, có thể lấy thêm ảnh VietQR
-            $vietQrResult = null;
-            if ($resultCreateVA['success'] && !empty($resultCreateVA['account_number'])) {
-                $vietQrResult = $gpayV2->getVietQRImage($resultCreateVA['account_number']);
+            // 4. Gọi API chuyển tiền tới tài khoản ngân hàng (Payout instant)
+            $resultTransfer = $gpayV2->transferToBank($payoutParams);
+            
+            // 5. (Tùy chọn) Truy vấn trạng thái giao dịch chi hộ vừa thực hiện
+            $queryPayoutResult = null;
+            if (request('query_status', 0)) {
+                $queryPayoutResult = $gpayV2->queryPayoutTransaction($transactionId);
             }
 
             dd([
-                'title'             => 'KẾT QUẢ TEST TẠO VIRTUAL ACCOUNT (GPAY V2)',
-                'gateway_account'   => [
+                'title'                 => 'KẾT QUẢ TEST TRANSFER TO BANK (GPAY V2)',
+                'gateway_account'       => [
                     'id'            => $objGatewayAccount->id,
                     'name'          => $objGatewayAccount->name,
                     'merchant_code' => $gpayV2->getMerchantCode(),
                     'client_id'     => $gpayV2->getClientId(),
                     'environment'   => $objGatewayAccount->tenant ?: 'sandbox',
                 ],
-                'input_params'      => $params,
-                'create_va_result'  => $resultCreateVA,
-                'vietqr_result'     => $vietQrResult,
+                'step_1_query_account'  => [
+                    'executed' => $doInquiry,
+                    'result'   => $queryAccResult,
+                ],
+                'step_2_transfer_bank'  => [
+                    'input_params' => $payoutParams,
+                    'result'       => $resultTransfer,
+                ],
+                'step_3_query_status'   => [
+                    'executed' => request('query_status', 0) ? true : false,
+                    'result'   => $queryPayoutResult,
+                ],
+                'curl_command'          => $resultTransfer['curl_command'] ?? ($queryAccResult['curl_command'] ?? ''),
+                'usage_query_params'    => [
+                    'account_number'     => 'Số tài khoản / số thẻ nhận (VD: ?account_number=19036789123456)',
+                    'bank_code'          => 'Mã ngân hàng (VD: ?bank_code=TCB|BIDV|VCB|MB|MSB|VPB|VCCB|WOO)',
+                    'amount'             => 'Số tiền VND (VD: ?amount=50000)',
+                    'full_name'          => 'Họ tên thụ hưởng (VD: ?full_name=NGUYEN+VAN+A)',
+                    'type'               => 'ACCOUNT_NUMBER hoặc CARD_NUMBER',
+                    'message'            => 'Nội dung chuyển tiền',
+                    'inquiry'            => '1 hoặc 0 (có kiểm tra tên tài khoản trước hay không)',
+                    'query_status'       => '1 hoặc 0 (có truy vấn trạng thái đơn sau khi chi không)',
+                    'gateway_account_id' => 'ID tài khoản cổng cụ thể (mặc định lấy gateway_id=8 đầu tiên)',
+                ]
             ]);
         }
 
