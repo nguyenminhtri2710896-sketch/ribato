@@ -233,7 +233,7 @@ class UserVirtualAccountService extends AbstractService
         $objUserVirtualAccount = UserVirtualAccount::create([
             "gateway_id" => $intGatewayId,
             "gateway_account_id" => $intGatewayAccountId,
-            "bank_account_name" => $strBankAccountName,
+            "bank_account_name" => ($strBankShortCode=="BIDV"?"GVA ":"") . $strBankAccountName,
             "bank_account_number" => $bankAccountNumber,
             "bank_id" => $intBankId,
             "bank_short_name" => $strBankShortCode,

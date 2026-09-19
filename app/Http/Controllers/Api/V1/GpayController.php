@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Models\UserGpayConfig;
 use App\Models\UserToken;
+use App\Models\GatewayAccount;
+use App\Models\UserVirtualAccount;
 use App\Services\AppMessageService;
 use App\Services\TransactionService;
 use App\Utilities\General;
@@ -185,6 +187,7 @@ class GpayController extends BaseController
             'amount'              => $intAmount,
             "bank_account_name"   => $strBankAccountName,
             "bank_account_number" => $strBankAccountNumber,
+            "gateway_id"=>$objGatewayAccount->gateway_id
         ]);
 
         if (isset($resultCreatePayment["error_code"]) && $resultCreatePayment["error_code"] != 0) {

@@ -613,9 +613,11 @@ class GpayV2
      * @return string Chữ ký Base64
      * @throws \Exception
      */
-    public function generateSignature(string $timestamp, string $requestId, $body): string
+    public function generateSignature(string $timestamp, string $requestId, $body = ''): string
     {
-        $bodyJson = is_array($body) ? json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : (string)$body;
+        $bodyJson = is_array($body) 
+            ? (!empty($body) ? json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '') 
+            : (string)$body;
         $rawData  = $timestamp . $requestId . $bodyJson;
 
         $pKeyResource = openssl_pkey_get_private($this->privateKey);
@@ -709,7 +711,7 @@ class GpayV2
      * @return array
      * @throws \Exception
      */
-    public function buildSecurityHeaders($body, ?string $requestId = null, ?string $timestamp = null): array
+    public function buildSecurityHeaders($body = '', ?string $requestId = null, ?string $timestamp = null): array
     {
         $tokenRes = $this->getAccessToken();
         if (!$tokenRes['success'] || empty($tokenRes['access_token'])) {
@@ -718,7 +720,9 @@ class GpayV2
 
         $requestId = $requestId ?: (string)Str::uuid();
         $timestamp = $timestamp ?: (string)time();
-        $bodyJson  = is_array($body) ? json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : (string)$body;
+        $bodyJson  = is_array($body) 
+            ? (!empty($body) ? json_encode($body, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : '') 
+            : (string)$body;
 
         $signature = $this->generateSignature($timestamp, $requestId, $bodyJson);
 
@@ -846,33 +850,43 @@ class GpayV2
     }
 
     /**
-     * Gửi request GET có Bearer token tới Gpay API
+     * Gửi request GET có Bearer token và chữ ký số tới Gpay API
      *
-     * @param string $path
+     * @param string $path Đường dẫn API tương đối (VD: '/account/information')
+     * @param array $queryParams Tham số query string (nếu có)
+     * @param string|null $customRequestId
      * @return array
      */
-    private function getSecure(string $path): array
+    private function getSecure(string $path, array $queryParams = [], ?string $customRequestId = null): array
     {
         try {
-            $endpoint = $this->baseUrl . '/' . ltrim($path, '/');
-            $tokenRes = $this->getAccessToken();
-            if (!$tokenRes['success']) {
-                return ['success' => false, 'message' => 'Không lấy được access token'];
+            $endpoint  = $this->baseUrl . '/' . ltrim($path, '/');
+            if (!empty($queryParams)) {
+                $endpoint .= '?' . http_build_query($queryParams);
             }
+            $requestId = $customRequestId ?: ((string)Str::uuid());
+            $headers   = $this->buildSecurityHeaders('', $requestId);
 
             $this->initCurl();
-            $this->curl->setHeader('Authorization', 'Bearer ' . $tokenRes['access_token']);
-            $this->curl->setHeader('Accept', 'application/json');
+            foreach ($headers as $k => $v) {
+                $this->curl->setHeader($k, $v);
+            }
             $this->curl->setOpt(CURLOPT_SSL_VERIFYHOST, 2);
             $this->curl->setOpt(CURLOPT_SSL_VERIFYPEER, true);
 
-            $this->logInfo('GPAY_V2_GET_REQUEST', ['endpoint' => $endpoint]);
+            $this->logInfo('GPAY_V2_GET_REQUEST', [
+                'endpoint' => $endpoint,
+                'headers'  => $this->maskHeaders($headers)
+            ]);
 
             $this->curl->get($endpoint);
 
             if ($this->curl->error) {
                 $errMsg = "Lỗi kết nối Gpay GET ({$path}): {$this->curl->errorCode} - {$this->curl->errorMessage}";
-                $this->logError('GPAY_V2_GET_ERROR', ['error' => $errMsg, 'raw' => $this->curl->rawResponse]);
+                $this->logError('GPAY_V2_GET_ERROR', [
+                    'error' => $errMsg,
+                    'raw'   => $this->curl->rawResponse
+                ]);
                 return [
                     'success'    => false,
                     'message'    => $errMsg,
@@ -896,15 +910,17 @@ class GpayV2
                 ];
             }
 
+            $msg = $res['meta']['msg'] ?? ($res['meta']['message'] ?? 'Thao tác thất bại');
             return [
                 'success' => false,
                 'code'    => $code,
-                'message' => $res['meta']['msg'] ?? 'Thao tác thất bại',
+                'message' => $msg,
                 'error'   => $res['meta']['error'] ?? null,
                 'data'    => $res['data'] ?? [],
                 'raw'     => $res
             ];
         } catch (\Exception $e) {
+            $this->logError('GPAY_V2_GET_EXCEPTION', ['path' => $path, 'exception' => $e->getMessage()]);
             return ['success' => false, 'message' => 'Exception: ' . $e->getMessage()];
         }
     }
