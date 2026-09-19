@@ -148,7 +148,7 @@ class GpayV2
     /**
      * @var bool Bật/tắt ghi log debug
      */
-    private $enableLog = true;
+    private $enableLog = false;
 
     /**
      * @var string|null Access Token được cache tạm thời
