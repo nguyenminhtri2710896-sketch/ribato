@@ -92,16 +92,25 @@ class GpayController extends BaseController
         $strReceivedDate      = $arrParams["created_date"] ?? ($arrParams["data"]["created_date"] ?? 0);
 
         // 4. Khởi tạo GpayV2 và Xác thực Chữ ký số RSA-SHA256
-        $objUserGpayConfig = UserGpayConfig::where('user_id', $intUserId)->first();
-        $strPublicKey      = $objUserGpayConfig ? General::beautyKey($objUserGpayConfig->gpay_public_key, "PUBLIC KEY") : config('services.gpay.public_key', env('GPAY_PUBLIC_KEY', ''));
+        // $objUserGpayConfig = UserGpayConfig::where('user_id', $intUserId)->first();
 
+
+        $objUserVirtualAccount = UserVirtualAccount::where('bank_account_number', $strBankAccountNumber)
+                        ->first();
+        if (!$objUserVirtualAccount) {
+                return $this->transactionService->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                        [__("Tài khoản chưa có VA.")]
+                ])->result();
+        }
+
+        $objGatewayAccount = GatewayAccount::where('id', $objUserVirtualAccount->gateway_account_id)->where('gateway_id', 8)->first();
+        $strPublicKey      = $objGatewayAccount ? General::beautyKey($objGatewayAccount->public_key, "PUBLIC KEY") : config('services.gpay.public_key', env('GPAY_PUBLIC_KEY', ''));
         $gpayV2 = new GpayV2([
             'gpay_public_key' => $strPublicKey,
-            'merchant_code'   => $objUserGpayConfig->merchant_id ?? '',
+            'merchant_code'   => $objGatewayAccount->merchant_id ?? '',
         ]);
 
         $verified = false;
-
         // Nếu là Webhook Thu hộ Virtual Account (VA Change Balance)
         if (isset($arrParams["action"]) && $arrParams["action"] === "CHANGE_BALANCE") {
             $vaResult = $gpayV2->handleVaWebhook($arrParams);
@@ -166,7 +175,7 @@ class GpayController extends BaseController
         }
 
         // 8. Nếu không tự detect được, tạo Payment mới và cập nhật Transaction
-        $strBankAccountName = $arrParams["account_name"] ?? ($arrParams["sender_name"] ?? "");
+        $strBankAccountName = $objUserVirtualAccount->bank_account_name;
         $intTotalBalance    = 0;
 
         $resultCreatePayment = $this->transactionService->createPayment([

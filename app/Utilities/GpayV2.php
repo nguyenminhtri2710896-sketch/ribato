@@ -79,6 +79,7 @@ class GpayV2
     const BANK_VCCB = 'VCCB';
     const BANK_VPB  = 'VPB';
     const BANK_WOO  = 'WOO';
+    const BANK_MB  = 'MB';
 
     /**
      * Loại thanh toán
@@ -504,6 +505,9 @@ class GpayV2
      */
     public function getAccessToken(bool $forceRefresh = false): array
     {
+
+
+
         if (!$forceRefresh && !empty($this->accessToken)) {
             return [
                 'success'      => true,
@@ -534,7 +538,6 @@ class GpayV2
                 'client_id'     => $this->clientId,
                 'client_secret' => $this->clientSecret,
             ];
-
             $this->initCurl();
             $this->curl->setHeader('Content-Type', 'application/json');
             $this->curl->setOpt(CURLOPT_SSL_VERIFYHOST, 2);
@@ -786,7 +789,7 @@ class GpayV2
                 'endpoint'     => $endpoint,
                 'headers'      => $this->maskHeaders($headers),
                 'body'         => $body,
-                'curl_command' => $curlCommand
+                // 'curl_command' => $curlCommand
             ]);
 
             $this->curl->post($endpoint, $bodyJson);
@@ -796,14 +799,14 @@ class GpayV2
                 $this->logError('GPAY_V2_CURL_ERROR', [
                     'error'        => $errMsg,
                     'raw'          => $this->curl->rawResponse,
-                    'curl_command' => $curlCommand
+                    // 'curl_command' => $curlCommand
                 ]);
                 return [
                     'success'      => false,
                     'message'      => $errMsg,
                     'error_code'   => $this->curl->errorCode,
                     'raw'          => $this->curl->rawResponse,
-                    'curl_command' => $curlCommand
+                    // 'curl_command' => $curlCommand
                 ];
             }
 
@@ -819,7 +822,7 @@ class GpayV2
                     'data'         => $res['data'] ?? [],
                     'meta'         => $res['meta'] ?? [],
                     'raw'          => $res,
-                    'curl_command' => $curlCommand
+                    // 'curl_command' => $curlCommand
                 ];
             }
 
@@ -831,7 +834,7 @@ class GpayV2
                 'error'        => $res['meta']['error'] ?? null,
                 'data'         => $res['data'] ?? [],
                 'raw'          => $res,
-                'curl_command' => $curlCommand
+                // 'curl_command' => $curlCommand
             ];
         } catch (\Exception $e) {
             $this->logError('GPAY_V2_EXCEPTION', ['path' => $path, 'exception' => $e->getMessage()]);

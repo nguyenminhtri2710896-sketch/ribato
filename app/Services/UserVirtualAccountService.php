@@ -196,7 +196,7 @@ class UserVirtualAccountService extends AbstractService
             }
             $bankAccountNumber = $resultCreateVirtualAccount['data']['account_number'] ?? "";
         } else if ($intGatewayId == 8) {
-            if (!in_array($strBankShortCode, ["BIDV", "TCB", "MSB", "VCCB", "VPB", "WOO"])) {
+            if (!in_array($strBankShortCode, ["BIDV","MB", "TCB", "MSB", "VCCB", "VPB", "WOO"])) {
                 return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
                     [__("Không hỗ trợ ngân hàng này cho cổng GPAY V2.")]
                 ])->result();

@@ -104,7 +104,7 @@ var userVirtualAccount = {
     applyGatewayBankFilter: function (gatewayId) {
         if (gatewayId == 8 || gatewayId == '8') {
             // Cổng GPAY V2: hỗ trợ 6 ngân hàng: BIDV, TCB, MSB, VCCB, VPB, WOO
-            this.updateBankSelect(['BIDV', 'TCB', 'MSB', 'VCCB', 'VPB', 'WOO']);
+            this.updateBankSelect(['BIDV','MB',  'TCB', 'MSB', 'VCCB', 'VPB', 'WOO']);
         } else if (gatewayId == 3 || gatewayId == '3') {
             // Cổng Yoobill: hỗ trợ BIDV
             this.updateBankSelect(['BIDV']);

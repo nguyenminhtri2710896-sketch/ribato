@@ -104,7 +104,7 @@ var userVirtualAccount = {
     applyGatewayBankFilter: function (gatewayId) {
         if (gatewayId == 8 || gatewayId == '8') {
             // Cổng GPAY V2: hỗ trợ 6 ngân hàng: BIDV, TCB, MSB, VCCB, VPB, WOO
-            this.updateBankSelect(['BIDV', 'TCB', 'MSB', 'VCCB', 'VPB', 'WOO']);
+            this.updateBankSelect(['BIDV', 'MB', 'TCB', 'MSB', 'VCCB', 'VPB', 'WOO']);
         } else if (gatewayId == 3 || gatewayId == '3') {
             // Cổng Yoobill: hỗ trợ BIDV
             this.updateBankSelect(['BIDV']);
@@ -119,7 +119,7 @@ var userVirtualAccount = {
 
         var arrCodes = Array.isArray(shortCodes) ? shortCodes : shortCodes.split(',');
         var ajaxUrl = '/bank/ajax/ajax-select2-get-list';
-        
+
         bankSelect.val(null);
         if (bankSelect.hasClass("select2-hidden-accessible")) {
             bankSelect.select2('destroy');

@@ -30,6 +30,9 @@ var transaction = {
                             case 2:
                                 nameGate = "Gpay";
                                 break;
+                            case 8:
+                                nameGate = "GpayV2";
+                                break;
                             case 3:
                                 nameGate = "Yb";
                                 break;
