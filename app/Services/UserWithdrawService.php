@@ -847,12 +847,12 @@ class UserWithdrawService extends AbstractService
             $objGatewayAccount = GatewayAccount::whereIn('gateway_id', [4, 5, 6])->where('balance', '>', $intAmount)->orderBy('balance', 'DESC')->first();
             if (!$objGatewayAccount) {
                 return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                    [__("Lỗi cấu hình, vui lòng liên hệ quản trị.")]
+                    [__("Lỗi cấu hình, vui lòng liên hệ quản trị..")]
                 ])->result();
             }
         } else {
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                [__("Lỗi cấu hình, vui lòng liên hệ quản trị.")]
+                [__("Lỗi cấu hình, vui lòng liên hệ quản trị...")]
             ])->result();
         }
 
