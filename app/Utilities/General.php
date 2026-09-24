@@ -197,7 +197,7 @@ class General
     {
 
         if (empty($array)) {
-            return "";
+            return [];
         }
         $arrTemp = [];
         foreach ($array as $key => $val) {
