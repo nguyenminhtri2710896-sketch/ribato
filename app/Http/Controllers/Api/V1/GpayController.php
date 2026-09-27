@@ -97,12 +97,12 @@ class GpayController extends BaseController
         // $objUserGpayConfig = UserGpayConfig::where('user_id', $intUserId)->first();
 
 
-        $objUserVirtualAccount = UserVirtualAccount::where('bank_account_number', $strBankAccountNumber)
-                        ->first();
+        $objUserVirtualAccount = UserVirtualAccount::where('bank_account_number', $strBankAccountNumber)  ->first();
         if (!$objUserVirtualAccount) {
-                return $this->transactionService->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                        [__("Tài khoản chưa có VA.")]
-                ])->result();
+            return response()->json([
+                'status'  => false,
+                'message' => 'Tài khoản chưa có VA.'
+            ], 404);
         }
 
         $objGatewayAccount = GatewayAccount::where('id', $objUserVirtualAccount->gateway_account_id)->where('gateway_id', 8)->first();
@@ -176,18 +176,37 @@ class GpayController extends BaseController
             return response()->json($resultDetectCodeTransaction);
         }
 
+
+        $intUserId = $objUserToken->user_id;
+        $intUserTokenId = $objUserToken->id;
+        $strBankShortName = "";
+        $strBankShortCode = "";
+        $objUserVirtualAccount = UserVirtualAccount::where('bank_account_number', $strBankAccountNumber)->first();
+        if ($objUserVirtualAccount) {
+                $objUserToken = UserToken::where('user_id', $objUserVirtualAccount->user_id)->first();
+                $intUserId = $objUserToken->user_id;
+                $intUserTokenId = $objUserToken->id;
+
+                $strBankShortName = $objUserVirtualAccount->bank_short_name;
+                $strBankShortCode = $objUserVirtualAccount->bank_short_code;
+        }
+
+
+
         // 8. Nếu không tự detect được, tạo Payment mới và cập nhật Transaction
         $strBankAccountName = $objUserVirtualAccount->bank_account_name;
         $intTotalBalance    = 0;
 
         $resultCreatePayment = $this->transactionService->createPayment([
-            "user_id"             => $objUserToken->user_id,
+            "user_id"             => $intUserId,
             'ref_code'            => $strTradeNo,
-            'user_token_id'       => $objUserToken->id,
+            'user_token_id'       => $intUserTokenId,
             'amount'              => $intAmount,
             "bank_account_name"   => $strBankAccountName,
             "bank_account_number" => $strBankAccountNumber,
-            "gateway_id"=>$objGatewayAccount->gateway_id
+            "gateway_id"          =>$objGatewayAccount->gateway_id,
+            "bank_short_name"     => $strBankShortName,
+            "bank_short_code"     => $strBankShortCode,
         ]);
 
         if (isset($resultCreatePayment["error_code"]) && $resultCreatePayment["error_code"] != 0) {
