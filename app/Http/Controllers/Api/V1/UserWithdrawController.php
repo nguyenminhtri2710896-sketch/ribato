@@ -91,7 +91,7 @@ class UserWithdrawController extends BaseController
             unset($arrParams["query"]["updated_at_to"]);
         }
 
-        if ((auth()->user()->id == 900 || auth()->user()->id == 897 || auth()->user()->id == 904 || auth()->user()->id == 16 || auth()->user()->id == 61) && empty($arrParams["show_full_transaction"]) && empty($arrParams["query"]["show_full_transaction"])) {
+        if ((auth()->user()->id == 900 ||auth()->user()->id == 1010 ||auth()->user()->id == 1013 || auth()->user()->id == 897 || auth()->user()->id == 904 || auth()->user()->id == 16 || auth()->user()->id == 61) && empty($arrParams["show_full_transaction"]) && empty($arrParams["query"]["show_full_transaction"])) {
             $arrParams["query_not_like"]["remark"] = "SA%";
         }
 
