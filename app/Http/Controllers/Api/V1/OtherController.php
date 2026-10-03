@@ -7,6 +7,7 @@ use App\Services\UserWithdrawService;
 use App\Services\WithdrawPaymenthotLogService;
 use App\Services\WithdrawYoobilLogService;
 use App\Utilities\General;
+use App\Utilities\GpayV2;
 use App\Utilities\Paymenthot;
 
 class OtherController extends BaseController
@@ -177,6 +178,31 @@ class OtherController extends BaseController
             ])->result();
         }
         
+
+        $intGatewayAccountId = (int) request('gateway_account_id');
+       
+        if(!empty(env('CHECK_INFO_BANK_WITH_ACCOUNT'))){
+           $intGatewayAccountId = (int) env('CHECK_INFO_BANK_WITH_ACCOUNT'); 
+        }
+
+        if ($intGatewayAccountId) {
+            $objGpayAccount = GatewayAccount::where('id', $intGatewayAccountId)->where('gateway_id', 8)->first();
+            if ($objGpayAccount) {
+                $gpayV2 = GpayV2::fromGatewayAccount($objGpayAccount);
+                $resQuery = $gpayV2->queryBankAccount((string) $arrParams["bank_account_number"], (string) $arrParams["bank_code"]);
+                if (empty($resQuery["success"]) || empty($resQuery["full_name"])) {
+                    return $withdrawPaymenthotLogService->setStatusCode(404)->setMessage("")->setData($resQuery)->setErrors([
+                        [__("Không lấy được thông tin chủ khoản.")]
+                    ])->result();
+                }
+
+                return $withdrawPaymenthotLogService->setStatusCode(0)->setMessage(__('Thành công.'))->setData([
+                    'bank_code' => $arrParams['bank_code'],
+                    'bank_account_number' => $arrParams['bank_account_number'],
+                    'bank_account_name' => str_replace("  ", " ", trim($resQuery["full_name"])),
+                ])->result();
+            }
+        }
 
         $objGatewayAccount = GatewayAccount::where('id', 12)->where('gateway_id', 1)->first();
         $checkToken = $withdrawPaymenthotLogService->checkTokenCreateRequestV2($objGatewayAccount->id);

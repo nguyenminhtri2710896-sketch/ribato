@@ -216,11 +216,11 @@ class UserWithdrawService extends AbstractService
             ])->result();
         }
 
-        if ($intAmount % 10 != 0) {
-            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                [__("Số tiền yêu cầu rút phải là bội số của " . number_format(10) . "đ.")]
-            ])->result();
-        }
+        // if ($intAmount % 10 != 0) {
+        //     return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+        //         [__("Số tiền yêu cầu rút phải là bội số của " . number_format(10) . "đ.")]
+        //     ])->result();
+        // }
 
 
 
@@ -540,11 +540,11 @@ class UserWithdrawService extends AbstractService
         }
 
 
-        if ($intAmount % 10 != 0) {
-            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                [__("Số tiền yêu cầu rút phải là bội số của " . number_format(10) . "đ.")]
-            ])->result();
-        }
+        // if ($intAmount % 10 != 0) {
+        //     return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+        //         [__("Số tiền yêu cầu rút phải là bội số của " . number_format(10) . "đ.")]
+        //     ])->result();
+        // }
 
         /**
          * Lấy phí IN 
@@ -751,11 +751,11 @@ class UserWithdrawService extends AbstractService
             ])->result();
         }
 
-        if ($intAmount % 10 != 0) {
-            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                [__("Số tiền yêu cầu rút phải là bội số của " . number_format(10) . "đ.")]
-            ])->result();
-        }
+        // if ($intAmount % 10 != 0) {
+        //     return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+        //         [__("Số tiền yêu cầu rút phải là bội số của " . number_format(10) . "đ.")]
+        //     ])->result();
+        // }
 
         $objUserBalance = UserBalance::where(["user_id" => $objUser->id])->first();
         if (!$objUserBalance) {

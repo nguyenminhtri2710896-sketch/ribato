@@ -639,11 +639,11 @@ class UserService extends AbstractService
         $intUserId = $arrParams["user_id"];
         $strEmail = trim($arrParams["email"]);
         $intAmount = trim($arrParams["amount"]);
-        if ($intAmount % 10 !== 0) {
-            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
-                [__("Số tiền phải là bội số của :amountđ.", ["amount" => number_format(10)])]
-            ])->result();
-        }
+        // if ($intAmount % 10 !== 0) {
+        //     return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+        //         [__("Số tiền phải là bội số của :amountđ.", ["amount" => number_format(10)])]
+        //     ])->result();
+        // }
 
         $objUser = User::where(["email" => $strEmail])->first();
         if (empty($objUser)) {
