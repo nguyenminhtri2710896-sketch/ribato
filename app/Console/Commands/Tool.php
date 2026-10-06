@@ -93,8 +93,9 @@ class Tool extends Command
     }
 
     public function syncAmountPendding()
-    {
-        User::update([
+    {   
+        $objUser = User::get();
+        $objUser->update([
             'user_balance_n1'=>0,
             'user_balance_n2'=>0,
             'user_balance_n3'=>0,
