@@ -93,13 +93,14 @@ class Tool extends Command
     }
 
     public function syncAmountPendding()
-    {   
-        $objUser = User::get();
-        $objUser->update([
-            'user_balance_n1'=>0,
-            'user_balance_n2'=>0,
-            'user_balance_n3'=>0,
-        ]);
+    {
+        $objUsers = User::get();
+        foreach ($objUsers as $objUser) {
+            $objUser->user_balance_n1 = 0;
+            $objUser->user_balance_n2 = 0;
+            $objUser->user_balance_n3 = 0;
+            $objUser->save();
+        }
         
         $obTransactions = Transaction::select(\DB::raw('SUM(amount_after_fee) as amount_pendding,user_id'))->where('status_id', 6)->where('for_control_yyyymmdd', date('Ymd'))->groupBy('user_id')->get();
         foreach ($obTransactions as $obTransaction) {
