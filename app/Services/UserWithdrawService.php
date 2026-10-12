@@ -809,6 +809,7 @@ class UserWithdrawService extends AbstractService
          */
         $intTotalWithdrawAccountBankToday = UserWithdraw::where('user_id', $intUserId)
             ->where('bank_account_number', $strBankAccountNumber)
+            ->where('is_tranfer_local', 0)
             ->where('bank_id', $intBankId)
             ->whereIn('status_id', [1, 2, 4, 5])
             ->where('created_at', ">", date('Y-m-d H:i:s', time() - (60 * 60 * 24)))
@@ -826,6 +827,7 @@ class UserWithdrawService extends AbstractService
 
         $intTotalWithdrawToday = UserWithdraw::where('user_id', $intUserId)
             ->whereIn('status_id', [1, 2, 4, 5])
+            ->where('is_tranfer_local', 0)
             ->whereDate('created_at', date('Y-m-d'))
             ->sum('amount');
 
