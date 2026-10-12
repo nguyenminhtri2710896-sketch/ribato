@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $agent = new Agent();
-        if ($this->app->environment('production')) {
+        if ($this->app->environment(['production', 'sandbox'])) {
             \URL::forceScheme('https');
         }
         if (request()->isSecure()) {

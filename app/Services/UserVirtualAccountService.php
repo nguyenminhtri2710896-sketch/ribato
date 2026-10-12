@@ -187,7 +187,26 @@ class UserVirtualAccountService extends AbstractService
          * YOOBILL
          */
         $orderNo = "";
-        if ($intGatewayId == 3) {
+        if (app()->environment('sandbox')) {
+            /**
+             * SANDBOX: tạo VA giả lập, không gọi đến cổng thanh toán hay dịch vụ bên ngoài nào
+             */
+            if ($intGatewayId == 3) {
+                $urlIpnCollection = url()->route('api.ipn.yoobil-collection', ["token" => $objUserToken->token_gateway]);
+                $urlIpnPayout = url()->route('api.ipn.yoobil-payout', ["token" => $objUserToken->token_gateway]);
+            } elseif ($intGatewayId == 8) {
+                $urlIpnCollection = url()->route('api.gpay.ipn', ["token" => $objUserToken->token_gateway]);
+                $urlIpnPayout = $urlIpnCollection;
+            } else {
+                $urlIpnCollection = url()->route('api.ipn.gpay-collection', ["token" => $objUserToken->token_gateway]);
+                $urlIpnPayout = url()->route('api.ipn.gpay-payout', ["token" => $objUserToken->token_gateway]);
+            }
+
+            do {
+                $bankAccountNumber = "SBX" . $strBankShortCode . random_int(10000000000, 99999999999);
+            } while (UserVirtualAccount::where('bank_account_number', $bankAccountNumber)->exists());
+            $orderNo = "SBX" . $objUser->id . "_" . uniqid();
+        } else if ($intGatewayId == 3) {
             if ($strBankShortCode != "BIDV") {
                 return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
                     [__("Không hỗ trợ ngân hàng này.")]
@@ -351,7 +370,9 @@ class UserVirtualAccountService extends AbstractService
             ])->result();
         }
 
-        if ($objUserVirtualAccount->gateway_id == 3) {
+        if (app()->environment('sandbox')) {
+            // SANDBOX: chỉ cập nhật trạng thái nội bộ, không gọi cổng thanh toán
+        } elseif ($objUserVirtualAccount->gateway_id == 3) {
             $arrGatewayAccount = GatewayAccount::find($objUserVirtualAccount->gateway_account_id);
             if (empty($arrGatewayAccount)) {
                 return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
