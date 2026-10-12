@@ -118,11 +118,11 @@ class UserVirtualAccountController extends BaseController
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"bank_code","bank_account_name"},
-     *                 @OA\Property(property="bank_code", type="string", description="Mã ngân hàng (VD: MSB, TCB, MB), phải nằm trong danh sách ngân hàng được cấu hình cho user"),
-     *                 @OA\Property(property="bank_account_name", type="string"),
-     *                 @OA\Property(property="account_type", type="string", description="O: dùng 1 lần, M: dùng nhiều lần (mặc định M)"),
-     *                 @OA\Property(property="min_amount", type="integer", description="Giá trị tối thiểu mỗi giao dịch"),
-     *                 @OA\Property(property="max_amount", type="integer", description="Giá trị tối đa mỗi giao dịch"),
+     *                 @OA\Property(property="bank_code", type="string", example="MSB", description="Mã ngân hàng tạo VA (VD: MSB, TCB, MB). Phải nằm trong danh sách ngân hàng đã được cấu hình cho tài khoản, nếu không sẽ báo lỗi."),
+     *                 @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Tên chủ tài khoản VA, hệ thống tự chuyển thành chữ in hoa."),
+     *                 @OA\Property(property="account_type", type="string", enum={"O","M"}, default="M", example="M", description="Loại tài khoản VA. <b>O</b>: dùng 1 lần (One-time, tự đóng sau khi nhận tiền). <b>M</b>: dùng nhiều lần (Multiple). Không truyền thì mặc định M. Chỉ áp dụng cho cổng GPAY V2."),
+     *                 @OA\Property(property="min_amount", type="integer", minimum=0, example=10000, description="Số tiền tối thiểu cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &lt;= max_amount. Chỉ áp dụng cho cổng GPAY V2."),
+     *                 @OA\Property(property="max_amount", type="integer", minimum=0, example=5000000, description="Số tiền tối đa cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &gt;= min_amount. Chỉ áp dụng cho cổng GPAY V2."),
      *                 @OA\Property(property="sign", type="string")
      *             )
      *         )

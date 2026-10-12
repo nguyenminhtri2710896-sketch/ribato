@@ -1202,23 +1202,36 @@
                                 ],
                                 "properties": {
                                     "bank_code": {
-                                        "description": "Mã ngân hàng (VD: MSB, TCB, MB), phải nằm trong danh sách ngân hàng được cấu hình cho user",
-                                        "type": "string"
+                                        "description": "Mã ngân hàng tạo VA (VD: MSB, TCB, MB). Phải nằm trong danh sách ngân hàng đã được cấu hình cho tài khoản, nếu không sẽ báo lỗi.",
+                                        "type": "string",
+                                        "example": "MSB"
                                     },
                                     "bank_account_name": {
-                                        "type": "string"
+                                        "description": "Tên chủ tài khoản VA, hệ thống tự chuyển thành chữ in hoa.",
+                                        "type": "string",
+                                        "example": "NGUYEN VAN A"
                                     },
                                     "account_type": {
-                                        "description": "O: dùng 1 lần, M: dùng nhiều lần (mặc định M)",
-                                        "type": "string"
+                                        "description": "Loại tài khoản VA. <b>O</b>: dùng 1 lần (One-time, tự đóng sau khi nhận tiền). <b>M</b>: dùng nhiều lần (Multiple). Không truyền thì mặc định M. Chỉ áp dụng cho cổng GPAY V2.",
+                                        "type": "string",
+                                        "default": "M",
+                                        "enum": [
+                                            "O",
+                                            "M"
+                                        ],
+                                        "example": "M"
                                     },
                                     "min_amount": {
-                                        "description": "Giá trị tối thiểu mỗi giao dịch",
-                                        "type": "integer"
+                                        "description": "Số tiền tối thiểu cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &lt;= max_amount. Chỉ áp dụng cho cổng GPAY V2.",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 10000
                                     },
                                     "max_amount": {
-                                        "description": "Giá trị tối đa mỗi giao dịch",
-                                        "type": "integer"
+                                        "description": "Số tiền tối đa cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &gt;= min_amount. Chỉ áp dụng cho cổng GPAY V2.",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 5000000
                                     },
                                     "sign": {
                                         "type": "string"
