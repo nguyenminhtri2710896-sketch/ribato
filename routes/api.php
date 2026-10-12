@@ -100,6 +100,7 @@ Route::group(['as' => 'api.'], function () {
 
 
              Route::match(['post', 'get'], '/user-virtual-account/get-list', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'getList'])->name('user-virtual-account.get-list');
+             Route::match(['post'], '/user-virtual-account/create', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'create'])->name('user-virtual-account.create');
 
             // Route::match(['post', 'get'], '/report/get-total-transaction-amount', [\App\Http\Controllers\Api\V1\ReportController::class, 'getTotalTransactionAmount'])->name('report.get-total-transaction-amount');
 

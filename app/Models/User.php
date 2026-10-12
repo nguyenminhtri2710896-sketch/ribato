@@ -23,6 +23,8 @@ class User extends Authenticatable implements JWTSubject
         'id',
         'gateway_withdraw_ids',
         'gateway_collection_ids',
+        'va_gateway_account_id',
+        'va_bank_codes',
         'gateway_id',
         'group_id',
         'user_parent_id',

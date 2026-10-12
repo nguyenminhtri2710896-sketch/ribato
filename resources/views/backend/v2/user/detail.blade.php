@@ -354,6 +354,9 @@
                                                         </th>
                                                         <th class="text-left desktop" data-priority="2">Số TK
                                                         </th>
+                                                        <th class="text-center desktop" data-priority="4">Loại</th>
+                                                        <th class="text-right desktop" data-priority="5">Tối thiểu</th>
+                                                        <th class="text-right desktop" data-priority="5">Tối đa</th>
                                                         <th class="text-center desktop" data-priority="3">Tình trạng</th>
                                                         <th class="text-center desktop" data-priority="7">Ngày tạo</th>
                                                     </tr>

@@ -113,6 +113,39 @@ class UserVirtualAccountService extends AbstractService
         $strBankAccountName = $arrParams["bank_account_name"];
         $intBankId = $arrParams["bank_id"];
 
+        /**
+         * Loại tài khoản (O: dùng 1 lần, M: dùng nhiều lần) và hạn mức giao dịch
+         */
+        $strAccountType = strtoupper((string) ($arrParams["account_type"] ?? GpayV2::VA_TYPE_MULTIPLE));
+        $intMinAmount = isset($arrParams["min_amount"]) && $arrParams["min_amount"] !== "" ? (int) $arrParams["min_amount"] : null;
+        $intMaxAmount = isset($arrParams["max_amount"]) && $arrParams["max_amount"] !== "" ? (int) $arrParams["max_amount"] : null;
+
+        $validatedLimit = Validator::make(
+            ["account_type" => $strAccountType, "min_amount" => $intMinAmount, "max_amount" => $intMaxAmount],
+            [
+                "account_type" => "in:" . GpayV2::VA_TYPE_ONE_TIME . "," . GpayV2::VA_TYPE_MULTIPLE,
+                "min_amount" => "nullable|integer|min:0",
+                "max_amount" => "nullable|integer|min:0",
+            ],
+            [
+                "account_type.in" => __("Loại tài khoản không hợp lệ (O: dùng 1 lần, M: dùng nhiều lần)."),
+                "min_amount.integer" => __("Giá trị tối thiểu không hợp lệ."),
+                "min_amount.min" => __("Giá trị tối thiểu không hợp lệ."),
+                "max_amount.integer" => __("Giá trị tối đa không hợp lệ."),
+                "max_amount.min" => __("Giá trị tối đa không hợp lệ."),
+            ]
+        );
+        if ($validatedLimit->errors()->messages()) {
+            return $this->setStatusCode(414)->setMessage("")->setData([])->setErrors($validatedLimit->errors()->messages())->result();
+        }
+        if ($intMinAmount && $intMaxAmount && $intMinAmount > $intMaxAmount) {
+            return $this->setStatusCode(414)->setMessage("")->setData([])->setErrors([
+                [__("Giá trị tối thiểu không được lớn hơn giá trị tối đa.")]
+            ])->result();
+        }
+        $intMinAmount = $intMinAmount ?: null;
+        $intMaxAmount = $intMaxAmount ?: null;
+
 
         $objGatewayAccount = GatewayAccount::where('id', $intGatewayAccountId)->first();
         if (empty($objGatewayAccount)) {
@@ -144,6 +177,12 @@ class UserVirtualAccountService extends AbstractService
         }
 
         $strBankShortCode = $objBank->short_code;
+        if ($objGatewayAccount->gateway_id != 8) {
+            // Chỉ cổng GPAY V2 hỗ trợ loại tài khoản và hạn mức
+            $strAccountType = GpayV2::VA_TYPE_MULTIPLE;
+            $intMinAmount = null;
+            $intMaxAmount = null;
+        }
         /**
          * YOOBILL
          */
@@ -209,10 +248,13 @@ class UserVirtualAccountService extends AbstractService
             $resultCreateVirtualAccount = $gpayV2->createVirtualAccount([
                 "account_name" => strtoupper($strBankAccountName),
                 "bank_code"    => $strBankShortCode,
-                "account_type" => GpayV2::VA_TYPE_MULTIPLE,
+                "account_type" => $strAccountType,
                 "map_type"     => GpayV2::MAP_TYPE_CUSTOMER_ID,
-                "map_id"       => (string) $objUser->id,
+                // VA dùng 1 lần cần map_id duy nhất cho mỗi lần tạo
+                "map_id"       => $strAccountType == GpayV2::VA_TYPE_ONE_TIME ? ($objUser->id . "_" . uniqid()) : (string) $objUser->id,
                 "description"  => "VA {$objUser->id} - {$strBankAccountName}",
+                "min_amount"   => $intMinAmount,
+                "max_amount"   => $intMaxAmount,
             ]);
 
             if (empty($resultCreateVirtualAccount['success'])) {
@@ -242,6 +284,9 @@ class UserVirtualAccountService extends AbstractService
             "ipn_payout" => $urlIpnPayout,
             "ipn_collection" => $urlIpnCollection,
             "order_no" => $orderNo,
+            "account_type" => $strAccountType,
+            "min_amount" => $intMinAmount,
+            "max_amount" => $intMaxAmount,
         ]);
 
         if (!$objUserVirtualAccount) {

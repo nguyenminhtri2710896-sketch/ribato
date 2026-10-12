@@ -89,7 +89,7 @@ class BankController extends BaseController
             ];
             unset($arrParams["query"]["name"]);
         }
-        return response()->json($this->bankService->responseSelect2($this->bankService->getList($arrParams)));
+        return response()->json($this->bankService->responseSelect2($this->bankService->getList($arrParams), request('value_field') == 'short_code' ? 'short_code' : 'id'));
     }
     public function add()
     {

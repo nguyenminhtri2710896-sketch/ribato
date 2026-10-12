@@ -68,6 +68,7 @@ var userVirtualAccount = {
 
         // Khi mở modal tạo VA
         $('.bs-modal-add-user-virtual-account').on('show.bs.modal', function () {
+            $('.bs-modal-add-user-virtual-account .va-gateway-v2-field').hide();
             var selectGateway = $('.bs-modal-add-user-virtual-account select[name="gateway_account_id"]');
             var gatewayAccountId = selectGateway.val();
             var gatewayId = selectGateway.data('selected-gateway-id');
@@ -102,6 +103,14 @@ var userVirtualAccount = {
         });
     },
     applyGatewayBankFilter: function (gatewayId) {
+        // Loại tài khoản & hạn mức chỉ áp dụng cho cổng GPAY V2
+        var isV2 = (gatewayId == 8);
+        var v2Fields = $('.bs-modal-add-user-virtual-account .va-gateway-v2-field');
+        v2Fields.toggle(isV2);
+        if (!isV2) {
+            v2Fields.find('select').val('M');
+            v2Fields.find('input').val('');
+        }
         if (gatewayId == 8 || gatewayId == '8') {
             // Cổng GPAY V2: hỗ trợ 6 ngân hàng: BIDV, TCB, MSB, VCCB, VPB, WOO
             this.updateBankSelect(['BIDV', 'MB', 'TCB', 'MSB', 'VCCB', 'VPB', 'WOO']);
@@ -155,6 +164,30 @@ var userVirtualAccount = {
             { data: 'bank_short_name', sortable: false },
             { data: 'bank_account_name', sortable: false },
             { data: 'bank_account_number', sortable: false },
+            {
+                className: "text-center",
+                data: 'account_type',
+                sortable: false,
+                mRender: function (data) {
+                    return data == 'O' ? 'Dùng 1 lần' : 'Dùng nhiều lần';
+                }
+            },
+            {
+                className: "text-right",
+                data: 'min_amount',
+                sortable: false,
+                mRender: function (data) {
+                    return data ? $.fn.dataTable.render.number(',', '.', 0).display(data) : '-';
+                }
+            },
+            {
+                className: "text-right",
+                data: 'max_amount',
+                sortable: false,
+                mRender: function (data) {
+                    return data ? $.fn.dataTable.render.number(',', '.', 0).display(data) : '-';
+                }
+            },
             {
                 className: "text-center",
                 data: null,

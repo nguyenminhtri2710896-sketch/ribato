@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Bank;
 use App\Exports\UserExport;
 
 use App\Models\GatewayAccount;
@@ -940,6 +941,21 @@ class UserService extends AbstractService
             ];
         }
 
+        $arrVaBanks = [];
+        if (!empty($objUser->va_bank_codes)) {
+            foreach (Bank::whereIn('short_code', explode(",", $objUser->va_bank_codes))->get() as $objVaBank) {
+                $arrVaBanks[] = ["id" => $objVaBank->short_code, "name" => $objVaBank->short_code . " - " . $objVaBank->name];
+            }
+        }
+
+        $arrGatewayAccountVa = null;
+        if (!empty($objUser->va_gateway_account_id)) {
+            $objGatewayAccountVa = GatewayAccount::where('id', $objUser->va_gateway_account_id)->first();
+            if ($objGatewayAccountVa) {
+                $arrGatewayAccountVa = ["id" => $objGatewayAccountVa->id, "name" => $objGatewayAccountVa->name];
+            }
+        }
+
         $objUserWithdrawLimit = UserWithdrawLimit::where('user_id', $objUser->id)->first();
         if (empty($objUserWithdrawLimit)) {
             $objUserWithdrawLimit = UserWithdrawLimit::create([
@@ -952,7 +968,7 @@ class UserService extends AbstractService
             ]);
         }
 
-        return $this->setStatusCode(0)->setMessage(__('Thành công.'))->setData(['user' => $objUser, 'gateway_account_withdraws' => $arrGatewayAccountWithdraws, 'gateway_account_collections' => $arrGatewayAccountCollections, 'user_parent' => $objUserParent, 'user_group' => $objUserGroup, 'user_fees' => $objUserFees, 'user_balance' => $objUserBalance, 'user_withdraw_limit' => $objUserWithdrawLimit])->result();
+        return $this->setStatusCode(0)->setMessage(__('Thành công.'))->setData(['user' => $objUser, 'gateway_account_withdraws' => $arrGatewayAccountWithdraws, 'gateway_account_collections' => $arrGatewayAccountCollections, 'gateway_account_va' => $arrGatewayAccountVa, 'va_banks' => $arrVaBanks, 'user_parent' => $objUserParent, 'user_group' => $objUserGroup, 'user_fees' => $objUserFees, 'user_balance' => $objUserBalance, 'user_withdraw_limit' => $objUserWithdrawLimit])->result();
     }
 
     public function add($arrParams = [])
@@ -999,6 +1015,12 @@ class UserService extends AbstractService
         $arrParams["gateway_withdraw_ids"] = implode(",", $arrWithdrawId);
         $arrCollectionId = $arrParams["gateway_collection_ids"] ?? [];
         $arrParams["gateway_collection_ids"] = implode(",", $arrCollectionId);
+        $arrParams["va_gateway_account_id"] = !empty($arrParams["va_gateway_account_id"]) ? (int) $arrParams["va_gateway_account_id"] : null;
+        $arrVaBankCodes = array_map('strtoupper', array_filter((array) ($arrParams["va_bank_codes"] ?? [])));
+        if (!empty($arrVaBankCodes)) {
+            $arrVaBankCodes = Bank::whereIn('short_code', $arrVaBankCodes)->pluck('short_code')->toArray();
+        }
+        $arrParams["va_bank_codes"] = !empty($arrVaBankCodes) ? implode(",", $arrVaBankCodes) : null;
 
 
         if (User::where(["email" => $strEmail])->exists() === true) {
@@ -1156,6 +1178,12 @@ class UserService extends AbstractService
         $arrParams["gateway_withdraw_ids"] = implode(",", $arrWithdrawId);
         $arrCollectionId = $arrParams["gateway_collection_ids"] ?? [];
         $arrParams["gateway_collection_ids"] = implode(",", $arrCollectionId);
+        $arrParams["va_gateway_account_id"] = !empty($arrParams["va_gateway_account_id"]) ? (int) $arrParams["va_gateway_account_id"] : null;
+        $arrVaBankCodes = array_map('strtoupper', array_filter((array) ($arrParams["va_bank_codes"] ?? [])));
+        if (!empty($arrVaBankCodes)) {
+            $arrVaBankCodes = Bank::whereIn('short_code', $arrVaBankCodes)->pluck('short_code')->toArray();
+        }
+        $arrParams["va_bank_codes"] = !empty($arrVaBankCodes) ? implode(",", $arrVaBankCodes) : null;
 
 
         $objUser = User::where("id", $intId)->first();

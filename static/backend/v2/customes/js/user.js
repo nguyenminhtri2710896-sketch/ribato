@@ -77,6 +77,19 @@ var user = {
                         $select_gateway_collection_ids.trigger('change.select2');
                     }
 
+                    const $select_va_gateway_account_id = $(".get-profile-info").find("select[name='va_gateway_account_id']");
+                    if ($select_va_gateway_account_id.length > 0 && result.data.gateway_account_va) {
+                        $select_va_gateway_account_id.append(new Option(result.data.gateway_account_va.name, result.data.gateway_account_va.id, true, true)).trigger('change');
+                    }
+
+                    const $select_va_bank_codes = $(".get-profile-info").find("select[name='va_bank_codes[]']");
+                    if ($select_va_bank_codes.length > 0 && result.data.va_banks) {
+                        $.each(result.data.va_banks, function (i, n) {
+                            $select_va_bank_codes.append(new Option(n.name, n.id, true, true));
+                        });
+                        $select_va_bank_codes.trigger('change');
+                    }
+
                     if (result.data.user_withdraw_limit) {
                         var withdrawLimit = result.data.user_withdraw_limit;
                         var $frmLimit = $(".user-form-submit-withdraw-limit");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\Bank;
 use App\Services\UserVirtualAccountService;
 
 class UserVirtualAccountController extends BaseController
@@ -106,6 +107,93 @@ class UserVirtualAccountController extends BaseController
         }
         return response()->json($this->userVirtualAccountService->responseSelect2($this->userVirtualAccountService->getList($arrParams)));
     }
+    /**
+     * @OA\Post(
+     *     path="/api/user-virtual-account/create",
+     *     summary="Tạo VA (dùng 1 lần / nhiều lần, có hạn mức tối thiểu - tối đa)",
+     *     tags={"Virtual Account"},
+     *     @OA\Parameter(name="api-token", in="header", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"bank_code","bank_account_name"},
+     *                 @OA\Property(property="bank_code", type="string", description="Mã ngân hàng (VD: MSB, TCB, MB), phải nằm trong danh sách ngân hàng được cấu hình cho user"),
+     *                 @OA\Property(property="bank_account_name", type="string"),
+     *                 @OA\Property(property="account_type", type="string", description="O: dùng 1 lần, M: dùng nhiều lần (mặc định M)"),
+     *                 @OA\Property(property="min_amount", type="integer", description="Giá trị tối thiểu mỗi giao dịch"),
+     *                 @OA\Property(property="max_amount", type="integer", description="Giá trị tối đa mỗi giao dịch"),
+     *                 @OA\Property(property="sign", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="OK")
+     * )
+     * Tài khoản cổng (gateway_account_id) lấy theo cấu hình "Tài khoản cổng tạo VA" của user.
+     */
+    public function create()
+    {
+        $arrParams = request(['bank_code', 'bank_account_name', 'account_type', 'min_amount', 'max_amount']);
+        $objUser = auth()->user();
+
+        if (empty($objUser->va_gateway_account_id)) {
+            return response()->json([
+                "error_code" => 404,
+                "message" => "",
+                "system_time" => date("Y-m-d H:i:s"),
+                "errors" => [[__("Tài khoản chưa được cấu hình cổng tạo VA.")]],
+                "data" => [],
+            ]);
+        }
+
+        $strBankCode = strtoupper(trim((string) ($arrParams["bank_code"] ?? "")));
+        if ($strBankCode === "") {
+            return response()->json([
+                "error_code" => 414,
+                "message" => "",
+                "system_time" => date("Y-m-d H:i:s"),
+                "errors" => [[__("Vui lòng nhập bank_code.")]],
+                "data" => [],
+            ]);
+        }
+
+        $objBank = Bank::where('short_code', $strBankCode)->first();
+        if (empty($objBank)) {
+            return response()->json([
+                "error_code" => 404,
+                "message" => "",
+                "system_time" => date("Y-m-d H:i:s"),
+                "errors" => [[__("Không tìm thấy ngân hàng này.")]],
+                "data" => [],
+            ]);
+        }
+        $arrAllowBankCodes = array_filter(explode(",", (string) $objUser->va_bank_codes));
+        if (empty($arrAllowBankCodes)) {
+            return response()->json([
+                "error_code" => 404,
+                "message" => "",
+                "system_time" => date("Y-m-d H:i:s"),
+                "errors" => [[__("Tài khoản chưa được cấu hình ngân hàng tạo VA.")]],
+                "data" => [],
+            ]);
+        }
+        if (!in_array($strBankCode, $arrAllowBankCodes)) {
+            return response()->json([
+                "error_code" => 414,
+                "message" => "",
+                "system_time" => date("Y-m-d H:i:s"),
+                "errors" => [[__("Tài khoản không được phép tạo VA ngân hàng :bank. Ngân hàng hỗ trợ: :banks.", ["bank" => $strBankCode, "banks" => implode(", ", $arrAllowBankCodes)])]],
+                "data" => [],
+            ]);
+        }
+        unset($arrParams["bank_code"]);
+        $arrParams["bank_id"] = $objBank->id;
+
+        $arrParams["user_id"] = $objUser->id;
+        $arrParams["gateway_account_id"] = $objUser->va_gateway_account_id;
+        return response()->json($this->userVirtualAccountService->add($arrParams));
+    }
+
     public function add()
     {
         $arrParams = request()->all();

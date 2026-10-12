@@ -52,6 +52,35 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row va-gateway-v2-field">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="has-validation">
+                                    <label class="mt-3 mb-1">Loại tài khoản</label>
+                                    <select name="account_type" class="form-control form-control-custom">
+                                        <option value="M" selected>Dùng nhiều lần</option>
+                                        <option value="O">Dùng 1 lần</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row va-gateway-v2-field">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="mt-3 mb-1">Giá trị tối thiểu</label>
+                                <input type="number" min="0" class="form-control" name="min_amount"
+                                    placeholder="Không giới hạn">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="mt-3 mb-1">Giá trị tối đa</label>
+                                <input type="number" min="0" class="form-control" name="max_amount"
+                                    placeholder="Không giới hạn">
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mt-3 text-right">

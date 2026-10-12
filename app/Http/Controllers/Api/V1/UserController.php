@@ -61,7 +61,7 @@ class UserController extends BaseController
     public function add()
     {
        
-        $arrParams = request(['for_control_type', 'number_day_for_control', 'group_id', 'user_parent_id', 'first_name', 'last_name', 'phone', 'email', 'password', 'password_confirmation', 'city_id', 'district_id', 'ward_id', 'company_name', 'address', 'gateway_withdraw_ids', 'gateway_collection_ids']);
+        $arrParams = request(['for_control_type', 'number_day_for_control', 'group_id', 'user_parent_id', 'first_name', 'last_name', 'phone', 'email', 'password', 'password_confirmation', 'city_id', 'district_id', 'ward_id', 'company_name', 'address', 'gateway_withdraw_ids', 'gateway_collection_ids', 'va_gateway_account_id', 'va_bank_codes']);
         return response()->json($this->userService->add($arrParams));
     }
 
@@ -69,7 +69,7 @@ class UserController extends BaseController
     public function update()
     {
        
-        $arrParams       = request(['for_control_type', 'number_day_for_control','user_id', 'group_id', 'user_parent_id', 'first_name', 'last_name', 'password', 'password_confirmation', 'city_id', 'district_id', 'ward_id', 'company_name', 'address', 'gateway_withdraw_ids', 'gateway_collection_ids']);
+        $arrParams       = request(['for_control_type', 'number_day_for_control','user_id', 'group_id', 'user_parent_id', 'first_name', 'last_name', 'password', 'password_confirmation', 'city_id', 'district_id', 'ward_id', 'company_name', 'address', 'gateway_withdraw_ids', 'gateway_collection_ids', 'va_gateway_account_id', 'va_bank_codes']);
         $arrParams["id"] = $arrParams["user_id"];
         return response()->json($this->userService->update($arrParams));
     }

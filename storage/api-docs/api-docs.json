@@ -1176,6 +1176,66 @@
                 }
             }
         },
+        "/api/user-virtual-account/create": {
+            "post": {
+                "tags": [
+                    "Virtual Account"
+                ],
+                "summary": "Tạo VA (dùng 1 lần / nhiều lần, có hạn mức tối thiểu - tối đa)",
+                "operationId": "bf42a60665c5225fc979d1b4f40ee515",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bank_code",
+                                    "bank_account_name"
+                                ],
+                                "properties": {
+                                    "bank_code": {
+                                        "description": "Mã ngân hàng (VD: MSB, TCB, MB), phải nằm trong danh sách ngân hàng được cấu hình cho user",
+                                        "type": "string"
+                                    },
+                                    "bank_account_name": {
+                                        "type": "string"
+                                    },
+                                    "account_type": {
+                                        "description": "O: dùng 1 lần, M: dùng nhiều lần (mặc định M)",
+                                        "type": "string"
+                                    },
+                                    "min_amount": {
+                                        "description": "Giá trị tối thiểu mỗi giao dịch",
+                                        "type": "integer"
+                                    },
+                                    "max_amount": {
+                                        "description": "Giá trị tối đa mỗi giao dịch",
+                                        "type": "integer"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/api/user-withdraw/get-list": {
             "post": {
                 "tags": [

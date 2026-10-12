@@ -85,6 +85,35 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="has-validation ajax-select2">
+                                    <label class="mt-3 mb-1">Tài khoản cổng tạo VA</label>
+                                    <select name="va_gateway_account_id"
+                                        class="js-data-select2  form-control form-control-custom"
+                                        data-ajax-url="{{ route('backend.gateway-account.ajax-select2-get-list') }}"
+                                        data-allow-clear="true"
+                                        data-placeholder="Tài khoản cổng tạo VA">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="has-validation ajax-select2">
+                                    <label class="mt-3 mb-1">Ngân hàng hỗ trợ tạo VA</label>
+                                    <select name="va_bank_codes[]"
+                                        class="js-data-select2 form-control form-control-custom" multiple
+                                        data-ajax-url="{{ route('backend.bank.ajax-select2-get-list') }}?value_field=short_code"
+                                        data-placeholder="Chọn ngân hàng hỗ trợ tạo VA">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="has-validation ajax-select2">
                                     <label class="mt-3 mb-1">Tài khoản payout<span
                                             class="text-danger">(*)</span></label>
                                     <select name="gateway_withdraw_ids[]"

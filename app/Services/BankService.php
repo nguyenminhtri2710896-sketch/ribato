@@ -58,7 +58,7 @@ class BankService extends AbstractService
     }
 
 
-    public function responseSelect2($arrResult = [])
+    public function responseSelect2($arrResult = [], $strValueField = 'id')
     {
         if ($arrResult["error_code"] != 0) {
             return [];
@@ -71,8 +71,8 @@ class BankService extends AbstractService
         $arrData  = [];
         foreach ($objBanks as $objBank) {
             $arrData[] = [
-                "id" => $objBank->id,
-                "text" => $objBank->name,
+                "id" => $strValueField == 'short_code' ? $objBank->short_code : $objBank->id,
+                "text" => $strValueField == 'short_code' ? ($objBank->short_code . " - " . $objBank->name) : $objBank->name,
             ];
         }
         return ["results" => $arrData, "pagination" => ["more" => $arrResult["data"]["records_total"] >= ($intLimit * $intPage) ? true : false], 'limit' => $intLimit];
