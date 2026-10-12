@@ -110,26 +110,33 @@ class UserVirtualAccountController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/user-virtual-account/create",
-     *     summary="Tạo VA (dùng 1 lần / nhiều lần, có hạn mức tối thiểu - tối đa)",
+     *     summary="Create virtual account",
+     *     description="Creates a virtual account (VA) for the authenticated user. The payment gateway account is resolved from the user's configuration, and the bank must be one of the banks enabled for the user.",
      *     tags={"Virtual Account"},
-     *     @OA\Parameter(name="api-token", in="header", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="api-token", in="header", description="token allow create service", @OA\Schema(type="string")),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 required={"bank_code","bank_account_name"},
-     *                 @OA\Property(property="bank_code", type="string", example="MSB", description="Mã ngân hàng tạo VA (VD: MSB, TCB, MB). Phải nằm trong danh sách ngân hàng đã được cấu hình cho tài khoản, nếu không sẽ báo lỗi."),
-     *                 @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Tên chủ tài khoản VA, hệ thống tự chuyển thành chữ in hoa."),
-     *                 @OA\Property(property="account_type", type="string", enum={"O","M"}, default="M", example="M", description="Loại tài khoản VA. <b>O</b>: dùng 1 lần (One-time, tự đóng sau khi nhận tiền). <b>M</b>: dùng nhiều lần (Multiple). Không truyền thì mặc định M. Chỉ áp dụng cho cổng GPAY V2."),
-     *                 @OA\Property(property="min_amount", type="integer", minimum=0, example=10000, description="Số tiền tối thiểu cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &lt;= max_amount. Chỉ áp dụng cho cổng GPAY V2."),
-     *                 @OA\Property(property="max_amount", type="integer", minimum=0, example=5000000, description="Số tiền tối đa cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &gt;= min_amount. Chỉ áp dụng cho cổng GPAY V2."),
+     *                 @OA\Property(property="bank_code", type="string", example="MSB", description="Bank code used to create the VA (e.g. MSB, TCB, MB). It must be one of the banks enabled for your account, otherwise an error is returned."),
+     *                 @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Account holder name of the VA. It is converted to upper case automatically."),
+     *                 @OA\Property(property="account_type", type="string", enum={"O","M"}, default="M", example="M", description="Virtual account type. <b>O</b>: one-time account, closed automatically after receiving a payment. <b>M</b>: multiple-use account, can receive payments repeatedly. Defaults to M when omitted."),
+     *                 @OA\Property(property="min_amount", type="integer", minimum=0, example=10000, description="Minimum amount (VND) accepted per transaction. Integer >= 0, must not be greater than max_amount. Omit or set 0 for no limit."),
+     *                 @OA\Property(property="max_amount", type="integer", minimum=0, example=5000000, description="Maximum amount (VND) accepted per transaction. Integer >= 0, must not be less than min_amount. Omit or set 0 for no limit."),
      *                 @OA\Property(property="sign", type="string")
      *             )
      *         )
      *     ),
-     *     @OA\Response(response=200, description="OK")
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"VA gateway has not been configured for this account."},"data":null}, summary="Result error."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *         )
+     *     )
      * )
-     * Tài khoản cổng (gateway_account_id) lấy theo cấu hình "Tài khoản cổng tạo VA" của user.
      */
     public function create()
     {

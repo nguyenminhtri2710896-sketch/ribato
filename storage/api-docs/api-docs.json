@@ -1181,12 +1181,14 @@
                 "tags": [
                     "Virtual Account"
                 ],
-                "summary": "Tạo VA (dùng 1 lần / nhiều lần, có hạn mức tối thiểu - tối đa)",
+                "summary": "Create virtual account",
+                "description": "Creates a virtual account (VA) for the authenticated user. The payment gateway account is resolved from the user's configuration, and the bank must be one of the banks enabled for the user.",
                 "operationId": "bf42a60665c5225fc979d1b4f40ee515",
                 "parameters": [
                     {
                         "name": "api-token",
                         "in": "header",
+                        "description": "token allow create service",
                         "schema": {
                             "type": "string"
                         }
@@ -1202,17 +1204,17 @@
                                 ],
                                 "properties": {
                                     "bank_code": {
-                                        "description": "Mã ngân hàng tạo VA (VD: MSB, TCB, MB). Phải nằm trong danh sách ngân hàng đã được cấu hình cho tài khoản, nếu không sẽ báo lỗi.",
+                                        "description": "Bank code used to create the VA (e.g. MSB, TCB, MB). It must be one of the banks enabled for your account, otherwise an error is returned.",
                                         "type": "string",
                                         "example": "MSB"
                                     },
                                     "bank_account_name": {
-                                        "description": "Tên chủ tài khoản VA, hệ thống tự chuyển thành chữ in hoa.",
+                                        "description": "Account holder name of the VA. It is converted to upper case automatically.",
                                         "type": "string",
                                         "example": "NGUYEN VAN A"
                                     },
                                     "account_type": {
-                                        "description": "Loại tài khoản VA. <b>O</b>: dùng 1 lần (One-time, tự đóng sau khi nhận tiền). <b>M</b>: dùng nhiều lần (Multiple). Không truyền thì mặc định M. Chỉ áp dụng cho cổng GPAY V2.",
+                                        "description": "Virtual account type. <b>O</b>: one-time account, closed automatically after receiving a payment. <b>M</b>: multiple-use account, can receive payments repeatedly. Defaults to M when omitted.",
                                         "type": "string",
                                         "default": "M",
                                         "enum": [
@@ -1222,13 +1224,13 @@
                                         "example": "M"
                                     },
                                     "min_amount": {
-                                        "description": "Số tiền tối thiểu cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &lt;= max_amount. Chỉ áp dụng cho cổng GPAY V2.",
+                                        "description": "Minimum amount (VND) accepted per transaction. Integer >= 0, must not be greater than max_amount. Omit or set 0 for no limit.",
                                         "type": "integer",
                                         "minimum": 0,
                                         "example": 10000
                                     },
                                     "max_amount": {
-                                        "description": "Số tiền tối đa cho mỗi giao dịch vào VA (VND). Số nguyên &gt;= 0, không truyền hoặc 0 là không giới hạn. Phải &gt;= min_amount. Chỉ áp dụng cho cổng GPAY V2.",
+                                        "description": "Maximum amount (VND) accepted per transaction. Integer >= 0, must not be less than min_amount. Omit or set 0 for no limit.",
                                         "type": "integer",
                                         "minimum": 0,
                                         "example": 5000000
@@ -1244,7 +1246,36 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_error": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 404,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "",
+                                            "errors": [
+                                                "VA gateway has not been configured for this account."
+                                            ],
+                                            "data": null
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 0,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
