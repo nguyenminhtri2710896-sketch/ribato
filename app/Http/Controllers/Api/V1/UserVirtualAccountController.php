@@ -22,25 +22,37 @@ class UserVirtualAccountController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/user-virtual-account/get-list",
-     *     summary="Danh sách VA",
+     *     summary="Virtual account list",
+     *     description="Returns the paginated list of virtual accounts of the authenticated user. Use the <b>query</b> object to filter and the <b>sort</b> object to order the result. All filters are optional and are combined with AND.",
      *     tags={"Virtual Account"},
-     *      @OA\Parameter(
-     *         name="api-token",
-     *         in="header",
-     *         description="token allow create service",
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
+     *     @OA\Parameter(name="api-token", in="header", description="token allow create service", @OA\Schema(type="string")),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
+     *                 @OA\Property(property="page", type="integer", minimum=1, default=1, example=1, description="Page number."),
+     *                 @OA\Property(property="limit", type="integer", minimum=1, default=10, example=10, description="Number of records per page."),
      *                 @OA\Property(
-     *                     property="sign",
-     *                     type="string"
+     *                     property="query",
+     *                     type="object",
+     *                     description="Filter conditions. Unknown keys are ignored.",
+     *                     @OA\Property(property="name", type="string", example="SBXMSB", description="Search by account number (partial match)."),
+     *                     @OA\Property(property="bank_account_number", type="string", description="Exact account number."),
+     *                     @OA\Property(property="bank_short_code", type="string", example="MSB", description="Filter by bank code (e.g. MSB, TCB, MB)."),
+     *                     @OA\Property(property="status_id", type="integer", enum={1,2}, example=2, description="Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance)."),
+     *                     @OA\Property(property="account_type", type="string", enum={"O","M"}, example="M", description="Account type. <b>O</b>: one-time, <b>M</b>: multiple-use."),
+     *                     @OA\Property(property="min_amount", type="integer", description="Exact minimum amount configured on the account."),
+     *                     @OA\Property(property="max_amount", type="integer", description="Exact maximum amount configured on the account."),
+     *                     @OA\Property(property="created_at_from", type="string", example="2026-10-01", description="Created from date (inclusive, 00:00:00). Format YYYY-MM-DD."),
+     *                     @OA\Property(property="created_at_to", type="string", example="2026-10-31", description="Created to date (inclusive, 23:59:59). Format YYYY-MM-DD.")
      *                 ),
-     *                 example={"sign": "signiture data"}
+     *                 @OA\Property(
+     *                     property="sort",
+     *                     type="object",
+     *                     description="Sort order, as {column: direction}. Direction is asc or desc. Default is id desc.",
+     *                     example={"created_at": "desc"}
+     *                 ),
+     *                 @OA\Property(property="sign", type="string")
      *             )
      *         )
      *     ),
@@ -48,8 +60,8 @@ class UserVirtualAccountController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
-     *             @OA\Examples(example="result_false", value={"error_code":401,"system_time":"2023-11-24 11:15:59","message":"access_token hết hạn hoặc không được phép sử dụng","errors":{"access_token hết hạn hoặc không được phép sử dụng"},"data":null,"tranid_tracking":"bc47d534b97f7cdb4c2d5d229376915c"}, summary="Result error."),
-     *             @OA\Examples(example="result_success", value={"error_code": 200,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *             @OA\Examples(example="result_false", value={"error_code":401,"system_time":"2023-11-24 11:15:59","message":"access_token expired or not allowed","errors":{"access_token expired or not allowed"},"data":null,"tranid_tracking":"bc47d534b97f7cdb4c2d5d229376915c"}, summary="Result error."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{"user_virtual_accounts":{},"records_total":0,"page":1,"limit":10}}, summary="Result success."),
      *         )
      *     )
      * )
@@ -199,6 +211,117 @@ class UserVirtualAccountController extends BaseController
         $arrParams["user_id"] = $objUser->id;
         $arrParams["gateway_account_id"] = $objUser->va_gateway_account_id;
         return response()->json($this->userVirtualAccountService->add($arrParams));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user-virtual-account/update",
+     *     summary="Update virtual account",
+     *     description="Updates the account type (one-time / multiple-use) and the minimum / maximum amount of a virtual account. At least one of account_type, min_amount, max_amount is required.",
+     *     tags={"Virtual Account"},
+     *     @OA\Parameter(name="api-token", in="header", description="token allow create service", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"account_number"},
+     *                 @OA\Property(property="account_number", type="string", example="SBXMSB12345678901", description="Virtual account number returned when the account was created."),
+     *                 @OA\Property(property="account_type", type="string", enum={"O","M"}, example="M", description="Virtual account type. <b>O</b>: one-time account, closed automatically after receiving a payment. <b>M</b>: multiple-use account. Omit to keep the current value."),
+     *                 @OA\Property(property="min_amount", type="integer", minimum=0, example=10000, description="Minimum amount (VND) accepted per transaction. Integer >= 0, must not be greater than max_amount. Omit to keep the current value."),
+     *                 @OA\Property(property="max_amount", type="integer", minimum=0, example=5000000, description="Maximum amount (VND) accepted per transaction. Integer >= 0, must not be less than min_amount. Omit to keep the current value."),
+     *                 @OA\Property(property="sign", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *         )
+     *     )
+     * )
+     */
+    public function update()
+    {
+        $arrParams = request(['account_number', 'account_type', 'min_amount', 'max_amount']);
+        if (!auth()->user()->full_access) {
+            $arrParams["user_id"] = auth()->user()->id;
+        }
+        return response()->json($this->userVirtualAccountService->updateByAccountNumber($arrParams));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user-virtual-account/active",
+     *     summary="Activate virtual account",
+     *     description="Re-opens a virtual account so that it can receive payments again.",
+     *     tags={"Virtual Account"},
+     *     @OA\Parameter(name="api-token", in="header", description="token allow create service", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"account_number"},
+     *                 @OA\Property(property="account_number", type="string", example="SBXMSB12345678901", description="Virtual account number returned when the account was created."),
+     *                 @OA\Property(property="sign", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *         )
+     *     )
+     * )
+     */
+    public function active()
+    {
+        $arrParams = request(['account_number']);
+        if (!auth()->user()->full_access) {
+            $arrParams["user_id"] = auth()->user()->id;
+        }
+        return response()->json($this->userVirtualAccountService->changeStatusByAccountNumber($arrParams, 2));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/user-virtual-account/deactivate",
+     *     summary="Deactivate virtual account",
+     *     description="Closes a virtual account so that it can no longer receive payments.",
+     *     tags={"Virtual Account"},
+     *     @OA\Parameter(name="api-token", in="header", description="token allow create service", @OA\Schema(type="string")),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"account_number"},
+     *                 @OA\Property(property="account_number", type="string", example="SBXMSB12345678901", description="Virtual account number returned when the account was created."),
+     *                 @OA\Property(property="sign", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *         )
+     *     )
+     * )
+     */
+    public function deactivate()
+    {
+        $arrParams = request(['account_number']);
+        if (!auth()->user()->full_access) {
+            $arrParams["user_id"] = auth()->user()->id;
+        }
+        return response()->json($this->userVirtualAccountService->changeStatusByAccountNumber($arrParams, 1));
     }
 
     public function add()

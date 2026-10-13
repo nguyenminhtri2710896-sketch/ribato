@@ -1110,7 +1110,8 @@
                 "tags": [
                     "Virtual Account"
                 ],
-                "summary": "Danh sách VA",
+                "summary": "Virtual account list",
+                "description": "Returns the paginated list of virtual accounts of the authenticated user. Use the <b>query</b> object to filter and the <b>sort</b> object to order the result. All filters are optional and are combined with AND.",
                 "operationId": "19e3100e4768a1a5e07bdd3e0082998f",
                 "parameters": [
                     {
@@ -1127,14 +1128,88 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "page": {
+                                        "description": "Page number.",
+                                        "type": "integer",
+                                        "default": 1,
+                                        "minimum": 1,
+                                        "example": 1
+                                    },
+                                    "limit": {
+                                        "description": "Number of records per page.",
+                                        "type": "integer",
+                                        "default": 10,
+                                        "minimum": 1,
+                                        "example": 10
+                                    },
+                                    "query": {
+                                        "description": "Filter conditions. Unknown keys are ignored.",
+                                        "properties": {
+                                            "name": {
+                                                "description": "Search by account number (partial match).",
+                                                "type": "string",
+                                                "example": "SBXMSB"
+                                            },
+                                            "bank_account_number": {
+                                                "description": "Exact account number.",
+                                                "type": "string"
+                                            },
+                                            "bank_short_code": {
+                                                "description": "Filter by bank code (e.g. MSB, TCB, MB).",
+                                                "type": "string",
+                                                "example": "MSB"
+                                            },
+                                            "status_id": {
+                                                "description": "Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance).",
+                                                "type": "integer",
+                                                "enum": [
+                                                    1,
+                                                    2
+                                                ],
+                                                "example": 2
+                                            },
+                                            "account_type": {
+                                                "description": "Account type. <b>O</b>: one-time, <b>M</b>: multiple-use.",
+                                                "type": "string",
+                                                "enum": [
+                                                    "O",
+                                                    "M"
+                                                ],
+                                                "example": "M"
+                                            },
+                                            "min_amount": {
+                                                "description": "Exact minimum amount configured on the account.",
+                                                "type": "integer"
+                                            },
+                                            "max_amount": {
+                                                "description": "Exact maximum amount configured on the account.",
+                                                "type": "integer"
+                                            },
+                                            "created_at_from": {
+                                                "description": "Created from date (inclusive, 00:00:00). Format YYYY-MM-DD.",
+                                                "type": "string",
+                                                "example": "2026-10-01"
+                                            },
+                                            "created_at_to": {
+                                                "description": "Created to date (inclusive, 23:59:59). Format YYYY-MM-DD.",
+                                                "type": "string",
+                                                "example": "2026-10-31"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "sort": {
+                                        "description": "Sort order, as {column: direction}. Direction is asc or desc. Default is id desc.",
+                                        "type": "object",
+                                        "example": {
+                                            "created_at": "desc"
+                                        }
+                                    },
                                     "sign": {
                                         "type": "string"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "sign": "signiture data"
-                                }
+                                "type": "object"
                             }
                         }
                     }
@@ -1151,9 +1226,9 @@
                                         "value": {
                                             "error_code": 401,
                                             "system_time": "2023-11-24 11:15:59",
-                                            "message": "access_token hết hạn hoặc không được phép sử dụng",
+                                            "message": "access_token expired or not allowed",
                                             "errors": [
-                                                "access_token hết hạn hoặc không được phép sử dụng"
+                                                "access_token expired or not allowed"
                                             ],
                                             "data": null,
                                             "tranid_tracking": "bc47d534b97f7cdb4c2d5d229376915c"
@@ -1162,11 +1237,16 @@
                                     "result_success": {
                                         "summary": "Result success.",
                                         "value": {
-                                            "error_code": 200,
+                                            "error_code": 0,
                                             "message": "success",
                                             "system_time": "2023-11-24 11:15:59",
                                             "errors": [],
-                                            "data": []
+                                            "data": {
+                                                "user_virtual_accounts": [],
+                                                "records_total": 0,
+                                                "page": 1,
+                                                "limit": 10
+                                            }
                                         }
                                     }
                                 }
@@ -1259,6 +1339,255 @@
                                             "message": "",
                                             "errors": [
                                                 "VA gateway has not been configured for this account."
+                                            ],
+                                            "data": null
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 0,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-virtual-account/update": {
+            "post": {
+                "tags": [
+                    "Virtual Account"
+                ],
+                "summary": "Update virtual account",
+                "description": "Updates the account type (one-time / multiple-use) and the minimum / maximum amount of a virtual account. At least one of account_type, min_amount, max_amount is required.",
+                "operationId": "79e87640e562144237870053611b7f3e",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_number"
+                                ],
+                                "properties": {
+                                    "account_number": {
+                                        "description": "Virtual account number returned when the account was created.",
+                                        "type": "string",
+                                        "example": "SBXMSB12345678901"
+                                    },
+                                    "account_type": {
+                                        "description": "Virtual account type. <b>O</b>: one-time account, closed automatically after receiving a payment. <b>M</b>: multiple-use account. Omit to keep the current value.",
+                                        "type": "string",
+                                        "enum": [
+                                            "O",
+                                            "M"
+                                        ],
+                                        "example": "M"
+                                    },
+                                    "min_amount": {
+                                        "description": "Minimum amount (VND) accepted per transaction. Integer >= 0, must not be greater than max_amount. Omit to keep the current value.",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 10000
+                                    },
+                                    "max_amount": {
+                                        "description": "Maximum amount (VND) accepted per transaction. Integer >= 0, must not be less than min_amount. Omit to keep the current value.",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 5000000
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_error": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 404,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "",
+                                            "errors": [
+                                                "Virtual account not found."
+                                            ],
+                                            "data": null
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 0,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-virtual-account/active": {
+            "post": {
+                "tags": [
+                    "Virtual Account"
+                ],
+                "summary": "Activate virtual account",
+                "description": "Re-opens a virtual account so that it can receive payments again.",
+                "operationId": "a5a7463f9c3412a64a055a6795d6ae6f",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_number"
+                                ],
+                                "properties": {
+                                    "account_number": {
+                                        "description": "Virtual account number returned when the account was created.",
+                                        "type": "string",
+                                        "example": "SBXMSB12345678901"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_error": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 404,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "",
+                                            "errors": [
+                                                "Virtual account not found."
+                                            ],
+                                            "data": null
+                                        }
+                                    },
+                                    "result_success": {
+                                        "summary": "Result success.",
+                                        "value": {
+                                            "error_code": 0,
+                                            "message": "success",
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "errors": [],
+                                            "data": []
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user-virtual-account/deactivate": {
+            "post": {
+                "tags": [
+                    "Virtual Account"
+                ],
+                "summary": "Deactivate virtual account",
+                "description": "Closes a virtual account so that it can no longer receive payments.",
+                "operationId": "c30f364fabd0087e1820500bd68e3e1c",
+                "parameters": [
+                    {
+                        "name": "api-token",
+                        "in": "header",
+                        "description": "token allow create service",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "account_number"
+                                ],
+                                "properties": {
+                                    "account_number": {
+                                        "description": "Virtual account number returned when the account was created.",
+                                        "type": "string",
+                                        "example": "SBXMSB12345678901"
+                                    },
+                                    "sign": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "result_error": {
+                                        "summary": "Result error.",
+                                        "value": {
+                                            "error_code": 404,
+                                            "system_time": "2023-11-24 11:15:59",
+                                            "message": "",
+                                            "errors": [
+                                                "Virtual account not found."
                                             ],
                                             "data": null
                                         }

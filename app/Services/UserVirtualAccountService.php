@@ -337,6 +337,137 @@ class UserVirtualAccountService extends AbstractService
         return $this->setStatusCode(0)->setMessage(__('Thành công.'))->setData(['gateway_account' => $objUserVirtualAccount])->result();
     }
 
+    /**
+     * Tìm VA theo số tài khoản (và user_id nếu có)
+     */
+    private function findByAccountNumber($arrParams = [])
+    {
+        $strAccountNumber = trim((string) ($arrParams["account_number"] ?? ""));
+        if ($strAccountNumber === "") {
+            return null;
+        }
+
+        $objQuery = UserVirtualAccount::where('bank_account_number', $strAccountNumber);
+        if (!empty($arrParams["user_id"])) {
+            $objQuery->where('user_id', $arrParams["user_id"]);
+        }
+        return $objQuery->first();
+    }
+
+    /**
+     * Kích hoạt / hủy kích hoạt VA theo số tài khoản
+     * $intStatusId: 2 = hoạt động, 1 = ngừng hoạt động
+     */
+    public function changeStatusByAccountNumber($arrParams = [], $intStatusId = 2)
+    {
+        $objUserVirtualAccount = $this->findByAccountNumber($arrParams);
+        if (empty($objUserVirtualAccount)) {
+            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                [__("Không tìm thấy tài khoản VA.")]
+            ])->result();
+        }
+
+        return $this->changeStatus(["id" => $objUserVirtualAccount->id, "status_id" => $intStatusId]);
+    }
+
+    /**
+     * Cập nhật loại tài khoản (1 lần / nhiều lần) và hạn mức tối thiểu / tối đa của VA
+     */
+    public function updateByAccountNumber($arrParams = [])
+    {
+        $objUserVirtualAccount = $this->findByAccountNumber($arrParams);
+        if (empty($objUserVirtualAccount)) {
+            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                [__("Không tìm thấy tài khoản VA.")]
+            ])->result();
+        }
+
+        $blnHasType = isset($arrParams["account_type"]) && $arrParams["account_type"] !== "";
+        $blnHasMin = array_key_exists("min_amount", $arrParams) && $arrParams["min_amount"] !== null && $arrParams["min_amount"] !== "";
+        $blnHasMax = array_key_exists("max_amount", $arrParams) && $arrParams["max_amount"] !== null && $arrParams["max_amount"] !== "";
+        if (!$blnHasType && !$blnHasMin && !$blnHasMax) {
+            return $this->setStatusCode(414)->setMessage("")->setData([])->setErrors([
+                [__("Vui lòng nhập ít nhất một trong các trường: account_type, min_amount, max_amount.")]
+            ])->result();
+        }
+
+        $strAccountType = $blnHasType ? strtoupper((string) $arrParams["account_type"]) : ($objUserVirtualAccount->account_type ?: GpayV2::VA_TYPE_MULTIPLE);
+        $intMinAmount = $blnHasMin ? $arrParams["min_amount"] : $objUserVirtualAccount->min_amount;
+        $intMaxAmount = $blnHasMax ? $arrParams["max_amount"] : $objUserVirtualAccount->max_amount;
+
+        $validated = Validator::make(
+            ["account_type" => $strAccountType, "min_amount" => $intMinAmount, "max_amount" => $intMaxAmount],
+            [
+                "account_type" => "in:" . GpayV2::VA_TYPE_ONE_TIME . "," . GpayV2::VA_TYPE_MULTIPLE,
+                "min_amount" => "nullable|integer|min:0",
+                "max_amount" => "nullable|integer|min:0",
+            ],
+            [
+                "account_type.in" => __("Loại tài khoản không hợp lệ (O: dùng 1 lần, M: dùng nhiều lần)."),
+                "min_amount.integer" => __("Giá trị tối thiểu không hợp lệ."),
+                "min_amount.min" => __("Giá trị tối thiểu không hợp lệ."),
+                "max_amount.integer" => __("Giá trị tối đa không hợp lệ."),
+                "max_amount.min" => __("Giá trị tối đa không hợp lệ."),
+            ]
+        );
+        if ($validated->errors()->messages()) {
+            return $this->setStatusCode(414)->setMessage("")->setData([])->setErrors($validated->errors()->messages())->result();
+        }
+
+        $intMinAmount = $intMinAmount ? (int) $intMinAmount : null;
+        $intMaxAmount = $intMaxAmount ? (int) $intMaxAmount : null;
+        if ($intMinAmount && $intMaxAmount && $intMinAmount > $intMaxAmount) {
+            return $this->setStatusCode(414)->setMessage("")->setData([])->setErrors([
+                [__("Giá trị tối thiểu không được lớn hơn giá trị tối đa.")]
+            ])->result();
+        }
+
+        if ($objUserVirtualAccount->gateway_id != 8) {
+            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                [__("Tài khoản VA này không hỗ trợ cập nhật loại tài khoản và hạn mức.")]
+            ])->result();
+        }
+
+        if (!app()->environment('sandbox')) {
+            $objGatewayAccount = GatewayAccount::find($objUserVirtualAccount->gateway_account_id);
+            if (empty($objGatewayAccount)) {
+                return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                    [__("Không tìm thấy tài khoản cổng.")]
+                ])->result();
+            }
+
+            $strAccountName = $objUserVirtualAccount->bank_account_name;
+            if ($objUserVirtualAccount->bank_short_code == "BIDV" && strpos($strAccountName, "GVA ") === 0) {
+                $strAccountName = substr($strAccountName, 4);
+            }
+
+            $gpayV2 = GpayV2::fromGatewayAccount($objGatewayAccount);
+            $resultUpdate = $gpayV2->updateVirtualAccount([
+                "account_number" => $objUserVirtualAccount->bank_account_number,
+                "account_name" => $strAccountName,
+                "account_type" => $strAccountType,
+                "min_amount" => $intMinAmount,
+                "max_amount" => $intMaxAmount,
+            ]);
+            if (empty($resultUpdate['success'])) {
+                return $this->setStatusCode(404)->setMessage("")->setData($resultUpdate)->setErrors([
+                    [__("Cập nhật tài khoản ảo thất bại: " . ($resultUpdate['message'] ?? ''))]
+                ])->result();
+            }
+        }
+
+        $objUserVirtualAccount->account_type = $strAccountType;
+        $objUserVirtualAccount->min_amount = $intMinAmount;
+        $objUserVirtualAccount->max_amount = $intMaxAmount;
+        if (!$objUserVirtualAccount->save()) {
+            return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                [__("Cập nhật thất bại.")]
+            ])->result();
+        }
+
+        return $this->setStatusCode(0)->setMessage(__("Cập nhật thành công."))->setData(["user_virtual_account" => $objUserVirtualAccount])->result();
+    }
+
     public function changeStatus($arrParams = [])
     {
         $validated = Validator::make(

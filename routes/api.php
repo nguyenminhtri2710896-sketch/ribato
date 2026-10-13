@@ -101,6 +101,9 @@ Route::group(['as' => 'api.'], function () {
 
              Route::match(['post', 'get'], '/user-virtual-account/get-list', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'getList'])->name('user-virtual-account.get-list');
              Route::match(['post'], '/user-virtual-account/create', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'create'])->name('user-virtual-account.create');
+             Route::match(['post'], '/user-virtual-account/update', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'update'])->name('user-virtual-account.update');
+             Route::match(['post'], '/user-virtual-account/active', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'active'])->name('user-virtual-account.active');
+             Route::match(['post'], '/user-virtual-account/deactivate', [\App\Http\Controllers\Api\V1\UserVirtualAccountController::class, 'deactivate'])->name('user-virtual-account.deactivate');
 
             // Route::match(['post', 'get'], '/report/get-total-transaction-amount', [\App\Http\Controllers\Api\V1\ReportController::class, 'getTotalTransactionAmount'])->name('report.get-total-transaction-amount');
 
