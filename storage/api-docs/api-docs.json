@@ -1219,7 +1219,133 @@
                         "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {},
+                                "schema": {
+                                    "properties": {
+                                        "error_code": {
+                                            "description": "<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized).",
+                                            "type": "integer",
+                                            "example": 0
+                                        },
+                                        "message": {
+                                            "description": "Result message.",
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "system_time": {
+                                            "description": "Server time.",
+                                            "type": "string",
+                                            "example": "2026-10-20 10:00:00"
+                                        },
+                                        "errors": {
+                                            "description": "Error messages. Empty on success.",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "description": "Response payload.",
+                                            "properties": {
+                                                "user_virtual_accounts": {
+                                                    "description": "List of virtual accounts.",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "description": "Virtual account ID.",
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "user_id": {
+                                                                "description": "Owner user ID.",
+                                                                "type": "integer",
+                                                                "example": 10
+                                                            },
+                                                            "bank_account_name": {
+                                                                "description": "Account holder name (upper case).",
+                                                                "type": "string",
+                                                                "example": "NGUYEN VAN A"
+                                                            },
+                                                            "bank_account_number": {
+                                                                "description": "Virtual account number. Customers transfer money to this number.",
+                                                                "type": "string",
+                                                                "example": "SBXMSB12345678901"
+                                                            },
+                                                            "bank_id": {
+                                                                "description": "Bank ID.",
+                                                                "type": "integer",
+                                                                "example": 5
+                                                            },
+                                                            "bank_short_name": {
+                                                                "description": "Bank code.",
+                                                                "type": "string",
+                                                                "example": "MSB"
+                                                            },
+                                                            "bank_short_code": {
+                                                                "description": "Bank code.",
+                                                                "type": "string",
+                                                                "example": "MSB"
+                                                            },
+                                                            "status_id": {
+                                                                "description": "Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance).",
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "account_type": {
+                                                                "description": "Account type. <b>O</b>: one-time, <b>M</b>: multiple-use.",
+                                                                "type": "string",
+                                                                "example": "M"
+                                                            },
+                                                            "min_amount": {
+                                                                "description": "Minimum amount (VND) per transaction. null = no limit.",
+                                                                "type": "integer",
+                                                                "example": 10000
+                                                            },
+                                                            "max_amount": {
+                                                                "description": "Maximum amount (VND) per transaction. null = no limit.",
+                                                                "type": "integer",
+                                                                "example": 5000000
+                                                            },
+                                                            "order_no": {
+                                                                "description": "Reference code of the account on the payment gateway.",
+                                                                "type": "string",
+                                                                "example": ""
+                                                            },
+                                                            "created_at": {
+                                                                "description": "Created time.",
+                                                                "type": "string",
+                                                                "example": "2026-10-20T10:00:00.000000Z"
+                                                            },
+                                                            "updated_at": {
+                                                                "description": "Last updated time.",
+                                                                "type": "string",
+                                                                "example": "2026-10-20T10:00:00.000000Z"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "records_total": {
+                                                    "description": "Total records matching the filters.",
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "page": {
+                                                    "description": "Current page.",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "limit": {
+                                                    "description": "Records per page.",
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
                                 "examples": {
                                     "result_false": {
                                         "summary": "Result error.",
@@ -1329,7 +1455,115 @@
                         "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {},
+                                "schema": {
+                                    "properties": {
+                                        "error_code": {
+                                            "description": "<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized).",
+                                            "type": "integer",
+                                            "example": 0
+                                        },
+                                        "message": {
+                                            "description": "Result message.",
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "system_time": {
+                                            "description": "Server time.",
+                                            "type": "string",
+                                            "example": "2026-10-20 10:00:00"
+                                        },
+                                        "errors": {
+                                            "description": "Error messages. Empty on success.",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "description": "Response payload. null / empty on error.",
+                                            "properties": {
+                                                "user_virtual_account": {
+                                                    "description": "Created virtual account. Use <b>bank_account_number</b> to receive payments.",
+                                                    "properties": {
+                                                        "id": {
+                                                            "description": "Virtual account ID.",
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "description": "Owner user ID.",
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "bank_account_name": {
+                                                            "description": "Account holder name (upper case).",
+                                                            "type": "string",
+                                                            "example": "NGUYEN VAN A"
+                                                        },
+                                                        "bank_account_number": {
+                                                            "description": "Virtual account number. Customers transfer money to this number.",
+                                                            "type": "string",
+                                                            "example": "SBXMSB12345678901"
+                                                        },
+                                                        "bank_id": {
+                                                            "description": "Bank ID.",
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "bank_short_name": {
+                                                            "description": "Bank code.",
+                                                            "type": "string",
+                                                            "example": "MSB"
+                                                        },
+                                                        "bank_short_code": {
+                                                            "description": "Bank code.",
+                                                            "type": "string",
+                                                            "example": "MSB"
+                                                        },
+                                                        "status_id": {
+                                                            "description": "Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance).",
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "account_type": {
+                                                            "description": "Account type. <b>O</b>: one-time, <b>M</b>: multiple-use.",
+                                                            "type": "string",
+                                                            "example": "M"
+                                                        },
+                                                        "min_amount": {
+                                                            "description": "Minimum amount (VND) per transaction. null = no limit.",
+                                                            "type": "integer",
+                                                            "example": 10000
+                                                        },
+                                                        "max_amount": {
+                                                            "description": "Maximum amount (VND) per transaction. null = no limit.",
+                                                            "type": "integer",
+                                                            "example": 5000000
+                                                        },
+                                                        "order_no": {
+                                                            "description": "Reference code of the account on the payment gateway.",
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "created_at": {
+                                                            "description": "Created time.",
+                                                            "type": "string",
+                                                            "example": "2026-10-20T10:00:00.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "description": "Last updated time.",
+                                                            "type": "string",
+                                                            "example": "2026-10-20T10:00:00.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
                                 "examples": {
                                     "result_error": {
                                         "summary": "Result error.",
@@ -1426,7 +1660,115 @@
                         "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {},
+                                "schema": {
+                                    "properties": {
+                                        "error_code": {
+                                            "description": "<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized).",
+                                            "type": "integer",
+                                            "example": 0
+                                        },
+                                        "message": {
+                                            "description": "Result message.",
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "system_time": {
+                                            "description": "Server time.",
+                                            "type": "string",
+                                            "example": "2026-10-20 10:00:00"
+                                        },
+                                        "errors": {
+                                            "description": "Error messages. Empty on success.",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "description": "Response payload. null / empty on error.",
+                                            "properties": {
+                                                "user_virtual_account": {
+                                                    "description": "Updated virtual account.",
+                                                    "properties": {
+                                                        "id": {
+                                                            "description": "Virtual account ID.",
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "user_id": {
+                                                            "description": "Owner user ID.",
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "bank_account_name": {
+                                                            "description": "Account holder name (upper case).",
+                                                            "type": "string",
+                                                            "example": "NGUYEN VAN A"
+                                                        },
+                                                        "bank_account_number": {
+                                                            "description": "Virtual account number. Customers transfer money to this number.",
+                                                            "type": "string",
+                                                            "example": "SBXMSB12345678901"
+                                                        },
+                                                        "bank_id": {
+                                                            "description": "Bank ID.",
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "bank_short_name": {
+                                                            "description": "Bank code.",
+                                                            "type": "string",
+                                                            "example": "MSB"
+                                                        },
+                                                        "bank_short_code": {
+                                                            "description": "Bank code.",
+                                                            "type": "string",
+                                                            "example": "MSB"
+                                                        },
+                                                        "status_id": {
+                                                            "description": "Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance).",
+                                                            "type": "integer",
+                                                            "example": 2
+                                                        },
+                                                        "account_type": {
+                                                            "description": "Account type. <b>O</b>: one-time, <b>M</b>: multiple-use.",
+                                                            "type": "string",
+                                                            "example": "M"
+                                                        },
+                                                        "min_amount": {
+                                                            "description": "Minimum amount (VND) per transaction. null = no limit.",
+                                                            "type": "integer",
+                                                            "example": 10000
+                                                        },
+                                                        "max_amount": {
+                                                            "description": "Maximum amount (VND) per transaction. null = no limit.",
+                                                            "type": "integer",
+                                                            "example": 5000000
+                                                        },
+                                                        "order_no": {
+                                                            "description": "Reference code of the account on the payment gateway.",
+                                                            "type": "string",
+                                                            "example": ""
+                                                        },
+                                                        "created_at": {
+                                                            "description": "Created time.",
+                                                            "type": "string",
+                                                            "example": "2026-10-20T10:00:00.000000Z"
+                                                        },
+                                                        "updated_at": {
+                                                            "description": "Last updated time.",
+                                                            "type": "string",
+                                                            "example": "2026-10-20T10:00:00.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
                                 "examples": {
                                     "result_error": {
                                         "summary": "Result error.",
@@ -1502,7 +1844,37 @@
                         "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {},
+                                "schema": {
+                                    "properties": {
+                                        "error_code": {
+                                            "description": "<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized).",
+                                            "type": "integer",
+                                            "example": 0
+                                        },
+                                        "message": {
+                                            "description": "Result message.",
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "system_time": {
+                                            "description": "Server time.",
+                                            "type": "string",
+                                            "example": "2026-10-20 10:00:00"
+                                        },
+                                        "errors": {
+                                            "description": "Error messages. Empty on success.",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "description": "Empty object on success.",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
                                 "examples": {
                                     "result_error": {
                                         "summary": "Result error.",
@@ -1578,7 +1950,37 @@
                         "description": "OK",
                         "content": {
                             "application/json": {
-                                "schema": {},
+                                "schema": {
+                                    "properties": {
+                                        "error_code": {
+                                            "description": "<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized).",
+                                            "type": "integer",
+                                            "example": 0
+                                        },
+                                        "message": {
+                                            "description": "Result message.",
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "system_time": {
+                                            "description": "Server time.",
+                                            "type": "string",
+                                            "example": "2026-10-20 10:00:00"
+                                        },
+                                        "errors": {
+                                            "description": "Error messages. Empty on success.",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "data": {
+                                            "description": "Empty object on success.",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                },
                                 "examples": {
                                     "result_error": {
                                         "summary": "Result error.",

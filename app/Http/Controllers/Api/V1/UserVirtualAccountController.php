@@ -60,6 +60,35 @@ class UserVirtualAccountController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized)."),
+     *             @OA\Property(property="message", type="string", example="success", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(
+     *                 property="data", type="object", description="Response payload.",
+     *                 @OA\Property(
+     *                     property="user_virtual_accounts", type="array", description="List of virtual accounts.",
+     *                     @OA\Items(type="object",
+     *                         @OA\Property(property="id", type="integer", example=1, description="Virtual account ID."),
+     *                         @OA\Property(property="user_id", type="integer", example=10, description="Owner user ID."),
+     *                         @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Account holder name (upper case)."),
+     *                         @OA\Property(property="bank_account_number", type="string", example="SBXMSB12345678901", description="Virtual account number. Customers transfer money to this number."),
+     *                         @OA\Property(property="bank_id", type="integer", example=5, description="Bank ID."),
+     *                         @OA\Property(property="bank_short_name", type="string", example="MSB", description="Bank code."),
+     *                         @OA\Property(property="bank_short_code", type="string", example="MSB", description="Bank code."),
+     *                         @OA\Property(property="status_id", type="integer", example=2, description="Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance)."),
+     *                         @OA\Property(property="account_type", type="string", example="M", description="Account type. <b>O</b>: one-time, <b>M</b>: multiple-use."),
+     *                         @OA\Property(property="min_amount", type="integer", example=10000, description="Minimum amount (VND) per transaction. null = no limit."),
+     *                         @OA\Property(property="max_amount", type="integer", example=5000000, description="Maximum amount (VND) per transaction. null = no limit."),
+     *                         @OA\Property(property="order_no", type="string", example="", description="Reference code of the account on the payment gateway."),
+     *                         @OA\Property(property="created_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Created time."),
+     *                         @OA\Property(property="updated_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Last updated time.")
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="records_total", type="integer", example=0, description="Total records matching the filters."),
+     *                 @OA\Property(property="page", type="integer", example=1, description="Current page."),
+     *                 @OA\Property(property="limit", type="integer", example=10, description="Records per page.")
+     *             ),
      *             @OA\Examples(example="result_false", value={"error_code":401,"system_time":"2023-11-24 11:15:59","message":"access_token expired or not allowed","errors":{"access_token expired or not allowed"},"data":null,"tranid_tracking":"bc47d534b97f7cdb4c2d5d229376915c"}, summary="Result error."),
      *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{"user_virtual_accounts":{},"records_total":0,"page":1,"limit":10}}, summary="Result success."),
      *         )
@@ -144,6 +173,30 @@ class UserVirtualAccountController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized)."),
+     *             @OA\Property(property="message", type="string", example="success", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(
+     *                 property="data", type="object", description="Response payload. null / empty on error.",
+     *                 @OA\Property(
+     *                     property="user_virtual_account", type="object", description="Created virtual account. Use <b>bank_account_number</b> to receive payments.",
+     *                         @OA\Property(property="id", type="integer", example=1, description="Virtual account ID."),
+     *                         @OA\Property(property="user_id", type="integer", example=10, description="Owner user ID."),
+     *                         @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Account holder name (upper case)."),
+     *                         @OA\Property(property="bank_account_number", type="string", example="SBXMSB12345678901", description="Virtual account number. Customers transfer money to this number."),
+     *                         @OA\Property(property="bank_id", type="integer", example=5, description="Bank ID."),
+     *                         @OA\Property(property="bank_short_name", type="string", example="MSB", description="Bank code."),
+     *                         @OA\Property(property="bank_short_code", type="string", example="MSB", description="Bank code."),
+     *                         @OA\Property(property="status_id", type="integer", example=2, description="Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance)."),
+     *                         @OA\Property(property="account_type", type="string", example="M", description="Account type. <b>O</b>: one-time, <b>M</b>: multiple-use."),
+     *                         @OA\Property(property="min_amount", type="integer", example=10000, description="Minimum amount (VND) per transaction. null = no limit."),
+     *                         @OA\Property(property="max_amount", type="integer", example=5000000, description="Maximum amount (VND) per transaction. null = no limit."),
+     *                         @OA\Property(property="order_no", type="string", example="", description="Reference code of the account on the payment gateway."),
+     *                         @OA\Property(property="created_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Created time."),
+     *                         @OA\Property(property="updated_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Last updated time.")
+     *                 )
+     *             ),
      *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"VA gateway has not been configured for this account."},"data":null}, summary="Result error."),
      *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
      *         )
@@ -237,6 +290,30 @@ class UserVirtualAccountController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized)."),
+     *             @OA\Property(property="message", type="string", example="success", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(
+     *                 property="data", type="object", description="Response payload. null / empty on error.",
+     *                 @OA\Property(
+     *                     property="user_virtual_account", type="object", description="Updated virtual account.",
+     *                         @OA\Property(property="id", type="integer", example=1, description="Virtual account ID."),
+     *                         @OA\Property(property="user_id", type="integer", example=10, description="Owner user ID."),
+     *                         @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Account holder name (upper case)."),
+     *                         @OA\Property(property="bank_account_number", type="string", example="SBXMSB12345678901", description="Virtual account number. Customers transfer money to this number."),
+     *                         @OA\Property(property="bank_id", type="integer", example=5, description="Bank ID."),
+     *                         @OA\Property(property="bank_short_name", type="string", example="MSB", description="Bank code."),
+     *                         @OA\Property(property="bank_short_code", type="string", example="MSB", description="Bank code."),
+     *                         @OA\Property(property="status_id", type="integer", example=2, description="Account status. <b>2</b>: active, <b>1</b>: inactive (deactivated / under maintenance)."),
+     *                         @OA\Property(property="account_type", type="string", example="M", description="Account type. <b>O</b>: one-time, <b>M</b>: multiple-use."),
+     *                         @OA\Property(property="min_amount", type="integer", example=10000, description="Minimum amount (VND) per transaction. null = no limit."),
+     *                         @OA\Property(property="max_amount", type="integer", example=5000000, description="Maximum amount (VND) per transaction. null = no limit."),
+     *                         @OA\Property(property="order_no", type="string", example="", description="Reference code of the account on the payment gateway."),
+     *                         @OA\Property(property="created_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Created time."),
+     *                         @OA\Property(property="updated_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Last updated time.")
+     *                 )
+     *             ),
      *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
      *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
      *         )
@@ -273,6 +350,11 @@ class UserVirtualAccountController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized)."),
+     *             @OA\Property(property="message", type="string", example="success", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(property="data", type="object", description="Empty object on success."),
      *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
      *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
      *         )
@@ -309,6 +391,11 @@ class UserVirtualAccountController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. Other values: error (404 not found / not configured, 414 invalid payload, 401 unauthorized)."),
+     *             @OA\Property(property="message", type="string", example="success", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(property="data", type="object", description="Empty object on success."),
      *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
      *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
      *         )
