@@ -555,7 +555,7 @@
                                         "message": {
                                             "description": "Result message.",
                                             "type": "string",
-                                            "example": "Success."
+                                            "example": "Thành công."
                                         },
                                         "system_time": {
                                             "description": "Server time.",
@@ -595,10 +595,10 @@
                                 },
                                 "examples": {
                                     "result_success": {
-                                        "summary": "Result success.",
+                                        "summary": "Result success (bank_id 5 = MB).",
                                         "value": {
                                             "error_code": 0,
-                                            "message": "Success.",
+                                            "message": "Thành công.",
                                             "system_time": "2026-10-20 10:00:00",
                                             "errors": [],
                                             "data": {

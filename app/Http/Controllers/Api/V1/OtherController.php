@@ -150,7 +150,7 @@ class OtherController extends BaseController
      *         description="OK",
      *         @OA\JsonContent(
      *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. <b>404</b>: neither bank_id nor bank_code sent, bank_id not found, bank_account_number missing, account holder name not found, or gateway error."),
-     *             @OA\Property(property="message", type="string", example="Success.", description="Result message."),
+     *             @OA\Property(property="message", type="string", example="Thành công.", description="Result message."),
      *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
      *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
      *             @OA\Property(
@@ -159,7 +159,7 @@ class OtherController extends BaseController
      *                 @OA\Property(property="bank_account_number", type="string", example="0123456789", description="Bank account number that was looked up."),
      *                 @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Account holder name.")
      *             ),
-     *             @OA\Examples(example="result_success", value={"error_code":0,"message":"Success.","system_time":"2026-10-20 10:00:00","errors":{},"data":{"bank_code":"MB","bank_account_number":"0123456789","bank_account_name":"NGUYEN VAN A"}}, summary="Result success."),
+     *             @OA\Examples(example="result_success", value={"error_code":0,"message":"Thành công.","system_time":"2026-10-20 10:00:00","errors":{},"data":{"bank_code":"MB","bank_account_number":"0123456789","bank_account_name":"NGUYEN VAN A"}}, summary="Result success (bank_id 5 = MB)."),
      *             @OA\Examples(example="result_error", value={"error_code":404,"message":"","system_time":"2026-10-20 10:00:00","errors":{{"Unable to get the account holder name."}},"data":{}}, summary="Result error."),
      *             @OA\Examples(example="result_invalid_bank", value={"error_code":404,"message":"","system_time":"2026-10-20 10:00:00","errors":{{"Ngân hàng không hợp lệ."}},"data":{}}, summary="Result error: bank_id not found.")
      *         )
