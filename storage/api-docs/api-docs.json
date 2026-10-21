@@ -500,19 +500,23 @@
                     "Bank"
                 ],
                 "summary": "Look up bank account holder name",
-                "description": "Returns the account holder name of a bank account from the bank code and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used.",
+                "description": "Returns the account holder name of a bank account from the bank (bank_id or bank_code) and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used.",
                 "operationId": "5e926f6e5723a730818183df0c8b5e02",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "bank_code",
                                     "bank_account_number"
                                 ],
                                 "properties": {
+                                    "bank_id": {
+                                        "description": "Bank ID from the bank list API (/api/bank/get-list). Either <b>bank_id</b> or <b>bank_code</b> is required. When bank_id is sent, the bank code is taken from it and bank_code is ignored.",
+                                        "type": "integer",
+                                        "example": 5
+                                    },
                                     "bank_code": {
-                                        "description": "Bank code (e.g. MB, BIDV, TCB, VCB).",
+                                        "description": "Bank code (e.g. MB, BIDV, TCB, VCB). Required when bank_id is not sent.",
                                         "type": "string",
                                         "example": "MB"
                                     },
@@ -527,7 +531,11 @@
                                         "example": 13
                                     }
                                 },
-                                "type": "object"
+                                "type": "object",
+                                "example": {
+                                    "bank_id": 5,
+                                    "bank_account_number": "0123456789"
+                                }
                             }
                         }
                     }
@@ -540,7 +548,7 @@
                                 "schema": {
                                     "properties": {
                                         "error_code": {
-                                            "description": "<b>0</b>: success. <b>404</b>: missing parameter, account holder name not found, or gateway error.",
+                                            "description": "<b>0</b>: success. <b>404</b>: neither bank_id nor bank_code sent, bank_id not found, bank_account_number missing, account holder name not found, or gateway error.",
                                             "type": "integer",
                                             "example": 0
                                         },
@@ -565,7 +573,7 @@
                                             "description": "Response payload. Empty on error.",
                                             "properties": {
                                                 "bank_code": {
-                                                    "description": "Bank code that was looked up.",
+                                                    "description": "Bank code that was looked up (resolved from bank_id when bank_id is sent).",
                                                     "type": "string",
                                                     "example": "MB"
                                                 },
@@ -609,6 +617,20 @@
                                             "errors": [
                                                 [
                                                     "Unable to get the account holder name."
+                                                ]
+                                            ],
+                                            "data": []
+                                        }
+                                    },
+                                    "result_invalid_bank": {
+                                        "summary": "Result error: bank_id not found.",
+                                        "value": {
+                                            "error_code": 404,
+                                            "message": "",
+                                            "system_time": "2026-10-20 10:00:00",
+                                            "errors": [
+                                                [
+                                                    "Ngân hàng không hợp lệ."
                                                 ]
                                             ],
                                             "data": []
