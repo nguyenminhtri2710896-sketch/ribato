@@ -1567,14 +1567,13 @@ class UserWithdrawService extends AbstractService
             }
         }
 
+        $result["sign"] = $strSign;
         $arrPost = [
             'error_code' => 0,
             'msg' => 'Thành công',
             'result' => $result
         ];
 
-
-        $result["sign"] = $strSign;
         if (env('BACKEND_VERSION') == 'v2' && env('POSTBACK_VERSION') == 'v2') {
             if (isset($result["sign"])) {
                 unset($result["sign"]);
