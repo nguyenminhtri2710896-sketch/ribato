@@ -194,7 +194,7 @@ class UserVirtualAccountController extends BaseController
      *                 )
      *             ),
      *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"VA gateway has not been configured for this account."},"data":null}, summary="Result error."),
-     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "Added successfully.","system_time":"2023-11-24 11:15:59","errors":{},"data":{"user_virtual_account":{"id":1,"user_id":10,"bank_account_name":"NGUYEN VAN A","bank_account_number":"SBXMSB12345678901","bank_id":5,"bank_short_name":"MSB","bank_short_code":"MSB","status_id":2,"account_type":"M","min_amount":10000,"max_amount":5000000,"order_no":"","order_code":"K3JD92LQ0XPA7TVM","created_at":"2026-10-20T10:00:00.000000Z","updated_at":"2026-10-20T10:00:00.000000Z"}}}, summary="Result success."),
      *         )
      *     )
      * )
@@ -312,7 +312,7 @@ class UserVirtualAccountController extends BaseController
      *                 )
      *             ),
      *             @OA\Examples(example="result_error", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{"Virtual account not found."},"data":null}, summary="Result error."),
-     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *             @OA\Examples(example="result_success", value={"error_code": 0,"message": "Updated successfully.","system_time":"2023-11-24 11:15:59","errors":{},"data":{"user_virtual_account":{"id":1,"user_id":10,"bank_account_name":"NGUYEN VAN A","bank_account_number":"SBXMSB12345678901","bank_id":5,"bank_short_name":"MSB","bank_short_code":"MSB","status_id":2,"account_type":"M","min_amount":10000,"max_amount":5000000,"order_no":"","order_code":"K3JD92LQ0XPA7TVM","created_at":"2026-10-20T10:00:00.000000Z","updated_at":"2026-10-20T10:00:00.000000Z"}}}, summary="Result success."),
      *         )
      *     )
      * )
