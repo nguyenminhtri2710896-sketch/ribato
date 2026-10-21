@@ -186,6 +186,7 @@ class UserWithdrawService extends AbstractService
         $intUserId = $arrParams["user_id"];
         $strRemark = $arrParams["remark"] ?? "";
         $strPlatform = $arrParams["platform"] ?? "web";
+        $strRefCode = $arrParams["ref_code"] ?? "";
 
 
         // return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
@@ -385,7 +386,8 @@ class UserWithdrawService extends AbstractService
             "gateway_fee_json" => json_encode($arrGatewayFee),
             "referal_fee_json" => json_encode($arrUserReferalFee),
             'status_id' => 1,
-            'platform' => $strPlatform
+            'platform' => $strPlatform,
+            'ref_code' => $strRefCode
         ]);
 
         //$strPlatform

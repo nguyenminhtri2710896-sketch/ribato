@@ -121,45 +121,23 @@ class UserWithdrawController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/user-withdraw/create",
-     *     summary="Tạo yêu cầu rút tiền",
+     *     summary="Create withdrawal request",
+     *     description="Creates a withdrawal request to a bank account. The amount plus fee is deducted from the partner balance immediately. The result (SUCCESS / FAILED) is sent to the partner's <b>webhook_payout_url</b> (see the Payout IPN). Amount must be at least 10,000 VND and below 300,000,000 VND. When 2-factor authentication is enabled on the account, <b>otp</b> is required.",
      *     tags={"Widthdraws"},
-     *      @OA\Parameter(
-     *         name="api-token",
-     *         in="header",
-     *         description="token allow create service",
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
+     *     @OA\Parameter(name="api-token", in="header", description="token allow create service", @OA\Schema(type="string")),
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="bank_account_number",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="bank_account_name",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="bank_id",
-     *                     type="integer"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="amount",
-     *                     type="integer"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="remark",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="sign",
-     *                     type="string"
-     *                 ),
-     *                 example={"bank_account_number": "1021312323","bank_account_name":"NGUYEN VAN A","bank_id":"get to list bank","remark":"noi dung ck","amount":100, "sign": "signiture data"}
+     *                 required={"bank_id","bank_account_number","bank_account_name","amount","remark"},
+     *                 @OA\Property(property="bank_id", type="integer", example=5, description="Recipient bank ID. Get it from the bank list API (/api/bank/get-list)."),
+     *                 @OA\Property(property="bank_account_number", type="string", example="1021312323", description="Recipient bank account number."),
+     *                 @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Recipient account holder name. You can verify it first with /api/other/get-bank-account-name."),
+     *                 @OA\Property(property="amount", type="integer", example=100000, description="Amount (VND) to transfer to the recipient, excluding fee. Minimum 10,000."),
+     *                 @OA\Property(property="remark", type="string", example="noi dung ck", description="Transfer content."),
+     *                 @OA\Property(property="ref_code", type="string", example="ABC123", description="Optional. Your own reference code of the request. It is returned in <b>user_withdraw.ref_code</b> and in the Payout IPN (<b>result.ref_code</b>) so you can match the result to your order."),
+     *                 @OA\Property(property="otp", type="string", example="123456", description="Required only when 2-factor authentication is enabled on the account."),
+     *                 @OA\Property(property="sign", type="string", example="signiture data", description="Signature of the request.")
      *             )
      *         )
      *     ),
@@ -167,8 +145,32 @@ class UserWithdrawController extends BaseController
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
-     *             @OA\Examples(example="result_false", value={"error_code":401,"system_time":"2023-11-24 11:15:59","message":"access_token hết hạn hoặc không được phép sử dụng","errors":{"access_token hết hạn hoặc không được phép sử dụng"},"data":null,"tranid_tracking":"bc47d534b97f7cdb4c2d5d229376915c"}, summary="Result error."),
-     *             @OA\Examples(example="result_success", value={"error_code": 200,"message": "success","system_time":"2023-11-24 11:15:59","errors":{},"data":{}}, summary="Result success."),
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. Other values: error (404 business error such as invalid bank / insufficient balance / limit exceeded, 414 invalid payload, 401 unauthorized)."),
+     *             @OA\Property(property="message", type="string", example="Tạo yêu cầu rút tiền thành công.", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(
+     *                 property="data", type="object", description="Response payload. Empty on error.",
+     *                 @OA\Property(
+     *                     property="user_withdraw", type="object", description="Created withdrawal request.",
+     *                     @OA\Property(property="id", type="integer", example=1, description="Withdrawal request ID."),
+     *                     @OA\Property(property="user_id", type="integer", example=10, description="Partner user ID."),
+     *                     @OA\Property(property="trans_code", type="string", example="2025091519847", description="Transaction code of the withdrawal generated by the system. Returned in the Payout IPN."),
+     *                     @OA\Property(property="ref_code", type="string", example="ABC123", description="Your reference code. Empty if not sent."),
+     *                     @OA\Property(property="bank_id", type="integer", example=5, description="Recipient bank ID."),
+     *                     @OA\Property(property="bank_short_name", type="string", example="MB", description="Recipient bank short name."),
+     *                     @OA\Property(property="bank_account_number", type="string", example="1021312323", description="Recipient bank account number."),
+     *                     @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Recipient account holder name."),
+     *                     @OA\Property(property="remark", type="string", example="noi dung ck", description="Transfer content."),
+     *                     @OA\Property(property="amount", type="integer", example=100000, description="Amount (VND) transferred to the recipient."),
+     *                     @OA\Property(property="fee", type="number", example=3000, description="Fee (VND) charged for the withdrawal."),
+     *                     @OA\Property(property="amount_after_fee", type="number", example=103000, description="Total amount (VND) deducted from the balance (amount + fee)."),
+     *                     @OA\Property(property="status_id", type="integer", example=1, description="Withdrawal status. <b>1</b>: requested, <b>4</b>: processing, <b>5</b>: awaiting transaction verification, <b>2</b>: completed, <b>3</b>: cancelled / failed."),
+     *                     @OA\Property(property="created_at", type="string", example="2026-10-20T10:00:00.000000Z", description="Created time.")
+     *                 )
+     *             ),
+     *             @OA\Examples(example="result_false", value={"error_code":404,"system_time":"2023-11-24 11:15:59","message":"","errors":{{"Số tiền yêu cầu rút tối thiểu 10,000đ."}},"data":{}}, summary="Result error."),
+     *             @OA\Examples(example="result_success", value={"error_code":0,"message":"Tạo yêu cầu rút tiền thành công.","system_time":"2023-11-24 11:15:59","errors":{},"data":{"user_withdraw":{"id":1,"user_id":10,"trans_code":"2025091519847","ref_code":"ABC123","bank_id":5,"bank_short_name":"MB","bank_account_number":"1021312323","bank_account_name":"NGUYEN VAN A","remark":"noi dung ck","amount":100000,"fee":3000,"amount_after_fee":103000,"status_id":1,"created_at":"2026-10-20T10:00:00.000000Z"}}}, summary="Result success.")
      *         )
      *     )
      * )
