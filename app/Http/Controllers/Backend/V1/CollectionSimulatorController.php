@@ -1,0 +1,131 @@
+<?php
+
+namespace App\Http\Controllers\Backend\V1;
+
+use App\Models\UserToken;
+use App\Models\UserVirtualAccount;
+use Illuminate\Support\Facades\Http;
+
+/**
+ * Công cụ test dành cho quản trị (chỉ sandbox): giả lập cổng gửi IPN collection
+ * về hệ thống theo đúng endpoint / payload của từng cổng.
+ */
+class CollectionSimulatorController extends BaseController
+{
+    protected function allowed(): bool
+    {
+        return app()->environment('sandbox') && (auth()->user()->is_admin || auth()->user()->full_access);
+    }
+
+    protected function error($strMessage)
+    {
+        return response()->json([
+            "error_code" => 404,
+            "message" => $strMessage,
+            "data" => [],
+            "errors" => [[$strMessage]],
+            "system_time" => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public function index()
+    {
+        if (!$this->allowed()) {
+            abort(403);
+        }
+
+        return view('backend.' . config('app.backend_version') . '.tool.simulate-collection');
+    }
+
+    public function ajaxSend()
+    {
+        if (!$this->allowed()) {
+            return $this->error(__("Bạn không có quyền thực hiện thao tác này."));
+        }
+
+        $strAccountNumber = trim((string) request('bank_account_number'));
+        $intAmount = (int) request('amount');
+        $strContent = trim((string) request('content'));
+
+        if ($strAccountNumber === "") {
+            return $this->error(__("Vui lòng chọn tài khoản VA."));
+        }
+        if ($intAmount <= 0) {
+            return $this->error(__("Vui lòng nhập số tiền."));
+        }
+        if ($strContent === "") {
+            return $this->error(__("Vui lòng nhập nội dung chuyển khoản."));
+        }
+
+        $objVa = UserVirtualAccount::where('bank_account_number', $strAccountNumber)->first();
+        if (!$objVa) {
+            return $this->error(__("Không tìm thấy tài khoản VA."));
+        }
+
+        $objUserToken = UserToken::where('user_id', $objVa->user_id)->first();
+        if (!$objUserToken) {
+            return $this->error(__("Người dùng của VA chưa có token."));
+        }
+
+        $strTradeNo = "SBX" . date('YmdHis') . random_int(1000, 9999);
+        $strNowMs = (string) round(microtime(true) * 1000);
+
+        if ($objVa->gateway_id == 8) {
+            $strUrl = $objVa->ipn_collection ?: url()->route('api.gpay.ipn', ["token" => $objUserToken->token_gateway]);
+            $arrPayload = [
+                "token" => $objUserToken->token_gateway,
+                "action" => "CHANGE_BALANCE",
+                "gpay_trans_id" => $strTradeNo,
+                "amount" => $intAmount,
+                "account_number" => $objVa->bank_account_number,
+                "account_name" => $objVa->bank_account_name,
+                "message" => $strContent,
+                "created_date" => $strNowMs,
+            ];
+        } elseif ($objVa->gateway_id == 3) {
+            $strUrl = $objVa->ipn_collection ?: url()->route('api.ipn.yoobil-collection', ["token" => $objUserToken->token_gateway]);
+            $arrPayload = [
+                "token" => $objUserToken->token_gateway,
+                "bypas_verified" => 1,
+                "code" => 10000,
+                "msg" => "the request is succeed.",
+                "result" => [
+                    "accountName" => $objVa->bank_account_name,
+                    "accountNo" => $objVa->bank_account_number,
+                    "amount" => $intAmount,
+                    "bankName" => $objVa->bank_short_code,
+                    "currency" => "VND",
+                    "orderNo" => $objVa->order_no,
+                    "purchaseAmount" => $intAmount,
+                    "purchaseCurrency" => "VND",
+                    "purchaseTime" => $strNowMs,
+                    "remark" => $strContent,
+                    "tradeNo" => $strTradeNo,
+                    "userName" => $objVa->bank_account_name,
+                ],
+            ];
+        } else {
+            return $this->error(__("Cổng của VA này chưa hỗ trợ giả lập."));
+        }
+
+        try {
+            $response = Http::timeout(30)->asJson()->post($strUrl, $arrPayload);
+        } catch (\Exception $ex) {
+            return $this->error(__("Gửi IPN thất bại: ") . $ex->getMessage());
+        }
+
+        return response()->json([
+            "error_code" => 0,
+            "message" => __("Đã gửi giao dịch giả lập."),
+            "data" => [
+                "url" => $strUrl,
+                "trade_no" => $strTradeNo,
+                "request" => $arrPayload,
+                "http_status" => $response->status(),
+                "response" => $response->json() ?? $response->body(),
+            ],
+            "errors" => [],
+            "system_time" => date('Y-m-d H:i:s'),
+        ]);
+    }
+}

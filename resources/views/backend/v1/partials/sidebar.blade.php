@@ -75,6 +75,15 @@
 
                     <li class="menu-title">{{ __('backend.admin') }}</li>
 
+                    @if (app()->environment('sandbox') && (auth()->user()->is_admin || auth()->user()->full_access))
+                        <li class="s-menu user">
+                            <a href="{{ route('backend.tool.simulate-collection') }}" class="waves-effect">
+                                <i class="fas fa-vial"></i>
+                                <span>Test Collect (Sandbox)</span>
+                            </a>
+                        </li>
+                    @endif
+
                     @if (auth()->user()->full_access)
 
 

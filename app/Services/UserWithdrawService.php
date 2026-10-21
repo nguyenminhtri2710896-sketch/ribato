@@ -405,7 +405,11 @@ class UserWithdrawService extends AbstractService
 
 
         $objUserYoobilConfig = UserYoobilConfig::where('user_id', $intUserId)->first();
-        if ($objUserYoobilConfig) {
+        if (app()->environment('sandbox')) {
+            dispatch(new \App\Jobs\SandboxWithdrawResultJob([
+                'id' => $objUserWithDraw->id,
+            ]))->onQueue('request')->delay(now()->addSeconds(rand(3, 10)));
+        } elseif ($objUserYoobilConfig) {
             dispatch(new WithdrawYoobilLogJob([
                 'id' => $objUserWithDraw->id,
             ]))->onQueue('request');
@@ -1032,7 +1036,14 @@ class UserWithdrawService extends AbstractService
          * 3 Yoobill
          */
 
-        if ($intTypeId == 1) {
+        if (app()->environment('sandbox')) {
+            /**
+             * Sandbox: giả lập kết quả ngẫu nhiên thành công / thất bại để test IPN
+             */
+            dispatch(new \App\Jobs\SandboxWithdrawResultJob([
+                'id' => $objUserWithDraw->id,
+            ]))->onQueue('request')->delay(now()->addSeconds(rand(3, 10)));
+        } elseif ($intTypeId == 1) {
             if ($intGatewayId == 3) {
                 dispatch(new WithdrawYoobilLogV2Job([
                     'id' => $objUserWithDraw->id,

@@ -70,6 +70,8 @@ $strRouteBackend = function () {
 
                 Route::get('/user-transaction/index', [\App\Http\Controllers\Backend\V1\UserTransactionController::class, 'index'])->name('user-transaction.index');
                 Route::get('/user-withdraw/index', [\App\Http\Controllers\Backend\V1\UserWithdrawController::class, 'index'])->name('user-withdraw.index');
+                Route::get('/tool/simulate-collection', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'index'])->name('tool.simulate-collection');
+                Route::match(['post', 'get'], '/tool/simulate-collection/ajax/send', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'ajaxSend'])->name('tool.simulate-collection.ajax-send');
                 Route::get('/ipn/collection', [\App\Http\Controllers\Backend\V1\IpnController::class, 'collection'])->name('ipn.collection');
                 Route::get('/ipn/payout', [\App\Http\Controllers\Backend\V1\IpnController::class, 'payout'])->name('ipn.payout');
 

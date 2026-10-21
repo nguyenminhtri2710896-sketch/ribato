@@ -243,6 +243,22 @@ return [
                 'nice' => 0,
             ]
         ],
+        'sandbox' => [
+            'supervisor-1' => [
+                'connection' => 'redis',
+                'queue' => ['default', 'callback', 'request', 'notification', 'forward'],
+                'balance' => 'auto',
+                'autoScalingStrategy' => 'time',
+                'minProcesses' => 1,
+                'maxProcesses' => 5,
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 128,
+                'tries' => 1,
+                'timeout' => 200,
+                'nice' => 0,
+            ],
+        ],
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
