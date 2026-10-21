@@ -41,59 +41,38 @@ class OtherController extends BaseController
     /**
      * @OA\Post(
      *     path="doman/ipn-callback",
-     *     summary="Địa chỉ đối tác khai báo để tiếp nhận kết quả giao dịch",
+     *     summary="Collection IPN: partner endpoint that receives the collection (payment received) result",
+     *     description="The system sends an HTTP POST (JSON) to the <b>webhook_url</b> declared by the partner when money has been received for a transaction. Respond with HTTP 2xx to acknowledge. A non-2xx response or a timeout (90s) is treated as failed and retried automatically (up to 4 attempts, 30s apart); it can also be resent from the IPN management page. Verify the <b>sign</b> field with the system public key before trusting the data.",
      *     tags={"IPN"},
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
+     *                 @OA\Property(property="error_code", type="integer", example=0, description="Always <b>0</b>."),
+     *                 @OA\Property(property="msg", type="string", example="Thành công", description="Result message."),
      *                 @OA\Property(
-     *                     property="user_id",
-     *                     type="number"
+     *                     property="result", type="object", description="Transaction data.",
+     *                     @OA\Property(property="user_id", type="integer", example=1, description="Partner user ID."),
+     *                     @OA\Property(property="amount", type="number", example=10000, description="Amount (VND) of the transaction."),
+     *                     @OA\Property(property="received_amount", type="number", example=8000, description="Amount (VND) credited to the partner after fee."),
+     *                     @OA\Property(property="received_date", type="string", example="2025-01-01 12:11:11", description="Time the money was received (Y-m-d H:i:s)."),
+     *                     @OA\Property(property="fee", type="number", example=2000, description="Fee (VND) charged for the transaction."),
+     *                     @OA\Property(property="content", type="string", example="Nội dung chuyển khoản", description="Transfer content."),
+     *                     @OA\Property(property="ref_code", type="string", example="ABC123", description="Reference / order code of the transaction (the VA transaction reference, or the code the partner used when creating the payment)."),
+     *                     @OA\Property(property="bank_short_name", type="string", example="BIDV", description="Receiving bank short name."),
+     *                     @OA\Property(property="bank_short_code", type="string", example="BIDV", description="Receiving bank code."),
+     *                     @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN BAY", description="Receiving account holder name."),
+     *                     @OA\Property(property="bank_account_number", type="string", example="09928323232", description="Receiving account number (the VA number for VA transactions)."),
+     *                     @OA\Property(property="bank_total_balance", type="number", example=1500000, description="Optional. Balance of the receiving bank account after the transaction, only sent when known."),
+     *                     @OA\Property(property="sign", type="string", example="sss", description="Signature of the result fields. Empty if the partner has no system key.")
      *                 ),
-     *                 @OA\Property(
-     *                     property="amount",
-     *                     type="number"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="received_amount",
-     *                     type="number"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="received_date",
-     *                     type="date"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="fee",
-     *                     type="number"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="content",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="ref_code",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="bank_short_name",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="bank_account_name",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="bank_account_number",
-     *                     type="string"
-     *                 ),
-     *                 example={"user_id": 1,"amount":10000,"received_amount":8000,"received_date":"2025-01-01 12:11:11","fee":2000,"content":"Nội dung chuyển khoản","ref_code":"ABC123","bank_short_name":"BIDV","bank_account_name":"NGUYEN VAN BAY","bank_account_number":"09928323232"}
+     *                 example={"error_code":0,"msg":"Thành công","result":{"user_id":1,"amount":10000,"received_amount":8000,"received_date":"2025-01-01 12:11:11","fee":2000,"content":"Nội dung chuyển khoản","ref_code":"ABC123","bank_short_name":"BIDV","bank_short_code":"BIDV","bank_account_name":"NGUYEN VAN BAY","bank_account_number":"09928323232","bank_total_balance":1500000,"sign":"sss"}}
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="OK",
+     *         description="OK. Any HTTP 2xx response acknowledges the IPN; the body is ignored.",
      *         @OA\JsonContent(
      *         )
      *     )
@@ -107,51 +86,35 @@ class OtherController extends BaseController
     /**
      * @OA\Post(
      *     path="doman/ipn-callback-payout",
-     *     summary="Địa chỉ đối tác khai báo để tiếp nhận kết quả rút tiền",
+     *     summary="Payout IPN: partner endpoint that receives the withdrawal (payout) result",
+     *     description="The system sends an HTTP POST (JSON) to the <b>webhook_payout_url</b> declared by the partner whenever the status of a withdrawal request changes. <b>PENDING</b> is not final; only <b>SUCCESS</b> and <b>FAILED</b> are final. Respond with HTTP 2xx to acknowledge. A non-2xx response or a timeout (90s) is treated as failed and retried automatically (up to 4 attempts, 30s apart); it can also be resent from the IPN management page. Verify the <b>sign</b> field with the system public key before trusting the data.",
      *     tags={"IPN PAYOUT"},
      *     @OA\RequestBody(
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
+     *                 @OA\Property(property="error_code", type="integer", example=0, description="Always <b>0</b>."),
+     *                 @OA\Property(property="msg", type="string", example="Thành công", description="Result message."),
      *                 @OA\Property(
-     *                     property="user_id",
-     *                     type="number"
+     *                     property="result", type="object", description="Withdrawal data.",
+     *                     @OA\Property(property="user_id", type="integer", example=1, description="Partner user ID."),
+     *                     @OA\Property(property="amount", type="number", example=10000, description="Withdrawal amount (VND), excluding fee."),
+     *                     @OA\Property(property="fee", type="number", example=3000, description="Fee (VND) charged for the withdrawal."),
+     *                     @OA\Property(property="trans_code", type="string", example="2025091519847", description="Transaction code of the withdrawal generated by the system."),
+     *                     @OA\Property(property="ref_code", type="string", example="ABC123", description="Reference code sent by the partner when creating the withdrawal request. Empty if none was sent."),
+     *                     @OA\Property(property="content", type="string", example="ck", description="Transfer content (the remark sent when creating the request)."),
+     *                     @OA\Property(property="status_id", type="integer", enum={1,4,5,2,3}, example=2, description="Withdrawal status. <b>1</b>: requested, <b>4</b>: processing, <b>5</b>: awaiting transaction verification, <b>2</b>: completed, <b>3</b>: cancelled / failed (amount and fee refunded)."),
+     *                     @OA\Property(property="code", type="string", enum={"PENDING","SUCCESS","FAILED"}, example="SUCCESS", description="Result code. <b>PENDING</b>: status_id 1, 4, 5 (not final). <b>SUCCESS</b>: status_id 2. <b>FAILED</b>: status_id 3."),
+     *                     @OA\Property(property="message", type="string", example="Thành công", description="Note of the withdrawal, e.g. the failure reason."),
+     *                     @OA\Property(property="sign", type="string", example="sss", description="Signature of the result fields. Empty if the partner has no system key.")
      *                 ),
-     *                 @OA\Property(
-     *                     property="amount",
-     *                     type="number"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="fee",
-     *                     type="number"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="trans_code",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="content",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="status_id",
-     *                     type="number"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="code",
-     *                     type="string"
-     *                 ),
-     *                 @OA\Property(
-     *                     property="message",
-     *                     type="string"
-     *                 ),
-     *                 example={"error_code":0,"msg":"Thành công","result":{"user_id":1,"amount":10000,"fee":3000,"trans_code":"2025091519847","content":"ck","status_id":2,"code":"SUCCESS","message":"Thành công","sign":"sss"}}
+     *                 example={"error_code":0,"msg":"Thành công","result":{"user_id":1,"amount":10000,"fee":3000,"trans_code":"2025091519847","ref_code":"ABC123","content":"ck","status_id":2,"code":"SUCCESS","message":"Thành công","sign":"sss"}}
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="OK",
+     *         description="OK. Any HTTP 2xx response acknowledges the IPN; the body is ignored.",
      *         @OA\JsonContent(
      *         )
      *     )
