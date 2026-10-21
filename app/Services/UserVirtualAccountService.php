@@ -291,7 +291,12 @@ class UserVirtualAccountService extends AbstractService
         }
 
 
+        do {
+            $strOrderCode = strtoupper(\Illuminate\Support\Str::random(16));
+        } while (UserVirtualAccount::where('order_code', $strOrderCode)->exists());
+
         $objUserVirtualAccount = UserVirtualAccount::create([
+            "order_code" => $strOrderCode,
             "gateway_id" => $intGatewayId,
             "gateway_account_id" => $intGatewayAccountId,
             "bank_account_name" => ($strBankShortCode=="BIDV"?"GVA ":"") . $strBankAccountName,
@@ -338,16 +343,16 @@ class UserVirtualAccountService extends AbstractService
     }
 
     /**
-     * Tìm VA theo số tài khoản (và user_id nếu có)
+     * Tìm VA theo order_code (và user_id nếu có, để đảm bảo VA thuộc user đó quản lý)
      */
-    private function findByAccountNumber($arrParams = [])
+    private function findByOrderCode($arrParams = [])
     {
-        $strAccountNumber = trim((string) ($arrParams["account_number"] ?? ""));
-        if ($strAccountNumber === "") {
+        $strOrderCode = trim((string) ($arrParams["order_code"] ?? ""));
+        if ($strOrderCode === "") {
             return null;
         }
 
-        $objQuery = UserVirtualAccount::where('bank_account_number', $strAccountNumber);
+        $objQuery = UserVirtualAccount::where('order_code', $strOrderCode);
         if (!empty($arrParams["user_id"])) {
             $objQuery->where('user_id', $arrParams["user_id"]);
         }
@@ -355,12 +360,12 @@ class UserVirtualAccountService extends AbstractService
     }
 
     /**
-     * Kích hoạt / hủy kích hoạt VA theo số tài khoản
+     * Kích hoạt / hủy kích hoạt VA theo order_code
      * $intStatusId: 2 = hoạt động, 1 = ngừng hoạt động
      */
-    public function changeStatusByAccountNumber($arrParams = [], $intStatusId = 2)
+    public function changeStatusByOrderCode($arrParams = [], $intStatusId = 2)
     {
-        $objUserVirtualAccount = $this->findByAccountNumber($arrParams);
+        $objUserVirtualAccount = $this->findByOrderCode($arrParams);
         if (empty($objUserVirtualAccount)) {
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
                 [__("Không tìm thấy tài khoản VA.")]
@@ -373,9 +378,9 @@ class UserVirtualAccountService extends AbstractService
     /**
      * Cập nhật loại tài khoản (1 lần / nhiều lần) và hạn mức tối thiểu / tối đa của VA
      */
-    public function updateByAccountNumber($arrParams = [])
+    public function updateByOrderCode($arrParams = [])
     {
-        $objUserVirtualAccount = $this->findByAccountNumber($arrParams);
+        $objUserVirtualAccount = $this->findByOrderCode($arrParams);
         if (empty($objUserVirtualAccount)) {
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
                 [__("Không tìm thấy tài khoản VA.")]

@@ -20,6 +20,7 @@ class UserVirtualAccount extends Model
         'id',
         'user_id',
         'order_no',
+        'order_code',
         'gateway_id',
         'gateway_account_id',
         'bank_account_name',

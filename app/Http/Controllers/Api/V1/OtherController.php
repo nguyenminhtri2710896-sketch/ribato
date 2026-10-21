@@ -162,6 +162,43 @@ class OtherController extends BaseController
         return null;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/other/get-bank-account-name",
+     *     summary="Look up bank account holder name",
+     *     description="Returns the account holder name of a bank account from the bank code and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used.",
+     *     tags={"Bank"},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 required={"bank_code","bank_account_number"},
+     *                 @OA\Property(property="bank_code", type="string", example="MB", description="Bank code (e.g. MB, BIDV, TCB, VCB)."),
+     *                 @OA\Property(property="bank_account_number", type="string", example="0123456789", description="Bank account number to look up."),
+     *                 @OA\Property(property="gateway_account_id", type="integer", example=13, description="Optional. GpayV2 gateway account ID used for the lookup. The system default is used when omitted or invalid.")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error_code", type="integer", example=0, description="<b>0</b>: success. <b>404</b>: missing parameter, account holder name not found, or gateway error."),
+     *             @OA\Property(property="message", type="string", example="Success.", description="Result message."),
+     *             @OA\Property(property="system_time", type="string", example="2026-10-20 10:00:00", description="Server time."),
+     *             @OA\Property(property="errors", type="array", @OA\Items(type="string"), description="Error messages. Empty on success."),
+     *             @OA\Property(
+     *                 property="data", type="object", description="Response payload. Empty on error.",
+     *                 @OA\Property(property="bank_code", type="string", example="MB", description="Bank code that was looked up."),
+     *                 @OA\Property(property="bank_account_number", type="string", example="0123456789", description="Bank account number that was looked up."),
+     *                 @OA\Property(property="bank_account_name", type="string", example="NGUYEN VAN A", description="Account holder name.")
+     *             ),
+     *             @OA\Examples(example="result_success", value={"error_code":0,"message":"Success.","system_time":"2026-10-20 10:00:00","errors":{},"data":{"bank_code":"MB","bank_account_number":"0123456789","bank_account_name":"NGUYEN VAN A"}}, summary="Result success."),
+     *             @OA\Examples(example="result_error", value={"error_code":404,"message":"","system_time":"2026-10-20 10:00:00","errors":{{"Unable to get the account holder name."}},"data":{}}, summary="Result error.")
+     *         )
+     *     )
+     * )
+     */
     public function getBankAccountName()
     {
         $withdrawPaymenthotLogService = new WithdrawPaymenthotLogService();
