@@ -500,7 +500,7 @@
                     "Bank"
                 ],
                 "summary": "Look up bank account holder name",
-                "description": "Returns the account holder name of a bank account from the bank (bank_id or bank_code) and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used.",
+                "description": "Returns the account holder name of a bank account from the bank (bank_id or bank_code) and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used. <b>Sandbox:</b> no real lookup is performed; a random account holder name is returned for any valid bank and account number.",
                 "operationId": "5e926f6e5723a730818183df0c8b5e02",
                 "requestBody": {
                     "content": {

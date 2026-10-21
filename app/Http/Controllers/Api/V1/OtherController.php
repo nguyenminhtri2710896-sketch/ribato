@@ -130,7 +130,7 @@ class OtherController extends BaseController
      * @OA\Post(
      *     path="/api/other/get-bank-account-name",
      *     summary="Look up bank account holder name",
-     *     description="Returns the account holder name of a bank account from the bank (bank_id or bank_code) and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used.",
+     *     description="Returns the account holder name of a bank account from the bank (bank_id or bank_code) and account number. Use it to verify the recipient before creating a withdrawal request. Set <b>gateway_account_id</b> to look up through a specific GpayV2 gateway account; otherwise the system default gateway is used. <b>Sandbox:</b> no real lookup is performed; a random account holder name is returned for any valid bank and account number.",
      *     tags={"Bank"},
      *     @OA\RequestBody(
      *         @OA\MediaType(
@@ -196,6 +196,21 @@ class OtherController extends BaseController
             ])->result();
         }
         
+
+        /**
+         * Sandbox: trả tên chủ khoản ngẫu nhiên, không gọi cổng thật
+         */
+        if (app()->environment('sandbox')) {
+            $arrLastNames = ["NGUYEN", "TRAN", "LE", "PHAM", "HOANG", "VU", "DANG", "BUI", "DO", "NGO"];
+            $arrMiddleNames = ["VAN", "THI", "HOANG", "MINH", "QUANG", "THANH", "NGOC", "DUC", "HUU", "ANH"];
+            $arrFirstNames = ["AN", "BINH", "CUONG", "DUNG", "HAI", "HUNG", "LAN", "LONG", "NAM", "PHUONG", "QUAN", "THAO", "TUAN", "VINH"];
+
+            return $withdrawPaymenthotLogService->setStatusCode(0)->setMessage(__('Thành công.'))->setData([
+                'bank_code' => $arrParams['bank_code'],
+                'bank_account_number' => $arrParams['bank_account_number'],
+                'bank_account_name' => $arrLastNames[array_rand($arrLastNames)] . " " . $arrMiddleNames[array_rand($arrMiddleNames)] . " " . $arrFirstNames[array_rand($arrFirstNames)],
+            ])->result();
+        }
 
         $intGatewayAccountId = (int) request('gateway_account_id');
        
