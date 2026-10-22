@@ -65,9 +65,21 @@ class CollectionSimulatorController extends BaseController
             // Chọn VA: dùng đúng VA đó (nếu có chọn user thì VA phải thuộc user đó)
             $objVa = UserVirtualAccount::where('bank_account_number', $strAccountNumber)->first();
             if (!$objVa) {
-                return $this->error(__("Không tìm thấy tài khoản VA."));
-            }
-            if ($intUserId && $objVa->user_id != $intUserId) {
+                // VA nhập tay không có trong hệ thống: giả lập cổng gửi IPN cho một VA bất kỳ
+                // (dùng để test hệ thống xử lý VA không tồn tại), cần chọn người dùng để lấy token
+                if (!$intUserId || !User::where('id', $intUserId)->exists()) {
+                    return $this->error(__("VA không tồn tại, vui lòng chọn người dùng để gửi giao dịch giả."));
+                }
+                $intFakeGatewayId = (int) request('gateway_id', 8);
+                $objVa = new UserVirtualAccount([
+                    "user_id" => $intUserId,
+                    "gateway_id" => in_array($intFakeGatewayId, [3, 8]) ? $intFakeGatewayId : 8,
+                    "bank_account_number" => $strAccountNumber,
+                    "bank_account_name" => "SIMULATED VA",
+                    "bank_short_code" => "",
+                    "order_no" => "",
+                ]);
+            } elseif ($intUserId && $objVa->user_id != $intUserId) {
                 return $this->error(__("Tài khoản VA không thuộc người dùng đã chọn."));
             }
         } else {

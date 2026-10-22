@@ -35,7 +35,12 @@
             $("#collect-va").select2({
                 dropdownParent: $("#collect-va").parent(),
                 allowClear: true,
-                placeholder: "Chọn VA",
+                tags: true,
+                placeholder: "Chọn hoặc nhập số VA bất kỳ",
+                createTag: function (params) {
+                    var term = $.trim(params.term);
+                    return term === '' ? null : { id: term, text: term + ' (VA nhập tay)', newTag: true };
+                },
                 ajax: {
                     url: '{{ route('backend.virtual-account.ajax-select2-get-list') }}',
                     dataType: 'json',
@@ -87,7 +92,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Collect: giả lập giao dịch nhận tiền từ cổng</h4>
-                        <p class="card-title-desc">Gửi một IPN collection như cổng thật. Chọn người dùng và/hoặc VA: chỉ chọn người dùng thì dùng ngẫu nhiên một VA đang hoạt động của họ.</p>
+                        <p class="card-title-desc">Gửi một IPN collection như cổng thật. Chọn người dùng và/hoặc VA (chọn có sẵn hoặc nhập số VA bất kỳ). Chỉ chọn người dùng thì dùng ngẫu nhiên một VA đang hoạt động của họ.</p>
                         <form class="form-simulate-collection" autocomplete="off" onsubmit="return false;">
                             <div class="mb-3 ajax-select2">
                                 <label class="form-label">Người dùng <small class="text-muted">(tùy chọn)</small></label>
@@ -99,6 +104,14 @@
                             <div class="mb-3">
                                 <label class="form-label">Tài khoản VA <small class="text-muted">(tùy chọn, bỏ trống sẽ lấy ngẫu nhiên VA của người dùng)</small></label>
                                 <select name="bank_account_number" id="collect-va" style="width:100%"></select>
+                                <small class="text-muted">Có thể gõ số VA bất kỳ (không có trong hệ thống) để test VA không tồn tại; khi đó bắt buộc chọn người dùng.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Cổng gửi giao dịch <small class="text-muted">(chỉ dùng khi nhập VA nhập tay)</small></label>
+                                <select name="gateway_id" class="form-control">
+                                    <option value="8">GpayV2</option>
+                                    <option value="3">Yoobill</option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Số tiền</label>
