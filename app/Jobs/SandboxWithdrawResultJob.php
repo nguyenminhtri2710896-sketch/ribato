@@ -47,6 +47,9 @@ class SandboxWithdrawResultJob implements ShouldQueue
         }
 
         $isSuccess = rand(0, 1) == 1;
+        if($objUserWithdraw->platform=='backend_test'){
+            $isSuccess =  1;
+        }
 
         $result = (new UserWithdrawService())->changeStatus([
             'id'        => $objUserWithdraw->id,
