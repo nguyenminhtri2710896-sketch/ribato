@@ -70,11 +70,7 @@ $strRouteBackend = function () {
 
                 Route::get('/user-transaction/index', [\App\Http\Controllers\Backend\V1\UserTransactionController::class, 'index'])->name('user-transaction.index');
                 Route::get('/user-withdraw/index', [\App\Http\Controllers\Backend\V1\UserWithdrawController::class, 'index'])->name('user-withdraw.index');
-                if (config('app.simulator_enabled')) {
-                    Route::get('/tool/simulate-collection', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'index'])->name('tool.simulate-collection');
-                    Route::match(['post', 'get'], '/tool/simulate-collection/ajax/send', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'ajaxSend'])->name('tool.simulate-collection.ajax-send');
-                    Route::match(['post', 'get'], '/tool/simulate-collection/ajax/create-payout', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'ajaxCreatePayout'])->name('tool.simulate-collection.ajax-create-payout');
-                }
+             
                 Route::get('/ipn/collection', [\App\Http\Controllers\Backend\V1\IpnController::class, 'collection'])->name('ipn.collection');
                 Route::get('/ipn/payout', [\App\Http\Controllers\Backend\V1\IpnController::class, 'payout'])->name('ipn.payout');
 
@@ -292,7 +288,11 @@ $strRouteBackend = function () {
                         Route::match(['post', 'get'], '/user-referal-fee/ajax/get-detail', [\App\Http\Controllers\Api\V1\UserReferalFeeController::class, 'getDetail'])->name('user-referal-fee.ajax-get-detail');
                         Route::match(['post', 'get'], '/user-referal-fee/ajax/update', [\App\Http\Controllers\Api\V1\UserReferalFeeController::class, 'update'])->name('user-referal-fee.ajax-update');
 
-
+                        if (config('app.simulator_enabled')) {
+                            Route::get('/tool/simulate-collection', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'index'])->name('tool.simulate-collection');
+                            Route::match(['post', 'get'], '/tool/simulate-collection/ajax/send', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'ajaxSend'])->name('tool.simulate-collection.ajax-send');
+                            Route::match(['post', 'get'], '/tool/simulate-collection/ajax/create-payout', [\App\Http\Controllers\Backend\V1\CollectionSimulatorController::class, 'ajaxCreatePayout'])->name('tool.simulate-collection.ajax-create-payout');
+                        }
 
                     });
                 });
