@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Backend\V1;
 
+use App\Models\User;
 use App\Models\UserToken;
 use App\Models\UserVirtualAccount;
+use App\Services\UserWithdrawService;
 use Illuminate\Support\Facades\Http;
 
 /**
- * Công cụ test dành cho quản trị (chỉ sandbox): giả lập cổng gửi IPN collection
- * về hệ thống theo đúng endpoint / payload của từng cổng.
+ * Công cụ test dành cho quản trị (chỉ sandbox):
+ * - Collect: giả lập cổng gửi IPN collection về hệ thống theo đúng endpoint / payload của từng cổng.
+ * - Payout: tạo yêu cầu rút tiền thay user qua đúng luồng tạo rút tiền (kết quả được sandbox giả lập ngẫu nhiên).
  */
 class CollectionSimulatorController extends BaseController
 {
@@ -44,11 +47,12 @@ class CollectionSimulatorController extends BaseController
         }
 
         $strAccountNumber = trim((string) request('bank_account_number'));
+        $intUserId = (int) request('user_id');
         $intAmount = (int) request('amount');
         $strContent = trim((string) request('content'));
 
-        if ($strAccountNumber === "") {
-            return $this->error(__("Vui lòng chọn tài khoản VA."));
+        if ($strAccountNumber === "" && !$intUserId) {
+            return $this->error(__("Vui lòng chọn người dùng hoặc tài khoản VA."));
         }
         if ($intAmount <= 0) {
             return $this->error(__("Vui lòng nhập số tiền."));
@@ -57,9 +61,24 @@ class CollectionSimulatorController extends BaseController
             return $this->error(__("Vui lòng nhập nội dung chuyển khoản."));
         }
 
-        $objVa = UserVirtualAccount::where('bank_account_number', $strAccountNumber)->first();
-        if (!$objVa) {
-            return $this->error(__("Không tìm thấy tài khoản VA."));
+        if ($strAccountNumber !== "") {
+            // Chọn VA: dùng đúng VA đó (nếu có chọn user thì VA phải thuộc user đó)
+            $objVa = UserVirtualAccount::where('bank_account_number', $strAccountNumber)->first();
+            if (!$objVa) {
+                return $this->error(__("Không tìm thấy tài khoản VA."));
+            }
+            if ($intUserId && $objVa->user_id != $intUserId) {
+                return $this->error(__("Tài khoản VA không thuộc người dùng đã chọn."));
+            }
+        } else {
+            // Chỉ chọn user: lấy ngẫu nhiên một VA đang hoạt động của user
+            if (!User::where('id', $intUserId)->exists()) {
+                return $this->error(__("Người dùng không tồn tại."));
+            }
+            $objVa = UserVirtualAccount::where('user_id', $intUserId)->where('status_id', 2)->inRandomOrder()->first();
+            if (!$objVa) {
+                return $this->error(__("Người dùng chưa có tài khoản VA đang hoạt động."));
+            }
         }
 
         $objUserToken = UserToken::where('user_id', $objVa->user_id)->first();
@@ -127,5 +146,28 @@ class CollectionSimulatorController extends BaseController
             "errors" => [],
             "system_time" => date('Y-m-d H:i:s'),
         ]);
+    }
+
+    public function ajaxCreatePayout()
+    {
+        if (!$this->allowed()) {
+            return $this->error(__("Bạn không có quyền thực hiện thao tác này."));
+        }
+
+        $arrParams = request(['user_id', 'bank_id', 'bank_account_number', 'bank_account_name', 'amount', 'remark', 'ref_code']);
+        $objUser = User::where('id', (int) ($arrParams["user_id"] ?? 0))->first();
+        if (!$objUser) {
+            return $this->error(__("Người dùng không tồn tại."));
+        }
+
+        $arrParams["user_id"] = $objUser->id;
+        $arrParams["platform"] = "backend_test";
+
+        // Giống API tạo rút tiền: user v1 đi luồng add, còn lại đi luồng addV2
+        $userWithdrawService = new UserWithdrawService();
+        if ($objUser->withdraw_version == "v1") {
+            return response()->json($userWithdrawService->add($arrParams));
+        }
+        return response()->json($userWithdrawService->addV2($arrParams));
     }
 }

@@ -79,7 +79,7 @@
                         <li class="s-menu user">
                             <a href="{{ route('backend.tool.simulate-collection') }}" class="waves-effect">
                                 <i class="fas fa-vial"></i>
-                                <span>Test Collect (Sandbox)</span>
+                                <span>Test Collect / Payout</span>
                             </a>
                         </li>
                     @endif
