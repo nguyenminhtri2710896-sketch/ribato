@@ -11,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
 /**
- * Chỉ dùng cho môi trường sandbox: giả lập kết quả rút tiền ngẫu nhiên
+ * Giả lập kết quả rút tiền ngẫu nhiên (yêu cầu tạo từ simulator hoặc môi trường sandbox)
  * (thành công / thất bại) để có dữ liệu test IPN payout.
  */
 class SandboxWithdrawResultJob implements ShouldQueue
@@ -32,16 +32,17 @@ class SandboxWithdrawResultJob implements ShouldQueue
 
     public function handle()
     {
-        if (!app()->environment('sandbox')) {
-            return;
-        }
-
         if (empty($this->arrData["id"])) {
             return \Log::error("SandboxWithdrawResultJob: Thiếu thông tin");
         }
 
         $objUserWithdraw = UserWithdraw::where('id', $this->arrData["id"])->first();
         if (!$objUserWithdraw || $objUserWithdraw->status_id != 1) {
+            return;
+        }
+
+        // Chỉ xử lý yêu cầu giả lập (simulator) hoặc môi trường sandbox, không đụng yêu cầu thật
+        if ($objUserWithdraw->platform !== 'backend_test' && !app()->environment('sandbox')) {
             return;
         }
 

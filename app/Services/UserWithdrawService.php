@@ -154,6 +154,15 @@ class UserWithdrawService extends AbstractService
         return $this->setStatusCode(0)->setMessage(__('Thành công.'))->setData(['user_withdraw' => $objUserWithdraw, 'user' => $objUser])->result();
     }
 
+    /**
+     * Yêu cầu rút giả lập: tạo từ simulator của quản trị (platform = backend_test)
+     * hoặc môi trường sandbox. Không gọi cổng thật.
+     */
+    public function isSimulatedWithdraw($strPlatform = "")
+    {
+        return $strPlatform === 'backend_test' || app()->environment('sandbox');
+    }
+
     public function add($arrParams = [])
     {
 
@@ -407,7 +416,7 @@ class UserWithdrawService extends AbstractService
 
 
         $objUserYoobilConfig = UserYoobilConfig::where('user_id', $intUserId)->first();
-        if (app()->environment('sandbox')) {
+        if ($this->isSimulatedWithdraw($strPlatform)) {
             dispatch(new \App\Jobs\SandboxWithdrawResultJob([
                 'id' => $objUserWithDraw->id,
             ]))->onQueue('request')->delay(now()->addSeconds(rand(3, 10)));
@@ -1038,9 +1047,9 @@ class UserWithdrawService extends AbstractService
          * 3 Yoobill
          */
 
-        if (app()->environment('sandbox')) {
+        if ($this->isSimulatedWithdraw($strPlatform)) {
             /**
-             * Sandbox: giả lập kết quả ngẫu nhiên thành công / thất bại để test IPN
+             * Giả lập kết quả ngẫu nhiên thành công / thất bại để test IPN, không gọi cổng thật
              */
             dispatch(new \App\Jobs\SandboxWithdrawResultJob([
                 'id' => $objUserWithDraw->id,
@@ -1068,9 +1077,11 @@ class UserWithdrawService extends AbstractService
             ]))->onQueue('request');
         }
 
-        dispatch(new \App\Jobs\ToolPushBackupWithdrawlJob([
-            'user_withdraw_id' => $objUserWithDraw->id,
-        ]))->onQueue('notification');
+        if ($strPlatform !== 'backend_test') {
+            dispatch(new \App\Jobs\ToolPushBackupWithdrawlJob([
+                'user_withdraw_id' => $objUserWithDraw->id,
+            ]))->onQueue('notification');
+        }
 
 
 

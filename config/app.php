@@ -59,6 +59,13 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'asset_url' => env('ASSET_URL'),
+    /*
+    | Bật công cụ simulator (trang Test Collect / Payout) cho quản trị. Mặc định tắt, môi trường
+    | nào cần dùng (kể cả production) phải đặt ALLOW_SIMULATOR=true. Yêu cầu rút tạo từ simulator
+    | được đánh dấu platform=backend_test và không đi qua cổng thật; giao dịch khác chạy bình thường.
+    */
+    'simulator_enabled' => filter_var(env('ALLOW_SIMULATOR', false), FILTER_VALIDATE_BOOLEAN),
+
     'asset_version' => env('APP_ENV') == "local" ? time() : env('ASSET_VERSION', "1.0"),
     'backend_version' => env('BACKEND_VERSION') ?: 'v1',
     'mod_version' => env('MOD_VERSION') ?: 'v1',

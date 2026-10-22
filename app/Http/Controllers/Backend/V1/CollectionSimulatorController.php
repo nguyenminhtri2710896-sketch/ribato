@@ -17,7 +17,7 @@ class CollectionSimulatorController extends BaseController
 {
     protected function allowed(): bool
     {
-        return app()->environment('sandbox') && (auth()->user()->is_admin || auth()->user()->full_access);
+        return config('app.simulator_enabled') && (auth()->user()->is_admin || auth()->user()->full_access);
     }
 
     protected function error($strMessage)
