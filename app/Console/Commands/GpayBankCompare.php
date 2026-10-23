@@ -65,12 +65,23 @@ class GpayBankCompare extends Command
                 $matchedIds[$found->id] = true;
                 continue;
             }
-            $missing[] = [$code, $bin, $g['bank_name'] ?? ''];
+            $missing[] = [
+                'code' => $code,
+                'bin' => $bin,
+                'name' => trim((string) ($g['bank_name'] ?? '')),
+                'logo' => $g['logo'] ?? null,
+                'short_name' => trim((string) ($g['short_name'] ?? '')) ?: $code,
+                'short_code' => trim((string) ($g['short_code'] ?? '')) ?: $code,
+            ];
         }
 
         if ($missing) {
             $this->warn('Thiếu trong bảng banks: ' . count($missing));
-            $this->table(['bank_code', 'bank_bin', 'bank_name'], $missing);
+            $this->table(['bank_code', 'bank_bin', 'bank_name'], array_map(fn($m) => [$m['code'], $m['bin'], $m['name']], $missing));
+
+            if ($this->confirm('Bạn có muốn thêm ' . count($missing) . ' ngân hàng này vào bảng banks không?', false)) {
+                $this->insertMissing($missing);
+            }
         } else {
             $this->info('Bảng banks đã có đủ tất cả ngân hàng của Gpay');
         }
@@ -83,5 +94,26 @@ class GpayBankCompare extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * napas_code = bank_bin, name = bank_name
+     * short_name / short_code lấy từ Gpay nếu có, không thì dùng bank_code
+     */
+    private function insertMissing(array $missing): void
+    {
+        $count = 0;
+        foreach ($missing as $m) {
+            Bank::create([
+                'napas_code' => $m['bin'] ?: null,
+                'name' => $m['name'] ?: $m['code'],
+                'short_name' => $m['short_name'],
+                'short_code' => $m['short_code'],
+                'logo' => $m['logo'],
+                'status_id' => 1,
+            ]);
+            $count++;
+        }
+        $this->info("Đã thêm $count ngân hàng vào bảng banks");
     }
 }
