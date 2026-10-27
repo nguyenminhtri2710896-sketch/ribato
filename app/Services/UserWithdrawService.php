@@ -28,6 +28,7 @@ use App\Models\UserToken;
 use App\Models\UserTransaction;
 use App\Models\UserWithdrawCallback;
 use App\Models\UserWithdrawLimit;
+use App\Models\UserWithdrawWhitelist;
 use App\Models\UserYoobilConfig;
 use App\Utilities\General;
 use Carbon\Carbon;
@@ -850,6 +851,31 @@ class UserWithdrawService extends AbstractService
             return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
                 [__("Số tiền rút trong ngày đã vượt quá giới hạn cho phép, vui lòng thử lại sau.")]
             ])->result();
+        }
+
+        /**
+         * Tài khoản không nằm trong whitelist: tối đa non_whitelist_limit_in_day / ngày
+         */
+        if (!UserWithdrawWhitelist::isWhitelisted($intUserId, $intBankId, $strBankAccountNumber)) {
+            $intNonWhitelistLimit = config('withdraw.non_whitelist_limit_in_day');
+            $intTotalNonWhitelistToday = UserWithdraw::where('user_id', $intUserId)
+                ->whereIn('status_id', [1, 2, 4, 5])
+                ->where('is_tranfer_local', 0)
+                ->whereDate('created_at', date('Y-m-d'))
+                ->whereNotExists(function ($query) {
+                    $query->selectRaw(1)
+                        ->from('user_withdraw_whitelists as w')
+                        ->whereColumn('w.user_id', 'user_withdraws.user_id')
+                        ->whereColumn('w.bank_id', 'user_withdraws.bank_id')
+                        ->whereColumn('w.bank_account_number', 'user_withdraws.bank_account_number');
+                })
+                ->sum('amount');
+
+            if ($intTotalNonWhitelistToday + $intAmount > $intNonWhitelistLimit) {
+                return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                    [__("Tài khoản nhận chưa được đăng ký whitelist, hạn mức rút tối đa " . number_format($intNonWhitelistLimit) . "đ/ngày, vui lòng liên hệ quản trị để được nâng hạn mức.")]
+                ])->result();
+            }
         }
 
 

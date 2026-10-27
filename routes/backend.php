@@ -273,6 +273,13 @@ $strRouteBackend = function () {
                         Route::get('/bank/index', [\App\Http\Controllers\Backend\V1\BankController::class, 'index'])->name('bank.index');
                         Route::get('/bank-account/index', [\App\Http\Controllers\Backend\V1\BankAccountController::class, 'index'])->name('bank-account.index');
 
+                        Route::get('/user-withdraw-whitelist/index', [\App\Http\Controllers\Backend\V1\UserWithdrawWhitelistController::class, 'index'])->name('user-withdraw-whitelist.index');
+                        Route::match(['post', 'get'], '/user-withdraw-whitelist/ajax/get-list', [\App\Http\Controllers\Api\V1\UserWithdrawWhitelistController::class, 'getList'])->name('user-withdraw-whitelist.ajax-get-list');
+                        Route::match(['post', 'get'], '/user-withdraw-whitelist/ajax/get-detail', [\App\Http\Controllers\Api\V1\UserWithdrawWhitelistController::class, 'getDetail'])->name('user-withdraw-whitelist.ajax-get-detail');
+                        Route::match(['post', 'get'], '/user-withdraw-whitelist/ajax/add', [\App\Http\Controllers\Api\V1\UserWithdrawWhitelistController::class, 'add'])->name('user-withdraw-whitelist.ajax-add');
+                        Route::match(['post', 'get'], '/user-withdraw-whitelist/ajax/update', [\App\Http\Controllers\Api\V1\UserWithdrawWhitelistController::class, 'update'])->name('user-withdraw-whitelist.ajax-update');
+                        Route::match(['post', 'get'], '/user-withdraw-whitelist/ajax/delete', [\App\Http\Controllers\Api\V1\UserWithdrawWhitelistController::class, 'delete'])->name('user-withdraw-whitelist.ajax-delete');
+
 
                         Route::get('/report/revenue-paymenthot', [\App\Http\Controllers\Backend\V1\ReportController::class, 'revenuePaymenthot'])->name('report.revenue-paymenthot');
                         Route::match(['post', 'get'], '/report/ajax-get-list-revenue-paymenthot', [\App\Http\Controllers\Backend\V1\ReportController::class, 'getListRevenuePaymenthot'])->name('report.ajax-get-list-revenue-paymenthot');

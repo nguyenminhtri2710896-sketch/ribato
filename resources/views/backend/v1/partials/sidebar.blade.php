@@ -94,6 +94,12 @@
                             </a>
                         </li>
                         <li class="s-menu user">
+                            <a href="{{ route('backend.user-withdraw-whitelist.index') }}" class="waves-effect">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Whitelist rút tiền</span>
+                            </a>
+                        </li>
+                        <li class="s-menu user">
                             <a href="{{ route('backend.bank-account.index') }}" class="waves-effect">
                                 <i class="fas fa-credit-card"></i>
                                 <span>{{ __('backend.bank_account') }}</span>

@@ -113,6 +113,12 @@ $routerName = request()
                     </li>
                     @endif
 
+                    <li class="s-menu user">
+                        <a href="{{ route('backend.user-withdraw-whitelist.index') }}" class="waves-effect">
+                            <i class="fas fa-shield-alt"></i>
+                            <span key="t-starter-page">Whitelist rút tiền</span>
+                        </a>
+                    </li>
                     @if (auth()->user()->is_accountant||auth()->user()->full_access)
                     <li class="s-menu user">
                         <a href="{{ route('backend.user.index') }}" class="waves-effect">
