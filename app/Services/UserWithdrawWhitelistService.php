@@ -58,6 +58,13 @@ class UserWithdrawWhitelistService extends AbstractService
         ])->result();
     }
 
+    private function normalizeParams($arrParams)
+    {
+        $arrParams["bank_account_number"] = trim($arrParams["bank_account_number"] ?? "");
+        $arrParams["daily_limit"] = preg_replace('/[^0-9]/', '', $arrParams["daily_limit"] ?? "");
+        return $arrParams;
+    }
+
     private function validateParams($arrParams)
     {
         $validated = Validator::make(
@@ -66,11 +73,15 @@ class UserWithdrawWhitelistService extends AbstractService
                 'user_id' => 'required',
                 'bank_id' => 'required',
                 'bank_account_number' => 'required',
+                'daily_limit' => 'required|integer|min:1',
             ],
             [
                 "user_id.required" => __("Vui lòng chọn người dùng."),
                 "bank_id.required" => __("Vui lòng chọn ngân hàng."),
                 "bank_account_number.required" => __("Vui lòng nhập số tài khoản."),
+                "daily_limit.required" => __("Vui lòng nhập số tiền rút tối đa trong ngày."),
+                "daily_limit.integer" => __("Số tiền rút tối đa trong ngày không hợp lệ."),
+                "daily_limit.min" => __("Số tiền rút tối đa trong ngày phải lớn hơn 0."),
             ]
         );
         if ($validated->errors()->messages()) {
@@ -101,7 +112,7 @@ class UserWithdrawWhitelistService extends AbstractService
 
     public function add($arrParams = [])
     {
-        $arrParams["bank_account_number"] = trim($arrParams["bank_account_number"] ?? "");
+        $arrParams = $this->normalizeParams($arrParams);
         if ($arrError = $this->validateParams($arrParams)) {
             return $arrError;
         }
@@ -122,7 +133,7 @@ class UserWithdrawWhitelistService extends AbstractService
 
     public function update($arrParams = [])
     {
-        $arrParams["bank_account_number"] = trim($arrParams["bank_account_number"] ?? "");
+        $arrParams = $this->normalizeParams($arrParams);
         if (empty($arrParams["id"])) {
             return $this->setStatusCode(414)->setMessage("")->setData([])->setErrors([
                 [__("Vui lòng nhập id.")]

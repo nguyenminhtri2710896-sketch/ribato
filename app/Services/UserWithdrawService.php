@@ -854,9 +854,25 @@ class UserWithdrawService extends AbstractService
         }
 
         /**
-         * Tài khoản không nằm trong whitelist: tối đa non_whitelist_limit_in_day / ngày
+         * Whitelist: tài khoản có trong whitelist bị giới hạn theo daily_limit của tài khoản đó,
+         * tài khoản không có trong whitelist tối đa non_whitelist_limit_in_day / ngày
          */
-        if (!UserWithdrawWhitelist::isWhitelisted($intUserId, $intBankId, $strBankAccountNumber)) {
+        $objWhitelist = UserWithdrawWhitelist::findAccount($intUserId, $intBankId, $strBankAccountNumber);
+        if ($objWhitelist) {
+            $intTotalWhitelistAccountToday = UserWithdraw::where('user_id', $intUserId)
+                ->where('bank_id', $intBankId)
+                ->where('bank_account_number', $strBankAccountNumber)
+                ->whereIn('status_id', [1, 2, 4, 5])
+                ->where('is_tranfer_local', 0)
+                ->whereDate('created_at', date('Y-m-d'))
+                ->sum('amount');
+
+            if ($intTotalWhitelistAccountToday + $intAmount > $objWhitelist->daily_limit) {
+                return $this->setStatusCode(404)->setMessage("")->setData([])->setErrors([
+                    [__("Số tiền rút trong ngày đến tài khoản này đã vượt quá hạn mức " . number_format($objWhitelist->daily_limit) . "đ/ngày, tổng đã sử dụng là " . number_format($intTotalWhitelistAccountToday) . "đ.")]
+                ])->result();
+            }
+        } else {
             $intNonWhitelistLimit = config('withdraw.non_whitelist_limit_in_day');
             $intTotalNonWhitelistToday = UserWithdraw::where('user_id', $intUserId)
                 ->whereIn('status_id', [1, 2, 4, 5])
@@ -877,7 +893,6 @@ class UserWithdrawService extends AbstractService
                 ])->result();
             }
         }
-
 
         if ($intTypeId == 1) {
             $objGatewayAccount = GatewayAccount::whereIn('id', explode(",", $objUser->gateway_withdraw_ids))->where('balance', '>', $intAmount)->orderBy('balance', 'DESC')->first();

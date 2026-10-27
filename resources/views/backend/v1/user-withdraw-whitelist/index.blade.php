@@ -87,6 +87,7 @@
                                                 <th class="text-center" data-priority="3">Ngân hàng</th>
                                                 <th class="text-center" data-priority="4">Số tài khoản</th>
                                                 <th class="text-center" data-priority="5">Tên chủ khoản</th>
+                                                <th class="text-center" data-priority="5">Hạn mức / ngày</th>
                                                 <th class="text-center" data-priority="6">Ghi chú</th>
                                                 <th class="text-center" data-priority="7">Ngày tạo</th>
                                                 <th class="text-center" data-priority="9">Chức năng</th>

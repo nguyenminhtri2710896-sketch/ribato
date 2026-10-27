@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('bank_id');
             $table->string('bank_account_number', 50);
             $table->string('bank_account_name', 191)->nullable();
+            $table->unsignedBigInteger('daily_limit');
             $table->string('note', 255)->nullable();
             $table->timestamps();
 

@@ -30,6 +30,11 @@
                                 <div class="invalid-tooltip">Vui lòng nhập số tài khoản</div>
                             </div></div></div></div>
                     <div class="row"><div class="col-md-12"><div class="form-group"><div class="has-validation">
+                                <label class="mt-3 mb-1">Số tiền rút tối đa / ngày<span class="text-danger">(*)</span></label>
+                                <input type="text" name="daily_limit" class="form-control" inputmode="numeric" required>
+                                <div class="invalid-tooltip">Vui lòng nhập số tiền rút tối đa trong ngày</div>
+                            </div></div></div></div>
+                    <div class="row"><div class="col-md-12"><div class="form-group"><div class="has-validation">
                                 <label class="mt-3 mb-1">Tên chủ khoản</label>
                                 <input type="text" name="bank_account_name" class="form-control" >
                                 <div class="invalid-tooltip">Vui lòng nhập tên chủ khoản</div>

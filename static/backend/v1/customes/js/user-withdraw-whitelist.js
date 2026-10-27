@@ -23,6 +23,14 @@ var userWithdrawWhitelist = {
             },
             { className: "text-left", data: 'bank_account_number', sortable: false },
             { className: "text-center", data: 'bank_account_name', sortable: false },
+            {
+                className: "text-end",
+                data: 'daily_limit',
+                sortable: false,
+                mRender: function (data, type, row) {
+                    return new Intl.NumberFormat('vi-VN').format(row.daily_limit);
+                }
+            },
             { className: "text-left", data: 'note', sortable: false, mRender: function (d) { return $('<div>').text(d || '').html(); } },
             {
                 className: "text-center",

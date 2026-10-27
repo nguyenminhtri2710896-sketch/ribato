@@ -17,6 +17,7 @@ class UserWithdrawWhitelist extends Model
         'bank_id',
         'bank_account_number',
         'bank_account_name',
+        'daily_limit',
         'note',
         'created_at',
         'updated_at',
@@ -29,12 +30,12 @@ class UserWithdrawWhitelist extends Model
         }, $this->fillable));
     }
 
-    public static function isWhitelisted($intUserId, $intBankId, $strBankAccountNumber): bool
+    public static function findAccount($intUserId, $intBankId, $strBankAccountNumber)
     {
         return self::where([
             'user_id' => $intUserId,
             'bank_id' => $intBankId,
             'bank_account_number' => $strBankAccountNumber,
-        ])->exists();
+        ])->first();
     }
 }
