@@ -875,16 +875,11 @@ class UserWithdrawService extends AbstractService
         } else {
             $intNonWhitelistLimit = config('withdraw.non_whitelist_limit_in_day');
             $intTotalNonWhitelistToday = UserWithdraw::where('user_id', $intUserId)
+                ->where('bank_id', $intBankId)
+                ->where('bank_account_number', $strBankAccountNumber)
                 ->whereIn('status_id', [1, 2, 4, 5])
                 ->where('is_tranfer_local', 0)
                 ->whereDate('created_at', date('Y-m-d'))
-                ->whereNotExists(function ($query) {
-                    $query->selectRaw(1)
-                        ->from('user_withdraw_whitelists as w')
-                        ->whereColumn('w.user_id', 'user_withdraws.user_id')
-                        ->whereColumn('w.bank_id', 'user_withdraws.bank_id')
-                        ->whereColumn('w.bank_account_number', 'user_withdraws.bank_account_number');
-                })
                 ->sum('amount');
 
             if ($intTotalNonWhitelistToday + $intAmount > $intNonWhitelistLimit) {
