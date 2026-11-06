@@ -104,6 +104,18 @@
                                                 placeholder="{{ __('backend.to_date') }}">
                                         </div>
                                     </div>
+                                    <div class="mb-2">
+                                        <label>{{ __('backend.transaction_for_control_date') }}</label>
+
+                                        <div class="input-daterange input-group" id="for-control-at"
+                                            data-date-format="dd/mm/yyyy" data-date-autoclose="true"
+                                            data-provide="datepicker" data-date-container="#for-control-at">
+                                            <input type="text" class="form-control" name="for_control_at_from"
+                                                placeholder="{{ __('backend.from_date') }}">
+                                            <input type="text" class="form-control" name="for_control_at_to"
+                                                placeholder="{{ __('backend.to_date') }}">
+                                        </div>
+                                    </div>
                                     <div class="d-grid gap-2 mb-2">
                                         <button class="btn btn-info  btn-secondary btn-block"><i class="fa fa-search"></i>
                                             {{ __('backend.search') }}</button>

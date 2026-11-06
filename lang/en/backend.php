@@ -263,6 +263,7 @@ return [
     "va_account" => "VA Account",
     "updated_date" => "Updated Date",
     "transaction_updated_date" => "Transaction Updated Date",
+    "transaction_for_control_date" => "Transaction Settlement Date",
     "payment_list" => "Payment List",
     "fee" => "Fee",
     "actual_received_amount" => "Actual Received Amount",

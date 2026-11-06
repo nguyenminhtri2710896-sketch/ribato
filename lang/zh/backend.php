@@ -263,6 +263,7 @@ return [
     "va_account" => "VA账号",
     "updated_date" => "更新日期",
     "transaction_updated_date" => "交易更新日期",
+    "transaction_for_control_date" => "交易结算日期",
     "payment_list" => "付款列表",
     "fee" => "费用",
     "actual_received_amount" => "实收金额",

@@ -263,6 +263,7 @@ return [
     "va_account" => "Tài khoản VA",
     "updated_date" => "Ngày cập nhật",
     "transaction_updated_date" => "Ngày cập nhật giao dịch",
+    "transaction_for_control_date" => "Ngày chốt giao dịch",
     "payment_list" => "Danh sách thanh toán",
     "fee" => "Phí",
     "actual_received_amount" => "Số tiền thực nhận",

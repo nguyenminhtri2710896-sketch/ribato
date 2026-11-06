@@ -128,6 +128,16 @@ class AbstractService
             unset($arrParams["query"]["updated_at_to"]);
         }
 
+        if (!empty($arrParams["query"]['for_control_at_from'])) {
+            $arrParams["query_greater_than"]["for_control_at"] = General::formatInputDay($arrParams["query"]['for_control_at_from'] . " 00:00:00");
+            unset($arrParams["query"]["for_control_at_from"]);
+        }
+
+        if (!empty($arrParams["query"]['for_control_at_to'])) {
+            $arrParams["query_less_than"]["for_control_at"] = General::formatInputDay($arrParams["query"]['for_control_at_to'] . " 23:59:59");
+            unset($arrParams["query"]["for_control_at_to"]);
+        }
+
         if (!empty($arrParams["query"]['received_at_from'])) {
             $arrParams["query_greater_than"]["received_at"] = General::formatInputDay($arrParams["query"]['received_at_from'] . " 00:00:00");
             unset($arrParams["query"]["received_at_from"]);
